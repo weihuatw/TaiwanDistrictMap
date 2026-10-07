@@ -1,0 +1,63 @@
+[
+  {
+    "level": "county",
+    "title": "直轄市、縣市界線(TWD97經緯度)",
+    "datasetUrl": "https://data.gov.tw/dataset/7442",
+    "downloadUrl": "https://www.tgos.tw/tgos/VirtualDir/Product/1cd4f4c9-6b01-4cf9-bf6c-23a73aa17d24/直轄市、縣(市)界線1140318.zip",
+    "metadataUpdated": "2025-12-16",
+    "provider": "內政部國土測繪中心",
+    "license": "政府資料開放授權條款－第1版",
+    "licenseUrl": "https://data.gov.tw/license",
+    "downloadedAt": "2026-10-07T16:51:18+08:00",
+    "sha256": "9ff4d337e03a711d7e17caaf4d0c46a0fe2c6bd3660b321a2e35123030d8491c",
+    "archiveBytes": 3762381,
+    "shapefile": "data/raw/county/COUNTY_MOI_1140318.shp",
+    "supplementaryFiles": [],
+    "releaseFile": "COUNTY_MOI_1140318",
+    "catalogUrl": "https://whgis-nlsc.moi.gov.tw/Opendata/Files.aspx",
+    "catalogVerifiedAt": "2026-10-07",
+    "catalogReleaseDate": "2025-04-16"
+  },
+  {
+    "level": "town",
+    "title": "鄉鎮市區界線(TWD97經緯度)",
+    "datasetUrl": "https://data.gov.tw/dataset/7441",
+    "downloadUrl": "https://www.tgos.tw/tgos/VirtualDir/Product/3fe61d4a-ca23-4f45-8aca-4a536f40f290/鄉(鎮、市、區)界線1140318.zip",
+    "metadataUpdated": "2025-12-24",
+    "provider": "內政部國土測繪中心",
+    "license": "政府資料開放授權條款－第1版",
+    "licenseUrl": "https://data.gov.tw/license",
+    "downloadedAt": "2026-10-07T16:51:19+08:00",
+    "sha256": "c5dc6c0f9a8cc1aad6758a0a6fb81b203718b37f42c5aa8e684262ca24a7d9dd",
+    "archiveBytes": 12801023,
+    "shapefile": "data/raw/town/TOWN_MOI_1140318.shp",
+    "supplementaryFiles": [
+      "data/raw/town/Town_Majia_Sanhe.shp"
+    ],
+    "releaseFile": "TOWN_MOI_1140318",
+    "catalogUrl": "https://whgis-nlsc.moi.gov.tw/Opendata/Files.aspx",
+    "catalogVerifiedAt": "2026-10-07",
+    "catalogReleaseDate": "2025-04-16"
+  },
+  {
+    "level": "village",
+    "title": "村里界圖(TWD97經緯度)",
+    "datasetUrl": "https://data.gov.tw/dataset/7438",
+    "downloadUrl": "https://www.tgos.tw/tgos/VirtualDir/Product/a04697c8-64db-450a-a105-3eb471c45abd/村(里)界(TWD97經緯度).zip",
+    "metadataUpdated": "2026-08-25",
+    "provider": "內政部國土測繪中心",
+    "license": "政府資料開放授權條款－第1版",
+    "licenseUrl": "https://data.gov.tw/license",
+    "downloadedAt": "2026-10-07T16:51:20+08:00",
+    "sha256": "c6cc09589cfdc073df6ca85b84be5f76a92c268774a44744fda341766479ef62",
+    "archiveBytes": 21618481,
+    "shapefile": "data/raw/village/VILLAGE_NLSC_1150817.shp",
+    "supplementaryFiles": [
+      "data/raw/village/Village_Sanhe.shp"
+    ],
+    "releaseFile": "VILLAGE_NLSC_1150817",
+    "catalogUrl": "https://whgis-nlsc.moi.gov.tw/Opendata/Files.aspx",
+    "catalogVerifiedAt": "2026-10-07",
+    "catalogReleaseDate": "2026-08-26"
+  }
+]

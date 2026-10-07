@@ -1,0 +1,35 @@
+{
+  "name": "taiwan-district-map",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "data:fetch": "python3 scripts/fetch-data.py",
+    "data:build": "node scripts/build-data.mjs",
+    "data:check": "node scripts/check-data.mjs",
+    "income:fetch": "python3 scripts/income/fetch.py",
+    "income:build": "python3 scripts/income/build.py",
+    "income:check": "node scripts/income/check.mjs",
+    "test": "node --test tests/*.test.mjs && python3 -m unittest discover -s tests -p '*_test.py'"
+  },
+  "dependencies": {
+    "@tomtom-org/maps-sdk": "0.51.3",
+    "@turf/turf": "7.3.5",
+    "lodash-es": "4.18.1",
+    "maplibre-gl": "^6.13.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@types/geojson": "7946.0.16",
+    "mapshaper": "0.6.113",
+    "typescript": "~5.9.3",
+    "vite": "8.2.2"
+  },
+  "overrides": {
+    "adm-zip": "0.6.1",
+    "fflate": "0.8.3"
+  }
+}
