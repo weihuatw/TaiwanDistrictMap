@@ -6,5 +6,6 @@ export default defineConfig({
   build: { target: 'es2022', rolldownOptions: { input: {
     admin: resolve(import.meta.dirname, 'index.html'),
     income: resolve(import.meta.dirname, 'income.html'),
+    school: resolve(import.meta.dirname, 'school.html'),
   } } },
 });

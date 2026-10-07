@@ -4,10 +4,13 @@
 
 另有 [2024所得地圖](income.html)，用財政部初步核定資料顯示各層平均年綜合所得，沿用相同導覽。詳細指標、對照限制與資料流程見 [所得地圖說明](docs/income.md)。
 
+另有 [學區地圖](school.html)，第一版支援臺北市115學年度的國小、國中學區。進入行政區先顯示學校點位，點校後才顯示所屬里界，包含部分鄰與共同學區；國小、國中可獨立勾選。來源及重建方式見 [學區地圖說明](docs/school.md)。
+
 GitHub repo：[weihuatw/TaiwanDistrictMap](https://github.com/weihuatw/TaiwanDistrictMap)。網站透過 GitHub Actions 發布至 GitHub Pages：
 
 - [行政區地圖](https://weihuatw.github.io/TaiwanDistrictMap/)
 - [2024所得地圖](https://weihuatw.github.io/TaiwanDistrictMap/income.html)
+- [學區地圖](https://weihuatw.github.io/TaiwanDistrictMap/school.html)
 
 ## 本機啟動
 
@@ -31,7 +34,7 @@ npm run dev -- --port 5173 --strictPort
 
 開啟 <http://127.0.0.1:5173/>。沒有 key 時仍可操作官方行政區圖形，底圖顯示為資料預覽背景。
 
-所得頁開啟 <http://127.0.0.1:5173/income.html>。
+所得頁開啟 <http://127.0.0.1:5173/income.html>；學區頁開啟 <http://127.0.0.1:5173/school.html>。
 
 TomTom key 支援網域白名單。使用此專案專用的 key，設定開發及發布網站的允許網域與所需地圖產品。前端變數會進入瀏覽器程式和地圖請求；環境檔的作用是避免將 key 提交到原始碼，並非對訪客隱藏 key。
 
@@ -91,6 +94,7 @@ npm run data:check
 ```sh
 npm test
 npm run data:check
+npm run school:check
 npm run build
 npm run preview -- --port 4173 --strictPort
 ```
@@ -101,7 +105,7 @@ npm run preview -- --port 4173 --strictPort
 
 ## GitHub Pages 部署
 
-`.github/workflows/deploy-pages.yml` 在每次推送至 `main` 或手動執行時，使用 Node.js 24 安裝鎖定的相依套件、執行測試及兩種資料檢查，再以 `/TaiwanDistrictMap/` 為 base 建置並發布 `dist/`。預先生成的 `public/data/` 隨原始碼提交，不必在 Actions 下載或重建官方資料。
+`.github/workflows/deploy-pages.yml` 在每次推送至 `main` 或手動執行時，使用 Node.js 24 安裝鎖定的相依套件、執行測試及行政區、所得、學區資料檢查，再以 `/TaiwanDistrictMap/` 為 base 建置並發布 `dist/`。預先生成的 `public/data/` 隨原始碼提交，不必在 Actions 下載或重建官方資料。
 
 Repository 的 Settings → Pages → Source 設為 **GitHub Actions**。在 Settings → Secrets and variables → Actions 設定 `VITE_TOMTOM_API_KEY`；工作流程缺少 key 時會停止，避免意外發布沒有底圖的版本。`.env.local`、原始下載檔、`node_modules/` 與 `dist/` 不提交。
 

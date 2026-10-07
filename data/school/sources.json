@@ -1,0 +1,62 @@
+[
+  {
+    "id": "campus-121",
+    "title": "各級學校範圍圖_121分帶",
+    "provider": "內政部國土測繪中心",
+    "datasetUrl": "https://data.gov.tw/dataset/174606",
+    "release": "1150409",
+    "downloadUrl": "https://www.tgos.tw/tgos/VirtualDir/Product/5f346c6b-edde-4fe7-8685-5585c0fb7852/各級學校範圍圖_121_1150409.zip",
+    "downloadedAt": "2026-10-08T00:11:03+08:00",
+    "sha256": "14fdbec063543c260059f662c380be80ae6f1285c6967e5d35896b11c514eb48",
+    "bytes": 2010108,
+    "licenseUrl": "https://data.gov.tw/license"
+  },
+  {
+    "id": "taipei-elementary",
+    "title": "臺北市115學年度國民小學里鄰學區對照表",
+    "provider": "臺北市政府教育局",
+    "datasetUrl": "https://data.taipei/dataset/detail?id=678c5215-f14a-47e3-92bd-da43f9d7c7a9",
+    "release": "115學年度",
+    "downloadUrl": "https://data.taipei/api/frontstage/tpeod/dataset/resource.download?rid=4ebe14e0-5539-4b43-985c-d3a0a5b351c9",
+    "downloadedAt": "2026-10-08T00:11:03+08:00",
+    "sha256": "f9d13818df11c38e3f7499a829f0d72db746e085c30a7699b99896c3910a5b58",
+    "bytes": 102672,
+    "licenseUrl": "https://data.gov.tw/license"
+  },
+  {
+    "id": "taipei-junior",
+    "title": "臺北市115學年度國民中學里鄰學區對照表",
+    "provider": "臺北市政府教育局",
+    "datasetUrl": "https://data.taipei/dataset/detail?id=678c5215-f14a-47e3-92bd-da43f9d7c7a9",
+    "release": "115學年度",
+    "downloadUrl": "https://data.taipei/api/frontstage/tpeod/dataset/resource.download?rid=bb9a06d4-69b1-4987-8660-858790f389b3",
+    "downloadedAt": "2026-10-08T00:11:03+08:00",
+    "sha256": "458d61c0ca46082f1b6aa5da0c57dec8ebf3d74ca58aeb94aee40f517e589fe6",
+    "bytes": 81316,
+    "licenseUrl": "https://data.gov.tw/license"
+  },
+  {
+    "id": "taipei-shelters",
+    "title": "避難收容處所點位檔（長安國小位置）",
+    "provider": "內政部消防署",
+    "datasetUrl": "https://data.gov.tw/dataset/73242",
+    "release": "2026-10-08下載",
+    "downloadUrl": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/ED6CF735-6C03-4573-A882-72C1BEC799CB/resource/54550E2F-4567-4C8F-BD2E-E54E9D0386B8/download",
+    "downloadedAt": "2026-10-08T00:11:03+08:00",
+    "sha256": "45f9e2039a7fc599f36bd65edb5b05b2ee222619f6e642c9d102e5cd6ca55e70",
+    "bytes": 1088666,
+    "licenseUrl": "https://data.gov.tw/license"
+  },
+  {
+    "id": "taipei-garden",
+    "title": "和平實驗國小校園田園位置",
+    "provider": "臺北市政府教育局環境教育網",
+    "datasetUrl": "https://ee.tp.edu.tw/report_history/?id=4874&mode=detail&node=27&type=rural",
+    "release": "2026-10-08核對",
+    "downloadUrl": "https://ee.tp.edu.tw/report_history/?id=4874&mode=detail&node=27&type=rural",
+    "downloadedAt": "2026-10-08T00:11:03+08:00",
+    "sha256": "047d9714eacf8da8b8375ab7ffe58600ec750198ec8339785ce7981468f87104",
+    "bytes": 38692,
+    "licenseUrl": "https://data.gov.tw/license"
+  }
+]

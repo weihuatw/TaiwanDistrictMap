@@ -18,6 +18,7 @@ interface ShellOptions {
   loadingText?: string;
   errorText?: string;
   sourceIntro?: string;
+  customList?: (view: View, query: string, list: HTMLElement) => { title: string; summary: string } | undefined;
 }
 
 /** Shared page chrome; map and data modules communicate through callbacks. */
@@ -126,6 +127,12 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     el('list-title').textContent = { county: '選擇縣市', town: '選擇鄉鎮市區', village: '選擇村里' }[actualLevel];
     const normalize = (value: string) => value.replaceAll('台', '臺').toLowerCase();
     const query = normalize(el<HTMLInputElement>('region-search').value.trim());
+    const custom = options.customList?.(view, query, el('region-list'));
+    if (custom) {
+      el('list-title').textContent = custom.title;
+      el('list-summary').textContent = custom.summary;
+      return;
+    }
     const matches = view.data.features.filter((f) => normalize(`${f.properties.name} ${f.properties.code}`).includes(query));
     const visible = options.sortRegions?.(matches) ?? matches;
     el('list-summary').textContent = `${visible.length} / ${view.data.features.length} 個範圍`;
@@ -197,6 +204,7 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     uiContainer: root.querySelector<HTMLElement>('.map-ui')!,
     sourceContent: el('source-content'),
     mapContainer, render, setBusy, showError, showInitializationError, setBasemapStatus,
+    refreshList: renderList,
     showTooltip, hideTooltip, getPadding, getLabelObstacles,
     renderManifest, showManifestError,
     markMapReady: () => { mapContainer.dataset.ready = 'true'; },

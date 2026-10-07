@@ -1,0 +1,37 @@
+.school-page .school-filter { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; border: 0; border-top: 1px solid var(--border); margin: 12px 0 0; padding: 12px 0 0; }
+.school-filter legend { float: left; font-size: 11px; color: var(--muted); margin-right: 4px; padding: 0; }
+.school-filter label { display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; min-height: 28px; }
+.school-filter input { margin: 0; width: 16px; height: 16px; accent-color: #18816a; }
+.school-filter #filter-junior { accent-color: #526bb2; }
+.school-key { width: 8px; height: 8px; border-radius: 50%; }
+.school-key.elementary { background: #18816a; }
+.school-key.junior { background: #526bb2; }
+.school-coverage { margin: 8px 0 0; font-size: 11px; line-height: 1.7; color: var(--muted); }
+.school-detail { border-top: 1px solid var(--border); margin-top: 10px; padding-top: 6px; font-size: 11px; line-height: 1.7; }
+.school-detail p { margin: 4px 0; }
+.school-note { color: #697e74; }
+.school-detail summary { cursor: pointer; padding: 5px 0; }
+.school-detail ul { margin: 4px 0 0; padding-left: 18px; max-height: 130px; overflow: auto; }
+.school-page .location-panel { max-height: calc(100dvh - 120px); overflow-y: auto; }
+.school-page .heading-row { align-items: start; }
+.school-page h1 { font-size: 24px; overflow-wrap: anywhere; }
+.school-page .location-footer { flex-wrap: wrap; }
+.school-page .basemap-status { top: auto; bottom: 94px; }
+.school-page .error-banner { top: auto; bottom: 145px; z-index: 3; }
+.school-page .map-hint { max-width: calc(100% - 32px); white-space: normal; text-align: center; width: max-content; }
+.school-marker { display: flex; align-items: center; border: 2px solid white; border-radius: 18px; padding: 0; color: #fff; background: #18816a; box-shadow: 0 2px 7px #1b42334d; pointer-events: auto; min-width: 30px; height: 30px; }
+.school-marker.junior { background: #526bb2; }
+.school-marker-badge { display: grid; place-items: center; width: 26px; height: 26px; flex: none; font-size: 12px; font-weight: 650; }
+.school-marker-name { display: none; padding: 0 10px 0 3px; white-space: nowrap; font-size: 12px; }
+.school-marker:hover, .school-marker:focus-visible, .school-marker.selected { z-index: 2; }
+.school-marker:hover .school-marker-name, .school-marker:focus-visible .school-marker-name, .school-marker.selected .school-marker-name { display: block; }
+.school-marker.selected { outline: 3px solid #efb44f; outline-offset: 2px; }
+.school-option { flex-wrap: wrap; gap: 8px; }
+.school-option .region-option-meta { width: calc(100% - 19px); margin-left: 19px; }
+@media (max-width: 760px) {
+  .school-page h1 { font-size: 21px; }
+  .school-page .region-panel { top: 12px; max-height: calc(100dvh - 100px); z-index: 4; }
+  .school-page .location-panel { max-height: calc(100dvh - 160px); }
+  .school-page .basemap-status { bottom: 76px; max-width: calc(100% - 85px); }
+  .school-page .school-filter { gap: 12px; margin-top: 9px; padding-top: 8px; }
+}

@@ -52,3 +52,5 @@ public/data/                     現有預先生成的界線與版本資訊
 應用的 `destroy()` 取消尚未完成的導覽、移除地圖事件與標籤、釋放地圖並移除介面。資料來源請求在頁面移除後不再更新 DOM；共用介面的 Escape 事件亦會解除。
 
 `npm test` 直接測試共用 TypeScript 的導覽與圖資模組，涵蓋請求競態、同層切換、返回、頁面清理、快取及失敗重試。`npm run build` 執行 TypeScript 檢查並生成純靜態成果。瀏覽器驗證與畫面保存在 [verification.md](verification.md)。
+
+學區頁 `school.html` 與 `src/apps/school/` 使用獨立的學校導覽狀態，第三層以學校點位與選校後的學區里界替代全區村里。資料及互動方式見 [學區地圖說明](school.md)。
