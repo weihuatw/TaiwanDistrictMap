@@ -1,6 +1,16 @@
-# 本機驗證紀錄
+# 驗證紀錄
 
-驗證日期：2026-10-07。未上傳 GitHub 或發布網站。
+驗證日期：2026-10-07。以下原有紀錄為發布前的本機驗證；GitHub Pages 狀態另見下方。
+
+## GitHub Pages 部署驗證
+
+2026-10-07 建立公開 repo `weihuatw/TaiwanDistrictMap`，推送 `main` 並啟用 GitHub Actions 作為 Pages 發布來源，預定網址為 `https://weihuatw.github.io/TaiwanDistrictMap/`。
+
+- 本機 29 個 Node 測試、2 個 Python 測試、`data:check`、`income:check` 與 `/TaiwanDistrictMap/` base 建置全部通過。
+- 實際瀏覽器載入該子路徑下的行政區與所得兩個入口，行政區頁 TomTom 向量來源記錄 `data-basemap-loaded="true"`、`data-basemap-type="vector"`、`data-ready="true"`。
+- 所得頁依序選取臺北市與信義區，顯示 133.6 萬、128.4 萬及 41 個村里範圍，確認分層圖資與所得檔案的子路徑正常。
+- Git 提交排除 `.env.local`、原始資料、`node_modules/` 與 `dist/`；所有提交檔案已檢查不含本機 TomTom key。
+- 首次 Actions 執行已完成測試及兩種資料檢查，在 `Check basemap key` 因尚未設定 `VITE_TOMTOM_API_KEY` Secret 停止，未發布線上網站。Key 傳送等待使用者明確同意。
 
 - `npm test`：29 個Node測試及2個Python報表解析測試通過，涵蓋導覽、所得資料、同層切換、請求競態、重試、配色、圖資快取與頁面清理。
 - `npm run data:check`：22 縣市、368 鄉鎮市區、7,986 村里圖形通過代碼、父子關係、環閉合、座標及標籤位置檢查。
