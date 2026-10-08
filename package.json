@@ -20,7 +20,10 @@
     "school:parse": "${SCHOOL_PYTHON:-python3} scripts/school/parse-national.py",
     "housing:fetch": "python3 scripts/housing/fetch.py",
     "housing:build": "python3 scripts/housing/build.py",
-    "housing:check": "node scripts/housing/check.mjs"
+    "housing:check": "node scripts/housing/check.mjs",
+    "population:fetch": "python3 scripts/population/fetch.py",
+    "population:build": "python3 scripts/population/build.py",
+    "population:check": "python3 scripts/population/check.py"
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "0.51.3",

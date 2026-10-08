@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "months": [
+    {
+      "month": "11508",
+      "period": "2026-08",
+      "catalogUrl": "https://data.gov.tw/dataset/77132",
+      "downloadUrl": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/2C7688CB-B505-4D00-B11C-66C4D31B024F/resource/13E3DE59-5186-4A45-8EAC-8D95B841734A/download",
+      "retrievedAt": "2026-10-08",
+      "sha256": "e7ae74090240a97015cba878ebab1c776651e0fe490453d65f8d7d9adaa92ed8"
+    }
+  ]
+}

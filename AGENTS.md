@@ -4,7 +4,7 @@
 
 ## 專案與現況
 
-這是 Vite + TypeScript 的純靜態地圖網站，沒有後端。三個 HTML 入口共用地圖核心與介面：
+這是 Vite + TypeScript 的純靜態地圖網站，沒有後端。四個 HTML 入口共用地圖核心與介面：
 
 | 入口 | 用途 | 應用目錄 |
 | --- | --- | --- |
@@ -15,7 +15,7 @@
 
 - Repository：<https://github.com/weihuatw/TaiwanDistrictMap>，發布分支為 `main`。
 - GitHub Pages：<https://weihuatw.github.io/TaiwanDistrictMap/>；另有 `income.html`、`school.html`。
-- 三個頁面均已部署。最近一次功能修正為 `a866f8a`，修正學校縮放反轉及區域取景，部署成功並經線上手機版驗證。
+- 四個頁面均已部署。最近一次功能修正為 `a866f8a`，修正學校縮放反轉及區域取景，部署成功並經線上手機版驗證。
 - `f7c058a` 加入手機底部資訊面板與載入前動畫；`eff2c81` 擴充全臺學校、學區資料並修正新北正規化；`6464a53` 是臺北學區頁的初版。
 - `docs/verification.md` 與 `docs/income.md` 仍有早期「尚未部署／等待 Secret」的文字，屬歷史狀態，不能當作目前阻礙。
 - 網站、文件及與使用者溝通以繁體中文為主。
@@ -49,6 +49,7 @@ npm run dev -- --port 5173 --strictPort
 | `src/map-core/region-layer.ts` | GeoJSON 填色／輪廓、灰色背景區域、點擊命中、避讓標籤；不查詢頁面元素 ID |
 | `src/map-core/types.ts` | 行政區、View、Camera、Padding 等共用型別 |
 | `src/ui/map-shell.html`、`map-shell.ts`、`style.css` | 清單、搜尋、麵包屑、提示、來源視窗及手機資訊面板；不持有資料載入或導覽歷史 |
+| `src/data/population.ts` | 共用人口資料 manifest、村里／各層彙總與單一年齡分片 repository；不耦合主題或地圖幾何 |
 | `src/apps/*/main.ts` | 組合核心、介面及主題回呼，處理主題資訊 |
 | `src/apps/school/navigation.ts` | 獨立 `SchoolNavigator`；`polygonView()` 將學校狀態轉成共用 polygon View |
 | `src/apps/school/data.ts`、`markers.ts` | 學校分檔、學區里界載入與學校標記 |
@@ -137,6 +138,23 @@ Python 標準函式庫解析官方 HTML，需注意嵌套表格，不能漏掉�
 
 原始下載在 `data/raw/income/113/`；來源在 `data/income/sources.json`；公開輸出與對照報告在 `public/data/income/2024/`。
 
+## 村里人口資料
+
+使用內政部戶政司村里戶數及單一年齡人口資料，呈現戶籍人口，不能稱為常住人口。完整來源、代碼對照、更新流程及讀取介面見 `docs/population.md`。
+
+- `src/data/population.ts` 是主題無關的讀取介面，提供村里、鄉鎮、縣市、全臺彙總及單一年齡性別資料。不要把人口欄位寫回共用 GeoJSON，也不要讓只需要總人口的頁面下載年齡分片。
+- 行政區頁的詳細資訊卡由共用 shell 插槽顯示村里戶數、總人口與男女數；載入失敗可重試，較舊的選取請求不得覆寫新狀態。
+- 11508 基準有 7,781 筆官方村里資料；7,780 個具名界線皆對應，瑪家鄉三和村代碼 `10013280006` 有人口但未混入全國主圖層，206 個未編定範圍沒有村里人口。來源名稱有 23 筆字形差異，依代碼連接並保留報告。
+- 原始檔在忽略提交的 `data/raw/population/`，來源與 SHA-256 在 `data/population/sources.json`，預期例外在 `data/population/expected-exceptions.json`，輸出在 `public/data/population/{西元年月}/`。
+
+```sh
+npm run population:fetch -- 11508
+npm run population:build -- 11508
+npm run population:check
+```
+
+發布 CI 執行 `population:check`；原始 CSV 不必放入 CI。月份更新後要檢視對照報告並審核例外清單。
+
 ## 學校與學區資料
 
 學區頁仍保留縣市 → 行政區 → 第三層互動，但**進入行政區顯示學校位置，不先畫所有里**。選校後才載入該校學區的里。國小／國中兩個 checkbox 預設皆 checked，兩者都關閉時顯示明確空狀態。國中部與國小部獨立記錄，同位置 marker 並排。
@@ -210,7 +228,7 @@ npm run build
 git diff --check
 ```
 
-最近一次全套為 56 個 Node 測試、2 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
+最近一次全套為 69 個 Node 測試、8 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
 
 | 測試 | 主要涵蓋 |
 | --- | --- |
@@ -218,6 +236,7 @@ git diff --check
 | `tests/transition.test.mjs` | I/O 前預覽、單次縮放、padding、返回／取消、手機面板高度變化 |
 | `tests/school.test.mjs`、`school-data.test.mjs` | 第三層學校模式、filter、跨區學區、解析與里名語境 |
 | `tests/income.test.mjs`、`income_parser_test.py` | 指標、路徑、級距、缺漏及嵌套 HTML |
+| `tests/population.test.mjs`、`scripts/population/check.py` | 人口分片快取／重試、年月、村里代碼、年齡與行政區加總 |
 
 瀏覽器驗證至少包含改動相關頁面、桌面及 390×844 手機、逐層進入與返回、連續選取、清單搜尋及灰色鄰區切換。改共用核心／介面時要回歸三個頁面。資料載入轉場可使用可控的延遲 server 驗證，避免只測快取命中。
 
@@ -229,7 +248,7 @@ git diff --check
 
 使用者要求發布時，完成修改、相關測試及提交後推送 `main`；不能只說已觸發部署就宣告上線。
 
-`.github/workflows/deploy-pages.yml` 在 main push 或手動觸發時：Node 24／Python 3.13 → `npm ci` → 測試與三種資料檢查 → 確認 key Secret → 使用 `/TaiwanDistrictMap/` base 建置 → 上傳 `dist/` → 部署。Pages Source 為 GitHub Actions。
+`.github/workflows/deploy-pages.yml` 在 main push 或手動觸發時：Node 24／Python 3.13 → `npm ci` → 測試與四種資料檢查 → 確認 key Secret → 使用 `/TaiwanDistrictMap/` base 建置 → 上傳 `dist/` → 部署。Pages Source 為 GitHub Actions。
 
 ```sh
 npm run build -- --base /TaiwanDistrictMap/

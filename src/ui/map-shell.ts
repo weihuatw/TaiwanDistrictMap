@@ -18,6 +18,7 @@ interface ShellOptions {
   loadingText?: string;
   errorText?: string;
   sourceIntro?: string;
+  renderSelectionDetails?: (region: Region | null, container: HTMLElement) => void;
   customList?: (view: View, query: string, list: HTMLElement) => { title: string; summary: string } | undefined;
 }
 
@@ -93,6 +94,7 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   addMobileContent(el('selection-card'));
   mobile.addEventListener('change', updateSheet, { signal: lifetime.signal });
   const panelResize = new ResizeObserver(updateSheet); panelResize.observe(infoPanel);
+  panelResize.observe(el('selection-card'));
   infoPanel.addEventListener('transitionend', updateSheet);
   if (options.brandTitle) el('brand-title').textContent = options.brandTitle;
   const currentPage = location.pathname.split('/').filter(Boolean).at(-1) ?? 'index.html';
@@ -147,6 +149,10 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
       const panel = el('region-panel').getBoundingClientRect();
       rectangles.push({ x: panel.x - origin.left, y: panel.y - origin.top, w: panel.width, h: panel.height });
     }
+    if (!el('selection-card').hidden) {
+      const card = el('selection-card').getBoundingClientRect();
+      rectangles.push({ x: card.x - origin.left, y: card.y - origin.top, w: card.width, h: card.height });
+    }
     return rectangles;
   };
   function render(current: View) {
@@ -184,6 +190,9 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
         ? `官方未編定村里範圍 · ${selected.properties.code}`
         : `村里代碼 ${selected.properties.code}${selected.properties.note ? ` · ${selected.properties.note}` : ''}`;
     }
+    const extra = el('selection-extra');
+    extra.replaceChildren();
+    options.renderSelectionDetails?.(selected, extra);
     el<HTMLInputElement>('region-search').value = '';
     renderList(); announce(`目前顯示${title}，${el('region-count').textContent}`);
   }
