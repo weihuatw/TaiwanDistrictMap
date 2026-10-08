@@ -14,9 +14,10 @@
     "income:build": "python3 scripts/income/build.py",
     "income:check": "node scripts/income/check.mjs",
     "test": "node --test tests/*.test.mjs && python3 -m unittest discover -s tests -p '*_test.py'",
-    "school:fetch": "python3 scripts/school/fetch.py",
+    "school:fetch": "python3 scripts/school/fetch.py && ${SCHOOL_PYTHON:-python3} scripts/school/fetch-national.py && ${SCHOOL_PYTHON:-python3} scripts/school/fetch-moe.py",
     "school:build": "node scripts/school/build.mjs",
-    "school:check": "node scripts/school/check.mjs"
+    "school:check": "node scripts/school/check.mjs",
+    "school:parse": "${SCHOOL_PYTHON:-python3} scripts/school/parse-national.py"
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "0.51.3",

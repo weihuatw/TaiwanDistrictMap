@@ -1,0 +1,26 @@
+[
+  {
+    "id": "moe-elementary",
+    "title": "教育部全臺國小地理資訊名錄",
+    "provider": "教育部統計處",
+    "datasetUrl": "https://stats.moe.gov.tw/edugissys/default.aspx",
+    "downloadUrl": "https://stats.moe.gov.tw/edugissys/default.aspx",
+    "release": "2026-10-08公開名錄查詢；頁面未註資料學年度",
+    "downloadedAt": "2026-10-08T06:08:19+08:00",
+    "sha256": "babe997e4cfe96c16c2240d23d0c4fc15543a2a0b5d82c35e85683e2ecde96e2",
+    "bytes": 2051529,
+    "records": 2652
+  },
+  {
+    "id": "moe-junior",
+    "title": "教育部全臺國中地理資訊名錄",
+    "provider": "教育部統計處",
+    "datasetUrl": "https://stats.moe.gov.tw/edugissys/default.aspx",
+    "downloadUrl": "https://stats.moe.gov.tw/edugissys/default.aspx",
+    "release": "2026-10-08公開名錄查詢；頁面未註資料學年度",
+    "downloadedAt": "2026-10-08T06:08:19+08:00",
+    "sha256": "29623572fb2bf48da4d02d034bc239fec25b3681e9a1ecbb15a1d3b634bef034",
+    "bytes": 775075,
+    "records": 967
+  }
+]

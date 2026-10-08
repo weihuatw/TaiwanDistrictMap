@@ -5,12 +5,13 @@ export interface CatchmentVillage { code: string; name: string; townCode: string
 export interface School {
   id: string; code: string | null; name: string; level: SchoolLevel;
   countyCode: string; countyName: string; townCode: string; townName: string;
-  position: [number, number] | null; positionSource: string | null; positionObjectId: number | null;
-  catchment: { year: number; sourceId: string; villages: CatchmentVillage[] } | null;
+  position: [number, number] | null; positionSource: string | null; positionObjectId: number | string | null;
+  catchment: { year: number | null; sourceId: string; villages: CatchmentVillage[]; text?: string; notes?: string; sourceIds?: string[]; unresolvedVillages?: string[] } | null;
 }
 export interface SchoolManifest {
   sources: { id: string; title: string; provider: string; datasetUrl: string; release: string; downloadedAt: string; sha256: string }[];
   counts: { schools: number; elementary: number; junior: number; withCatchment: number };
+  coverage?: { countyCode: string; countyName: string; schools: number; withCatchment: number; years: number[] }[];
   catchmentCounties: string[]; catchmentYear: number; notes: string[]; unmatchedSchools: number; unmatchedVillages: number;
 }
 export interface SchoolView {

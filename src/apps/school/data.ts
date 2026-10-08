@@ -16,8 +16,6 @@ export class SchoolRepository {
   }
   async load(townCode: string): Promise<School[]> {
     if (!/^\d{8}$/.test(townCode)) throw new Error('Invalid town code');
-    // First release covers Taipei; an unsupported district is not an HTTP error.
-    if (!townCode.startsWith('63000')) return [];
     if (this.cache.has(townCode)) return this.cache.get(townCode)!;
     const response = await this.fetcher(`${this.root}towns/${townCode}.json`, { signal: AbortSignal.timeout(20_000) });
     if (!response.ok) throw new Error('School data request failed');

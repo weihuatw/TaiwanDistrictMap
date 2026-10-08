@@ -65,10 +65,10 @@ test('Catchment I/O includes cross-district villages and shared partial links wi
   assert.deepEqual(await repository.catchment(junior,{load:()=>assert.fail('Missing data must not fetch villages')}),data());
   await assert.rejects(repository.catchment(elementary,{load:async()=>data()}),/incomplete/);
 });
-test('School I/O preserves codes, caches successes, retries failures and treats unsupported counties as empty',async()=>{
-  let calls=0;const repository=new SchoolRepository('/project/data/school',async url=>{calls++;assert.equal(url,'/project/data/school/towns/63000010.json');return calls===1?new Response(null,{status:503}):Response.json([elementary,junior]);});
+test('School I/O preserves codes, caches successes, retries failures and loads nationwide districts independently',async()=>{
+  let calls=0;const repository=new SchoolRepository('/project/data/school',async url=>{calls++;if(url==='/project/data/school/towns/65000010.json')return Response.json([]);assert.equal(url,'/project/data/school/towns/63000010.json');return calls===1?new Response(null,{status:503}):Response.json([elementary,junior]);});
   await assert.rejects(repository.load('63000010'));assert.equal((await repository.load('63000010')).length,2);await repository.load('63000010');assert.equal(calls,2);
-  assert.deepEqual(await repository.load('65000010'),[]);assert.equal(calls,2);await assert.rejects(repository.load('../private'));
+  assert.deepEqual(await repository.load('65000010'),[]);await repository.load('65000010');assert.equal(calls,3);await assert.rejects(repository.load('../private'));
 });
 test('Catchment fitting includes cross-district bounds without mutating cached town boundaries',async()=>{
   const f=fixture();await inTown(f);const before=JSON.stringify(town);await f.nav.choose(elementary,camera);

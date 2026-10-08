@@ -11,6 +11,9 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCES = [
+    dict(id='campus-119', title='各級學校範圍圖_119分帶', provider='內政部國土測繪中心',
+         datasetUrl='https://data.gov.tw/dataset/174605', release='1150127',
+         downloadUrl='https://www.tgos.tw/tgos/VirtualDir/Product/d8e02080-95b2-499f-b1e1-fb33dfd6bb90/各級學校範圍圖_119_1150127.zip'),
     dict(id='campus-121', title='各級學校範圍圖_121分帶', provider='內政部國土測繪中心',
          datasetUrl='https://data.gov.tw/dataset/174606', release='1150409',
          downloadUrl='https://www.tgos.tw/tgos/VirtualDir/Product/5f346c6b-edde-4fe7-8685-5585c0fb7852/各級學校範圍圖_121_1150409.zip'),

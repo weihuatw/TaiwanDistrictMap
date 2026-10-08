@@ -35,3 +35,5 @@
   .school-page .basemap-status { bottom: 76px; max-width: calc(100% - 85px); }
   .school-page .school-filter { gap: 12px; margin-top: 9px; padding-top: 8px; }
 }
+.school-original { white-space: pre-line; line-height: 1.65; }
+.school-source-link { display: inline-block; margin: 6px 12px 6px 0; color: #216b58; font-size: 12px; }

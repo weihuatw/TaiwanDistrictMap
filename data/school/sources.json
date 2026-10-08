@@ -1,5 +1,17 @@
 [
   {
+    "id": "campus-119",
+    "title": "各級學校範圍圖_119分帶",
+    "provider": "內政部國土測繪中心",
+    "datasetUrl": "https://data.gov.tw/dataset/174605",
+    "release": "1150127",
+    "downloadUrl": "https://www.tgos.tw/tgos/VirtualDir/Product/d8e02080-95b2-499f-b1e1-fb33dfd6bb90/各級學校範圍圖_119_1150127.zip",
+    "downloadedAt": "2026-10-07T23:59:12+08:00",
+    "sha256": "b704adb4a506fd3b25e0f1decdfd5e917092a514b66951bd91db7003acd42526",
+    "bytes": 47277,
+    "licenseUrl": "https://data.gov.tw/license"
+  },
+  {
     "id": "campus-121",
     "title": "各級學校範圍圖_121分帶",
     "provider": "內政部國土測繪中心",

@@ -1,0 +1,496 @@
+[
+  {
+    "code": "104700",
+    "name": "縣立竹崎國小",
+    "townName": "竹崎鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-326b6658cdf6",
+    "parts": [
+      {
+        "text": "竹崎村、復金村、龍山村8～22鄰、和平村1～11鄰、義隆村1～7、10～12鄰（部分為內埔國小共同學區）、坑頭村1～9鄰、沙坑村1～2鄰、獅埜村。",
+        "townName": "竹崎鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "104707",
+    "name": "縣立桃源國小",
+    "townName": "竹崎鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-f0c84eee8368",
+    "parts": [
+      {
+        "text": "桃源村1-13鄰、昇平村1鄰。",
+        "townName": "竹崎鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "104686",
+    "name": "縣立同仁國小",
+    "townName": "中埔鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-6031a14a59ee",
+    "parts": [
+      {
+        "text": "同仁村、瑞豐村、深坑村、沄水村11-14鄰、三層村。",
+        "townName": "中埔鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "104617",
+    "name": "縣立中林國小",
+    "townName": "大林鎮",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-89c82844a66a",
+    "parts": [
+      {
+        "text": "中林里、上林里。",
+        "townName": "大林鎮",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "104713",
+    "name": "縣立沙坑國小",
+    "townName": "竹崎鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-d9d8c2012f80",
+    "parts": [
+      {
+        "text": "沙坑村3-12鄰、坑頭村10-11鄰、獅埜村13-15鄰。",
+        "townName": "竹崎鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "104654",
+    "name": "縣立網寮國小",
+    "townName": "東石鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-f338b438ce41",
+    "parts": [
+      {
+        "text": "網寮村、掌潭村（與過溝國小共同學區）。",
+        "townName": "東石鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "104733",
+    "name": "縣立新美國小",
+    "townName": "阿里山鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-44c8ca54b75f",
+    "parts": [
+      {
+        "text": "阿里山鄉新美村。",
+        "townName": "阿里山鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "104656",
+    "name": "縣立重寮國小",
+    "townName": "鹿草鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-da54b0534f14",
+    "parts": [
+      {
+        "text": "重寮村、施家村。",
+        "townName": "鹿草鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "104660",
+    "name": "縣立後塘國小",
+    "townName": "鹿草鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-2ca382a55d5c",
+    "parts": [
+      {
+        "text": "三角村、後堀村、下麻村。",
+        "townName": "鹿草鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "104517",
+    "name": "縣立忠和國中",
+    "townName": "水上鄉",
+    "countyCode": "10010",
+    "level": "junior",
+    "year": null,
+    "sourceId": "site-f71cdbadd7b2",
+    "parts": [
+      {
+        "text": "水上鄉：三界村、中庄村、忠和村、南鄉村、國姓村、義興村。中埔鄉：和美村、和睦村、和興村。",
+        "townName": "水上鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "104515",
+    "name": "縣立東榮國中",
+    "townName": "東石鄉",
+    "countyCode": "10010",
+    "level": "junior",
+    "year": null,
+    "sourceId": "site-b3171fdfc657",
+    "parts": [
+      {
+        "text": "東石村、下楫村、塭港村、型厝村、港口村、猿樹村、永屯村、三家村、鰲鼓村、頂楫村、溪下村、龍港村、海埔村、副瀨村。",
+        "townName": "東石鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": null,
+    "name": "民雄國小",
+    "townName": "民雄鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-7851d4697a81",
+    "parts": [
+      {
+        "text": "中樂村、西安村、福權村、寮頂村、中和村、東榮村9~16鄰、東榮村21~26鄰、文隆村11~17鄰",
+        "townName": "民雄鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": null,
+    "name": "東榮國小",
+    "townName": "民雄鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-7851d4697a81",
+    "parts": [
+      {
+        "text": "東湖村、豐收村、頂崙村、鎮北村、東榮村1~8鄰、東榮村17~20鄰",
+        "townName": "民雄鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": null,
+    "name": "興中國小",
+    "townName": "民雄鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-7851d4697a81",
+    "parts": [
+      {
+        "text": "興中村、福興村、興南村、文隆村1~10鄰、文隆村18鄰、山中村、中央村、金興村、平和村1.2.5.6鄰",
+        "townName": "民雄鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": null,
+    "name": "大崎國小",
+    "townName": "民雄鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-7851d4697a81",
+    "parts": [
+      {
+        "text": "秀林村、大崎村",
+        "townName": "民雄鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": null,
+    "name": "菁埔國小",
+    "townName": "民雄鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-7851d4697a81",
+    "parts": [
+      {
+        "text": "菁埔村、平和村3、4、7鄰、西昌村全部(與新港文昌共)",
+        "townName": "民雄鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": null,
+    "name": "松山國小",
+    "townName": "民雄鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-7851d4697a81",
+    "parts": [
+      {
+        "text": "松山村",
+        "townName": "民雄鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": null,
+    "name": "三興國小",
+    "townName": "民雄鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-7851d4697a81",
+    "parts": [
+      {
+        "text": "三興村、東興村",
+        "townName": "民雄鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": null,
+    "name": "秀林國小",
+    "townName": "民雄鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-7851d4697a81",
+    "parts": [
+      {
+        "text": "北斗村",
+        "townName": "民雄鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": null,
+    "name": "福樂國小",
+    "townName": "民雄鄉",
+    "countyCode": "10010",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-7851d4697a81",
+    "parts": [
+      {
+        "text": "雙福村、福樂村",
+        "townName": "民雄鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "724606",
+    "name": "縣立敬恆國(中)小",
+    "townName": "莒光鄉",
+    "countyCode": "09007",
+    "level": "elementary",
+    "year": null,
+    "sourceId": "site-9a0d2c26d8e0",
+    "parts": [
+      {
+        "text": "青帆村、田沃村、西坵村。",
+        "townName": "莒光鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "code": "724504",
+    "name": "縣立敬恆國中(小)",
+    "townName": "莒光鄉",
+    "countyCode": "09007",
+    "level": "junior",
+    "year": null,
+    "sourceId": "site-9a0d2c26d8e0",
+    "parts": [
+      {
+        "text": "青帆村、田沃村、西坵村。大坪村、福正村。",
+        "townName": "莒光鄉",
+        "shared": false,
+        "partial": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "來源為學校官網，未註學年度。"
+  },
+  {
+    "name": "縣立永安國小",
+    "code": "104609",
+    "countyCode": "10010",
+    "townName": "布袋鎮",
+    "level": "elementary",
+    "year": 115,
+    "sourceId": "chiayi-background-104609",
+    "parts": [
+      {
+        "text": "永安里。",
+        "townName": "布袋鎮",
+        "partial": false,
+        "shared": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "依官方115學年度學校現況與背景分析明列學區。"
+  },
+  {
+    "name": "縣立鹿滿國小",
+    "code": "104704",
+    "countyCode": "10010",
+    "townName": "竹崎鄉",
+    "level": "elementary",
+    "year": 115,
+    "sourceId": "chiayi-background-104704",
+    "parts": [
+      {
+        "text": "鹿滿村、紫雲村。",
+        "townName": "竹崎鄉",
+        "partial": false,
+        "shared": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "依官方115學年度學校現況與背景分析明列學區。"
+  },
+  {
+    "name": "縣立月眉國小",
+    "code": "104635",
+    "countyCode": "10010",
+    "townName": "新港鄉",
+    "level": "elementary",
+    "year": 115,
+    "sourceId": "chiayi-background-104635",
+    "parts": [
+      {
+        "text": "月眉村、月潭村、中洋村、溪北村。",
+        "townName": "新港鄉",
+        "partial": false,
+        "shared": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "依官方115學年度學校現況與背景分析明列學區。"
+  },
+  {
+    "name": "縣立安和國小",
+    "code": "104638",
+    "countyCode": "10010",
+    "townName": "新港鄉",
+    "level": "elementary",
+    "year": 115,
+    "sourceId": "chiayi-background-104638",
+    "parts": [
+      {
+        "text": "安和村。",
+        "townName": "新港鄉",
+        "partial": false,
+        "shared": false,
+        "omitVillageSuffix": false
+      }
+    ],
+    "notes": "依官方115學年度學校現況與背景分析明列學區。"
+  }
+]

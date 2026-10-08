@@ -2,12 +2,13 @@ import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { attachNational } from './national.mjs';
 import { pointOnFeature, booleanPointInPolygon, area } from '@turf/turf';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const json = async (file) => JSON.parse(await readFile(path.join(root, file), 'utf8'));
 const write = async (file, data) => { await mkdir(path.dirname(path.join(root, file)), { recursive: true }); await writeFile(path.join(root, file), JSON.stringify(data) + '\n'); };
-const sources = await json('data/school/sources.json');
+const sources = [...await json('data/school/sources.json'), ...await json('data/school/national-downloads.json'),...await json('data/school/moe-sources.json'),...await json('data/school/site-sources.json')];
 const counties = (await json('public/data/counties.geojson')).features;
 const towns = (await Promise.all(counties.map(c => json(`public/data/towns/${c.properties.code}.geojson`)))).flatMap(c => c.features);
 const norm = s => s.replaceAll('台', '臺').replace(/\s/g, '');
@@ -23,7 +24,7 @@ const aliases = {
 };
 const campuses = [];
 const skippedLocations = [];
-for (const zone of [121]) {
+for (const zone of [119,121]) {
   await mkdir(path.join(root, 'data/build/school'), { recursive: true });
   const output = path.join(root, `data/build/school/campus-${zone}.geojson`);
   const result = spawnSync(path.join(root, 'node_modules/.bin/mapshaper'), ['-i', path.join(root, `data/raw/school/campus-${zone}/campus.shp`), '-proj', 'wgs84', '-o', output, 'format=geojson', 'force'], { stdio: 'inherit' });
@@ -42,6 +43,7 @@ for (const campus of campuses) {
   const key=campus.town.countyCode+'|'+campus.name;
   if (!largest.has(key)||largest.get(key).area<campus.area) largest.set(key,campus);
 }
+await write('data/build/school/campuses.json',[...largest.values()]);
 const supplementResult=spawnSync('python3',['-c', `import csv,json,re,sys
 from pathlib import Path
 raw=Path(sys.argv[1])
@@ -61,7 +63,7 @@ function school(campus, level, id, name=campus.name, code=null) {
     positionSource:campus.sourceId, positionObjectId:campus.objectId, catchment:null };
 }
 for (const c of largest.values()) {
-  if(c.town.countyCode!=='63000') continue;
+
   const levels = /國民中小學|國中小/.test(c.name) ? ['elementary','junior'] : /國民小學|國小/.test(c.name) ? ['elementary'] : /國民中學|國中/.test(c.name) ? ['junior'] : [];
   for (const level of levels) { const id=`${c.sourceId}-${c.objectId}-${level}`; records.set(id,school(c,level,id)); }
 }
@@ -118,11 +120,18 @@ for(const {id,level,entries} of official) for(const row of entries) {
     if(other) addVillage(other,row,true);
   }
 }
+const shelterResult=spawnSync('python3',['-c',`import csv,json,sys
+r=list(csv.DictReader(open(sys.argv[1],encoding='utf-8-sig')))
+print(json.dumps([{'name':x['避難收容處所名稱'],'town':x['縣市及鄉鎮市區'],'position':[x['經度'],x['緯度']],'objectId':x['序號']} for x in r],ensure_ascii=False))`,path.join(root,'data/raw/school/taipei-shelters.csv')],{encoding:'utf8'});
+if(shelterResult.status!==0)throw new Error(shelterResult.stderr);
+const shelters=JSON.parse(shelterResult.stdout);
+const nationalReport = await attachNational({root, records, campuses:[...largest.values()], shelters, towns, villages, school});
 for(const r of records.values()) r.catchment?.villages.sort((a,b)=>a.code.localeCompare(b.code));
-for(const t of towns.filter(t=>t.properties.countyCode==='63000')) await write(`public/data/school/towns/${t.properties.code}.json`,[...records.values()].filter(r=>r.townCode===t.properties.code).sort((a,b)=>a.name.localeCompare(b.name,'zh-Hant')));
-const report={unmatchedSchools,unmatchedVillages,supplementedSchools,skippedLocations,schoolAliases:aliases,villageAliases:{'萬華區 糖?里':'萬華區 糖廍里'}};
+for(const t of towns) await write(`public/data/school/towns/${t.properties.code}.json`,[...records.values()].filter(r=>r.townCode===t.properties.code).sort((a,b)=>a.name.localeCompare(b.name,'zh-Hant')));
+const report={national:nationalReport,unmatchedSchools,unmatchedVillages,supplementedSchools,skippedLocations,schoolAliases:aliases,villageAliases:{'萬華區 糖?里':'萬華區 糖廍里'}};
 await write('public/data/school/join-report.json',report);
 const counts={schools:records.size,elementary:[...records.values()].filter(r=>r.level==='elementary').length,junior:[...records.values()].filter(r=>r.level==='junior').length,withCatchment:[...records.values()].filter(r=>r.catchment).length};
-await write('public/data/school/manifest.json',{sources,counts,schoolCounties:['63000'],catchmentCounties:['63000'],catchmentYear:115,
-  notes:['學區目前收錄臺北市115學年度官方里鄰對照表；其他縣市的學區尚未收錄。','第一版學校與學區支援臺北市。學校位置主要為官方校地圖的內部代表點；長安國小使用官方避難收容點、和平實驗國小使用官方校園田園點補足。私立學校位置可能有缺漏，沒有官方學區對照者不填色。','只要部分鄰屬於學區即標示整個里，共同學區亦納入；整里填色不代表全里皆屬於該校學區。'],unmatchedSchools:unmatchedSchools.length,unmatchedVillages:unmatchedVillages.length});
+const usedSources=new Set([...records.values()].flatMap(r=>[r.positionSource,r.catchment?.sourceId,...(r.catchment?.sourceIds??[])]).filter(Boolean));
+await write('public/data/school/manifest.json',{sources:sources.filter(s=>usedSources.has(s.id)),counts,schoolCounties:counties.map(c=>c.properties.code),catchmentCounties:[...new Set([...records.values()].filter(r=>r.catchment).map(r=>r.countyCode))],coverage:nationalReport.coverage,catchmentYear:115,
+  notes:['學區依各縣市公告與官方學校資料收錄，學年度各自標示；未取得或未完整對照的學區會列出收錄狀態。','全臺學校位置主要採教育部地理資訊名錄，並以國土測繪中心校地代表點及官方校園點補足。未收錄的學區不以鄰近學校或距離推估；招生不採固定里界的學校請查看官方原文。','只要部分鄰屬於學區即標示整個里，共同學區亦納入；整里填色不代表全里皆屬於該校學區。'],unmatchedSchools:unmatchedSchools.length+nationalReport.unmatchedSchools.length,unmatchedVillages:unmatchedVillages.length+nationalReport.unmatchedVillages.length});
 console.log(JSON.stringify({counts,unmatchedSchools,unmatchedVillages},null,2));

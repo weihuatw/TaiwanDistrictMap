@@ -6,7 +6,7 @@ import { createMapShell } from '../../ui/map-shell';
 import { SchoolRepository } from './data';
 import { SchoolNavigator, polygonView } from './navigation';
 import { createSchoolMarkers } from './markers';
-import { levelName, schoolColor, type School, type SchoolView } from './types';
+import { levelName, schoolColor, type School, type SchoolView, type SchoolManifest } from './types';
 
 export function startSchoolApp(root: HTMLElement) {
   root.classList.add('school-page');
@@ -18,13 +18,14 @@ export function startSchoolApp(root: HTMLElement) {
   let basemap: ReturnType<typeof createMap> | undefined;
   let alive = true;
   let previousPath = '';
+  let schoolManifest: SchoolManifest | undefined;
   const el = <T extends HTMLElement = HTMLElement>(id: string) => root.querySelector<T>(`#${id}`)!;
   const getColor = (r: Region) => navigator.current?.selected ? schoolColor(navigator.current.selected.level) : r.properties.color;
   const chooseSchool = (school: School) => { if (layer?.ready) void navigator.choose(school, layer.camera()); };
   const shell = createMapShell(root, {
     brandTitle: '學區地圖', pageTitle: '臺灣學區地圖', getColor, showSelectionCard: false,
     loadingText: '載入學校與學區…', errorText: '學校或行政區資料載入失敗，請重試。',
-    sourceIntro: '學校位置主要取自國土測繪中心校地範圍圖，並以官方校園點位補足缺漏；學區收錄臺北市115學年度里鄰對照表，行政區界由國土測繪中心提供。',
+    sourceIntro: '學校位置採教育部地理資訊及國土測繪中心校地圖；學區依各縣市官方公告對照村里，學年度與收錄情況分別標示。',
     onChoose: region => { if (layer?.ready && navigator.current?.level !== 'school') void navigator.enter(region, layer.camera()); },
     onBack: () => navigator.back(), onHome: () => navigator.home(), onNavigate: index => navigator.goTo(index),
     onPanelChange: () => layer?.scheduleLabels(),
@@ -40,7 +41,7 @@ export function startSchoolApp(root: HTMLElement) {
         button.setAttribute('aria-pressed', String(view.selected?.id === school.id));
         const swatch = document.createElement('span'); swatch.className = 'region-swatch'; swatch.style.background = schoolColor(school.level);
         const name = document.createElement('span'); name.className = 'region-option-name'; name.textContent = school.name;
-        const meta = document.createElement('span'); meta.className = 'region-option-meta'; meta.textContent = `${levelName(school.level)} · ${school.catchment ? `${school.catchment.villages.length} 里` : '學區未收錄'}${school.position ? '' : ' · 位置缺漏'}`;
+        const meta = document.createElement('span'); meta.className = 'region-option-meta'; meta.textContent = `${levelName(school.level)} · ${school.catchment ? school.catchment.villages.length ? `${school.catchment.villages.length} 里` : '尚無里界對照' : '學區未收錄'}${school.position ? '' : ' · 位置缺漏'}`;
         button.append(swatch, name, meta);
         button.addEventListener('click', () => {
           chooseSchool(school);
@@ -50,7 +51,7 @@ export function startSchoolApp(root: HTMLElement) {
       if (!matches.length) {
         const empty = document.createElement('p'); empty.className = 'empty-list';
         empty.textContent = !navigator.filter.elementary && !navigator.filter.junior ? '請勾選國小或國中以顯示學校。'
-          : !view.schools.length ? '此行政區尚未收錄學校；第一版支援臺北市。'
+          : !view.schools.length ? '此行政區沒有已收錄的國小或國中。'
           : '找不到符合的學校，請調整篩選或搜尋校名。';
         list.append(empty);
       }
@@ -63,7 +64,7 @@ export function startSchoolApp(root: HTMLElement) {
     },
   });
   shell.mapContainer.setAttribute('aria-label', '臺灣國小與國中學區互動地圖');
-  shell.viewExtra.innerHTML = `<fieldset class="school-filter"><legend>顯示學校</legend><label><input type="checkbox" id="filter-elementary" checked /><span class="school-key elementary"></span>國小</label><label><input type="checkbox" id="filter-junior" checked /><span class="school-key junior"></span>國中</label></fieldset><p id="school-coverage" class="school-coverage">學區：臺北市115學年度；其他縣市尚未收錄。</p><div id="school-detail" class="school-detail" hidden></div>`;
+  shell.viewExtra.innerHTML = `<fieldset class="school-filter"><legend>顯示學校</legend><label><input type="checkbox" id="filter-elementary" checked /><span class="school-key elementary"></span>國小</label><label><input type="checkbox" id="filter-junior" checked /><span class="school-key junior"></span>國中</label></fieldset><p id="school-coverage" class="school-coverage">全臺學校 · 學區依各縣市公告收錄</p><div id="school-detail" class="school-detail" hidden></div>`;
   for (const level of ['elementary', 'junior'] as const) el<HTMLInputElement>(`filter-${level}`).addEventListener('change', event => {
     if (layer) navigator.setFilter(level, (event.target as HTMLInputElement).checked, layer.camera());
   });
@@ -88,7 +89,10 @@ export function startSchoolApp(root: HTMLElement) {
     const selected = view.selected;
     el('school-detail').hidden = !selected;
     const county = view.path[0]?.properties.countyCode;
-    el('school-coverage').textContent = county && county !== '63000' ? '此縣市尚未收錄；第一版支援臺北市。' : '學區：臺北市115學年度；部分鄰以整里呈現。';
+    const coverage = schoolManifest?.coverage?.find(c => c.countyCode === county);
+    el('school-coverage').textContent = view.level === 'school'
+      ? `${view.schools.filter(s => s.catchment).length} / ${view.schools.length} 所有學區資料 · 部分鄰以整里呈現`
+      : coverage ? `${coverage.countyName}：${coverage.withCatchment} 所有學區資料${coverage.years.length ? ` · ${coverage.years.join('、')}學年度` : ''}` : '全臺學校 · 學區依各縣市公告收錄';
     el('hint-text').textContent = view.level === 'county' ? '點選縣市，探索學校與學區'
       : view.level === 'town' ? '點選行政區查看學校 · 灰色縣市可切換'
       : !navigator.visibleSchools.length ? '勾選國小或國中，或選擇其他行政區'
@@ -99,7 +103,7 @@ export function startSchoolApp(root: HTMLElement) {
     const title = selected?.name ?? view.path.at(-1)!.properties.name;
     el('location-title').textContent = title; document.title = `${title}｜臺灣學區地圖`;
     el('level-badge').textContent = selected ? '學區' : '學校';
-    el('region-count').textContent = selected ? selected.catchment ? `${view.catchment.features.length} 個學區里` : '學區尚未收錄' : `${navigator.visibleSchools.length} 所學校`;
+    el('region-count').textContent = selected ? selected.catchment ? view.catchment.features.length ? `${view.catchment.features.length} 個學區里` : '尚無里界對照' : '學區尚未收錄' : `${navigator.visibleSchools.length} 所學校`;
     el('back-label').textContent = `返回${selected ? view.path.at(-1)!.properties.name : view.path[0].properties.name}`;
     el('announcement').textContent = `${title}，${el('region-count').textContent}`;
     if (selected) {
@@ -114,14 +118,29 @@ export function startSchoolApp(root: HTMLElement) {
       const detail = el('school-detail'); detail.replaceChildren();
       const info = document.createElement('p'); info.textContent = `${levelName(selected.level)}${selected.code ? ` · 學校代碼 ${selected.code}` : ''}${selected.position ? '' : ' · 校地位置缺漏，可查看學區'}`;
       const note = document.createElement('p'); note.className = 'school-note';
-      note.textContent = selected.catchment ? `${selected.catchment.year}學年度 · 包含部分鄰與共同學區；填色顯示整個里。` : '尚未取得此校的官方學區對照資料。';
+      note.textContent = selected.catchment ? `${selected.catchment.year ? `${selected.catchment.year}學年度資料` : '現行學區公告'} · 填色顯示整個里，部分鄰與共同學區另有註記。` : '尚未取得此校的官方學區對照資料。';
       detail.append(info, note);
       if (selected.catchment) {
+        if (selected.catchment.unresolvedVillages?.length) {
+          const incomplete = document.createElement('p'); incomplete.className = 'school-note';
+          incomplete.textContent = `部分村里尚未完成里界對照：${selected.catchment.unresolvedVillages.join('、')}。請參照官方原文。`;
+          detail.append(incomplete);
+        }
         const details = document.createElement('details');
         const summary = document.createElement('summary'); summary.textContent = `涵蓋里清單（${selected.catchment.villages.length}）`;
         const list = document.createElement('ul');
         for (const v of selected.catchment.villages) { const li = document.createElement('li'); li.textContent = `${v.townName} ${v.name}${v.partial ? ' · 部分鄰' : ''}${v.shared ? ' · 共同學區' : ''}`; list.append(li); }
         details.append(summary, list); detail.append(details);
+        for (const id of selected.catchment.sourceIds ?? [selected.catchment.sourceId]) {
+          const source = schoolManifest?.sources.find(s => s.id === id);
+          if (source) { const link = document.createElement('a'); link.href = source.datasetUrl; link.textContent = '查看官方資料 ↗'; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.className = 'school-source-link'; detail.append(link); }
+        }
+        if (selected.catchment.text) {
+          const original = document.createElement('details');
+          const heading = document.createElement('summary'); heading.textContent = '官方學區原文與備註';
+          const text = document.createElement('p'); text.className = 'school-original'; text.textContent = `${selected.catchment.text}${selected.catchment.notes ?? ''}`;
+          original.append(heading, text); detail.append(original);
+        }
       }
     }
   }
@@ -149,6 +168,8 @@ export function startSchoolApp(root: HTMLElement) {
   } catch { shell.showInitializationError(() => location.reload()); }
   void Promise.all([boundaries.manifest(), schools.manifest()]).then(([geometry, manifest]) => {
     if (!alive) return;
+    schoolManifest = manifest;
+    if (navigator.current) renderChrome(navigator.current);
     shell.renderManifest(geometry);
     for (const source of manifest.sources) {
       const row = document.createElement('div'); row.className = 'source-row';
@@ -157,7 +178,7 @@ export function startSchoolApp(root: HTMLElement) {
       row.append(link, text); shell.sourceContent.append(row);
     }
     const note = document.createElement('p'); note.className = 'source-footnote';
-    note.textContent = `${manifest.counts.schools.toLocaleString()} 筆學校／學部資料；${manifest.counts.withCatchment} 筆具學區對照。${manifest.notes.join(' ')} ${manifest.unmatchedSchools} 所學校校地位置未對應。`;
+    note.textContent = `${manifest.counts.schools.toLocaleString()} 筆學校／學部資料；${manifest.counts.withCatchment} 筆具學區對照。${manifest.notes.join(' ')} ${manifest.unmatchedSchools} 筆公告學校名稱尚未完成對照。`;
     const audit = document.createElement('a'); audit.href = `${base}data/school/join-report.json`; audit.textContent = '查看資料對照紀錄 ↗'; audit.target = '_blank'; audit.rel = 'noopener noreferrer'; audit.className = 'license-link';
     shell.sourceContent.append(note, audit);
   }).catch(() => { if (alive) shell.showManifestError(); });

@@ -4,7 +4,7 @@
 
 另有 [2024所得地圖](income.html)，用財政部初步核定資料顯示各層平均年綜合所得，沿用相同導覽。詳細指標、對照限制與資料流程見 [所得地圖說明](docs/income.md)。
 
-另有 [學區地圖](school.html)，第一版支援臺北市115學年度的國小、國中學區。進入行政區先顯示學校點位，點校後才顯示所屬里界，包含部分鄰與共同學區；國小、國中可獨立勾選。來源及重建方式見 [學區地圖說明](docs/school.md)。
+另有 [學區地圖](school.html)，提供全臺22縣市的國小、國中位置與已收錄的官方學區；資料年份與缺漏分別標示。進入行政區先顯示學校點位，點校後才顯示所屬里界，包含部分鄰與共同學區；國小、國中可獨立勾選。來源及重建方式見 [學區地圖說明](docs/school.md)。
 
 GitHub repo：[weihuatw/TaiwanDistrictMap](https://github.com/weihuatw/TaiwanDistrictMap)。網站透過 GitHub Actions 發布至 GitHub Pages：
 
