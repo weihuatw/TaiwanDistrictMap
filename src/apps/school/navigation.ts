@@ -13,15 +13,18 @@ export class SchoolNavigator {
   private onChange: (view: SchoolView, restore: boolean) => void;
   private onBusy: (busy: boolean) => void;
   private onError: (error: unknown, retry: () => Promise<void>) => void;
+  private onPreview: (target: Region | School) => void;
   constructor(options: {
     loadRegions: (file: string) => Promise<Regions>; loadSchools: (townCode: string) => Promise<School[]>;
     loadCatchment: (school: School) => Promise<Regions>;
     onChange: (view: SchoolView, restore: boolean) => void; onBusy: (busy: boolean) => void;
     onError: (error: unknown, retry: () => Promise<void>) => void;
+    onPreview?: (target: Region | School) => void;
   }) {
     this.loadRegions = options.loadRegions; this.loadSchools = options.loadSchools;
     this.loadCatchment = options.loadCatchment; this.onChange = options.onChange;
     this.onBusy = options.onBusy; this.onError = options.onError;
+    this.onPreview = options.onPreview ?? (() => {});
   }
   get current() { return this.history.at(-1); }
   get visibleSchools() { return filterSchools(this.current?.schools ?? [], this.filter); }
@@ -49,6 +52,7 @@ export class SchoolNavigator {
     if (!parent || parent.level === 'school' || !parent.data.features.some(r => r.properties.code === region.properties.code)) return;
     return this.request(async () => {
       const level = parent.level === 'county' ? 'town' : 'school';
+      this.onPreview(region);
       const data = level === 'town' ? await this.loadRegions(`towns/${region.properties.code}.geojson`) : emptyRegions();
       const schools = level === 'school' ? await this.loadSchools(region.properties.code) : [];
       return () => {
@@ -62,6 +66,7 @@ export class SchoolNavigator {
     const view = this.current;
     if (!view || view.level !== 'school' || !this.filter[school.level] || !view.schools.some(s => s.id === school.id)) return;
     return this.request(async () => {
+      this.onPreview(school);
       const catchment = await this.loadCatchment(school);
       return () => {
         if (!view.selected) view.overviewCamera = camera;

@@ -31,8 +31,9 @@
 @media (max-width: 760px) {
   .school-page h1 { font-size: 21px; }
   .school-page .region-panel { top: 12px; max-height: calc(100dvh - 100px); z-index: 4; }
-  .school-page .location-panel { max-height: calc(100dvh - 160px); }
-  .school-page .basemap-status { bottom: 76px; max-width: calc(100% - 85px); }
+  .school-page .location-panel { max-height: none; overflow: hidden; }
+  .school-page .basemap-status { top: 160px; bottom: auto; max-width: calc(100% - 85px); }
+  .school-page .error-banner { bottom: calc(var(--info-visible-height, 34px) + 12px); z-index: 6; }
   .school-page .school-filter { gap: 12px; margin-top: 9px; padding-top: 8px; }
 }
 .school-original { white-space: pre-line; line-height: 1.65; }

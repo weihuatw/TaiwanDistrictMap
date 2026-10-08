@@ -1,4 +1,4 @@
-import type { Rect, View, Padding, RegionHit } from '../../map-core/types';
+import type { Rect, View, RegionHit } from '../../map-core/types';
 import type { createMapShell } from '../../ui/map-shell';
 import type { IncomeRepository } from './data';
 import type { IncomeManifest, IncomeRecord } from './types';
@@ -23,6 +23,7 @@ export function createIncomePanel(shell: Shell, income: IncomeRepository) {
     item.append(swatch, text); scale.append(item);
   }
   shell.uiContainer.append(legend);
+  shell.addMobileContent(legend);
   const element = (id: string) => summary.querySelector<HTMLElement>(`#${id}`)!;
   let manifest: IncomeManifest | null = null;
 
@@ -62,17 +63,11 @@ export function createIncomePanel(shell: Shell, income: IncomeRepository) {
     section.append(link, text, audit); shell.sourceContent.append(section);
   }
   function obstacles(): Rect[] {
+    if (innerWidth <= 760) return [];
     const origin = shell.mapContainer.getBoundingClientRect(); const rect = legend.getBoundingClientRect();
     return [{ x: rect.x - origin.x - 6, y: rect.y - origin.y - 6, w: rect.width + 12, h: rect.height + 12 }];
   }
-  function padding(fallback: Padding): Padding {
-    if (innerWidth > 760) return fallback;
-    const location = shell.root.querySelector('.location-panel')!.getBoundingClientRect();
-    // A wide but short app/browser panel has room beside the summary, not below it.
-    if (innerWidth >= 600) return { top: 45, right: 70, bottom: 70, left: location.right + 22 };
-    return { top: location.bottom + 15, right: 48, bottom: legend.getBoundingClientRect().height + 65, left: 24 };
-  }
-  return { render, tooltip, showSources, obstacles, padding, get manifest() { return manifest; } };
+  return { render, tooltip, showSources, obstacles, get manifest() { return manifest; } };
 }
 
 function originLabel(r: IncomeRecord) {

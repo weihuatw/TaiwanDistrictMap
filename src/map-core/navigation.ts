@@ -7,6 +7,7 @@ export class RegionNavigator {
   private onChange: (view: View, restore?: boolean) => void;
   private onBusy: (busy: boolean) => void;
   private onError: (error: unknown, retry: () => Promise<void>) => void;
+  private onPreview: (region: Region) => void;
   private history: View[] = [];
   get stack(): readonly View[] { return this.history; }
   private sequence = 0;
@@ -15,8 +16,10 @@ export class RegionNavigator {
     onChange: (view: View, restore?: boolean) => void,
     onBusy: (busy: boolean) => void,
     onError: (error: unknown, retry: () => Promise<void>) => void,
+    onPreview: (region: Region) => void = () => {},
   ) {
     this.load = load; this.onChange = onChange; this.onBusy = onBusy; this.onError = onError;
+    this.onPreview = onPreview;
     this.history = []; this.sequence = 0;
   }
   get current() { return this.stack.at(-1); }
@@ -66,6 +69,7 @@ export class RegionNavigator {
     const token = ++this.sequence;
     const level = parent.level === 'county' ? 'town' : 'village';
     this.onBusy(true);
+    this.onPreview(feature);
     try {
       const data = await this.load(dataPath(level, feature.properties.code));
       if (token !== this.sequence || parent !== this.stack[parentIndex]) return;

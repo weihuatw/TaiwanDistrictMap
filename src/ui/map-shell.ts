@@ -31,6 +31,69 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   };
   const lifetime = new AbortController();
   const mapContainer = el('map');
+  const mobile = matchMedia('(max-width: 760px)');
+  const infoPanel = el('info-toggle').closest<HTMLElement>('.location-panel')!;
+  const infoContent = el('info-content');
+  let collapsed = false;
+  let sheetFrame = 0;
+  function updateSheet() {
+    infoPanel.classList.toggle('is-collapsed', collapsed);
+    infoContent.inert = mobile.matches && collapsed;
+    el('info-toggle').setAttribute('aria-expanded', String(!collapsed));
+    el('info-toggle').setAttribute('aria-label', collapsed ? '展開地圖資訊' : '收折地圖資訊');
+    if (sheetFrame) cancelAnimationFrame(sheetFrame);
+    sheetFrame = requestAnimationFrame(() => {
+      sheetFrame = 0;
+      if (lifetime.signal.aborted) return;
+      const visible = mobile.matches ? Math.max(0, innerHeight - infoPanel.getBoundingClientRect().top) : 0;
+      root.style.setProperty('--info-visible-height', `${visible}px`);
+      options.onPanelChange();
+    });
+  }
+  let drag: { id: number; y: number; offset: number; max: number } | undefined;
+  let suppressClick = false;
+  const handle = el('info-toggle');
+  handle.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') suppressClick = false;
+  });
+  handle.addEventListener('click', () => {
+    if (suppressClick) { suppressClick = false; return; }
+    suppressClick = false;
+    collapsed = !collapsed; updateSheet();
+  });
+  handle.addEventListener('pointerdown', event => {
+    if (!mobile.matches || event.button !== 0) return;
+    suppressClick = false;
+    const safeBottom = parseFloat(getComputedStyle(infoContent).paddingBottom) - 16;
+    const max = Math.max(0, infoPanel.offsetHeight - 34 - safeBottom);
+    drag = { id: event.pointerId, y: event.clientY, offset: collapsed ? max : 0, max };
+    handle.setPointerCapture(event.pointerId);
+  });
+  handle.addEventListener('pointermove', event => {
+    if (drag?.id !== event.pointerId || Math.abs(event.clientY - drag.y) < 5) return;
+    infoPanel.classList.add('is-dragging');
+    infoPanel.style.transform = `translateY(${Math.max(0, Math.min(drag.max, drag.offset + event.clientY - drag.y))}px)`;
+  });
+  const finishDrag = () => { drag = undefined; infoPanel.classList.remove('is-dragging'); infoPanel.style.removeProperty('transform'); };
+  handle.addEventListener('pointerup', event => {
+    if (drag?.id !== event.pointerId) return;
+    const distance = event.clientY - drag.y;
+    if (Math.abs(distance) > 24) {
+      collapsed = distance > 0; suppressClick = true; updateSheet();
+    }
+    finishDrag();
+  });
+  handle.addEventListener('pointercancel', () => { finishDrag(); updateSheet(); });
+  // Move supporting cards into the scrollable sheet on phones, retaining desktop placement.
+  function addMobileContent(element: HTMLElement) {
+    const parent = element.parentElement!;
+    const move = () => { (mobile.matches ? infoContent : parent).append(element); updateSheet(); };
+    mobile.addEventListener('change', move, { signal: lifetime.signal }); move();
+  }
+  addMobileContent(el('selection-card'));
+  mobile.addEventListener('change', updateSheet, { signal: lifetime.signal });
+  const panelResize = new ResizeObserver(updateSheet); panelResize.observe(infoPanel);
+  infoPanel.addEventListener('transitionend', updateSheet);
   if (options.brandTitle) el('brand-title').textContent = options.brandTitle;
   if (options.loadingText) el('loading-text').textContent = options.loadingText;
   if (options.sourceIntro) root.querySelector<HTMLElement>('.source-intro')!.textContent = options.sourceIntro;
@@ -70,7 +133,7 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     el('hover-tooltip').hidden = false;
   };
   const getPadding = (): Padding => innerWidth <= 760
-    ? { top: 225, right: 48, bottom: 90, left: 36 }
+    ? { top: 55, right: 55, bottom: Math.min(innerHeight * .45, Math.max(34, innerHeight - infoPanel.getBoundingClientRect().top)) + 20, left: 20 }
     : { top: 70, right: 90, bottom: 90, left: 355 };
   const getLabelObstacles = (): Rect[] => {
     const origin = mapContainer.getBoundingClientRect();
@@ -205,9 +268,10 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     sourceContent: el('source-content'),
     mapContainer, render, setBusy, showError, showInitializationError, setBasemapStatus,
     refreshList: renderList,
+    addMobileContent,
     showTooltip, hideTooltip, getPadding, getLabelObstacles,
     renderManifest, showManifestError,
     markMapReady: () => { mapContainer.dataset.ready = 'true'; },
-    destroy: () => { lifetime.abort(); root.replaceChildren(); },
+    destroy: () => { lifetime.abort(); panelResize.disconnect(); if (sheetFrame) cancelAnimationFrame(sheetFrame); root.style.removeProperty('--info-visible-height'); root.replaceChildren(); },
   };
 }

@@ -81,8 +81,12 @@ export function startSchoolApp(root: HTMLElement) {
       layer?.render(polygons, navigator.context, restore);
       markers?.render(view.level === 'school' ? navigator.visibleSchools : [], view.selected, view.level === 'school' ? view.path.at(-1) : undefined);
     },
-    onBusy: busy => { shell.setBusy(busy); layer?.setBusy(busy); markers?.setBusy(busy); },
+    onBusy: busy => { shell.setBusy(busy); layer?.setBusy(busy); markers?.setBusy(busy); if (!busy) layer?.cancelPreview(); },
     onError: (error, retry) => shell.showError(error, retry),
+    onPreview: target => {
+      if ('properties' in target) layer?.previewRegion(target);
+      else if (target.position) layer?.previewPoint(target.position);
+    },
   });
 
   function renderChrome(view: SchoolView) {
@@ -149,11 +153,7 @@ export function startSchoolApp(root: HTMLElement) {
     basemap = createMap({ container: shell.mapContainer, apiKey: import.meta.env.VITE_TOMTOM_API_KEY, onStatus: shell.setBasemapStatus });
     layer = createRegionLayer(basemap.map, {
       getColor, fillOpacity: .35, hoverOpacity: .47,
-      getPadding: () => {
-        const rect = root.querySelector('.location-panel')!.getBoundingClientRect();
-        if (innerWidth <= 760) return { top: Math.min(rect.bottom + 16, innerHeight * .55), right: 48, bottom: 95, left: 24 };
-        return shell.getPadding();
-      },
+      getPadding: shell.getPadding,
       getLabelObstacles: shell.getLabelObstacles,
       duration: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 720,
       onReady: shell.markMapReady, onHover: shell.showTooltip, onHoverEnd: shell.hideTooltip,

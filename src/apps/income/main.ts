@@ -43,8 +43,9 @@ export function startIncomeApp(root: HTMLElement) {
       shell.render(view); panel.render(view, manifest);
       layer?.render(view, navigator.context, restore);
     },
-    (loading) => { shell.setBusy(loading); layer?.setBusy(loading); },
+    (loading) => { shell.setBusy(loading); layer?.setBusy(loading); if (!loading) layer?.cancelPreview(); },
     (error, retry) => shell.showError(error, retry),
+    region => layer?.previewRegion(region),
   );
   try {
     basemap = createMap({ container: shell.mapContainer, apiKey: import.meta.env.VITE_TOMTOM_API_KEY, style: 'monoLight', onStatus: shell.setBasemapStatus });
@@ -52,7 +53,7 @@ export function startIncomeApp(root: HTMLElement) {
       getColor, isMissing: (region) => income.get(region.properties.code)?.meanK == null,
       fillOpacity: FILL_OPACITY, hoverOpacity: FILL_OPACITY, selectedOpacity: FILL_OPACITY,
       outlineColor: '#526f83', emphasisColor: '#153f61',
-      getPadding: () => panel.padding(shell.getPadding()),
+      getPadding: shell.getPadding,
       getLabelObstacles: () => [...shell.getLabelObstacles(), ...panel.obstacles()],
       duration: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 720,
       onReady: shell.markMapReady, onHover: shell.showTooltip, onHoverEnd: shell.hideTooltip,

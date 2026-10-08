@@ -38,7 +38,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   };
   const onResize = () => {
     scheduleLabels();
-    if (view && mapReady) camera.fit(view, 0);
+    if (view && mapReady && !camera.isPreviewing) camera.fit(view, 0);
   };
   const onClick = (event: MapMouseEvent) => {
     const hit = regionAt(event.point);
@@ -188,6 +188,9 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   return {
     get ready() { return mapReady; },
     camera: camera.capture,
+    previewRegion: camera.previewRegion,
+    previewPoint: camera.previewPoint,
+    cancelPreview: camera.cancelPreview,
     render(current: View, surrounding: ContextRegion[], restore = false) {
       view = current; contextRegions = surrounding; pendingRestore = restore;
       if (mapReady) renderMap(current, restore);

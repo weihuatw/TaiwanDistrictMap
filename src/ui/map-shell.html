@@ -1,11 +1,14 @@
     <div id="map" aria-label="臺灣行政區互動地圖"></div>
     <main class="map-ui">
       <section class="location-panel" aria-label="目前地圖層級">
+        <button id="info-toggle" class="sheet-handle" aria-label="收折地圖資訊" aria-expanded="true" aria-controls="info-content"><span aria-hidden="true"></span></button>
+        <div id="info-content" class="info-content">
         <div class="brand"><span class="brand-icon" aria-hidden="true">臺</span><span>TAIWAN <span class="brand-separator">/</span> <span id="brand-title">行政區地圖</span></span></div>
         <div class="heading-row"><h1 id="location-title">臺灣</h1><span id="level-badge" class="level-badge">縣市</span></div>
         <nav id="breadcrumbs" class="breadcrumbs" aria-label="行政區導覽"></nav>
         <div id="view-extra"></div>
         <div class="location-footer"><span id="region-count">正在載入行政區…</span><button id="back-button" class="back-button" hidden><span aria-hidden="true">←</span><span id="back-label">返回</span></button></div>
+        </div>
       </section>
 
       <div class="toolbar" aria-label="地圖工具">

@@ -28,8 +28,9 @@ export function startAdminApp(root: HTMLElement) {
       shell.render(view);
       layer?.render(view, navigator.context, restore);
     },
-    (loading) => { shell.setBusy(loading); layer?.setBusy(loading); },
+    (loading) => { shell.setBusy(loading); layer?.setBusy(loading); if (!loading) layer?.cancelPreview(); },
     (error, retry) => shell.showError(error, retry),
+    region => layer?.previewRegion(region),
   );
   try {
     basemap = createMap({ container: shell.mapContainer, apiKey: import.meta.env.VITE_TOMTOM_API_KEY, onStatus: shell.setBasemapStatus });
