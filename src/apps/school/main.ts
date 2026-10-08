@@ -78,8 +78,10 @@ export function startSchoolApp(root: HTMLElement) {
       shell.render(polygons); renderChrome(view);
       if (search) { el<HTMLInputElement>('region-search').value = search; shell.refreshList(); }
       previousPath = pathKey;
-      layer?.render(polygons, navigator.context, restore);
-      markers?.render(view.level === 'school' ? navigator.visibleSchools : [], view.selected, view.level === 'school' ? view.path.at(-1) : undefined);
+      const visibleSchools = navigator.visibleSchools;
+      layer?.render(polygons, navigator.context, restore, () => {
+        markers?.render(view.level === 'school' ? visibleSchools : [], view.selected, view.level === 'school' ? view.path.at(-1) : undefined);
+      });
     },
     onBusy: busy => { shell.setBusy(busy); layer?.setBusy(busy); markers?.setBusy(busy); if (!busy) layer?.cancelPreview(); },
     onError: (error, retry) => shell.showError(error, retry),
@@ -153,6 +155,7 @@ export function startSchoolApp(root: HTMLElement) {
     basemap = createMap({ container: shell.mapContainer, apiKey: import.meta.env.VITE_TOMTOM_API_KEY, onStatus: shell.setBasemapStatus });
     layer = createRegionLayer(basemap.map, {
       getColor, fillOpacity: .35, hoverOpacity: .47,
+      deferUntilMoveEnd: true, fadeDuration: 180,
       getPadding: shell.getPadding,
       getLabelObstacles: shell.getLabelObstacles,
       duration: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 720,

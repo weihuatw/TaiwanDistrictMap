@@ -32,6 +32,7 @@ public/data/                     現有預先生成的界線與版本資訊
 - `BoundaryRepository(dataUrl)` 接收圖資根路徑。`load(file)` 提供 GeoJSON，`manifest()` 提供來源與版本。失敗請求不進入快取，重試可以重新載入。
 - `RegionNavigator` 接收資料載入函式與畫面、載入狀態、錯誤回呼。它不依賴 TomTom、MapLibre、fetch 或 DOM；原有逐層返回與灰色鄰區切換邏輯維持相同。
 - `createRegionLayer(map, options)` 接收畫面資料與周邊區域，處理圖層和標籤。點擊及滑過透過回呼交給應用。標籤避讓區域與地圖邊距由介面提供，圖層不查詢頁面的元素 ID。
+  學區頁啟用 `deferUntilMoveEnd`，下載仍與相機動畫並行，最新已提交畫面在 `moveend` 後的 animation frame 才更新 GeoJSON、標籤與學校 marker。更新前後分別保留欲呈現與實際呈現狀態，避免舊 polygon 被當成新資料點擊。行政區來源載入完成後，以 MapLibre 圖層透明度做 180ms 淡入，不等待底圖的全域 idle；減少動態效果時取消淡入。所有頁面的標籤避讓在相機停止後計算，先集中量測再寫入樣式，避免動畫期間每幀強制排版。待執行更新採最新畫面優先，destroy 時取消 frame 並解除事件。
 - `createMapShell(root, options)` 掛載共用 HTML，處理頁面 DOM。它不下載資料、不建立底圖、不持有導覽歷史。
 - `startAdminApp(root)` 將上述回呼接在一起，是目前行政區瀏覽的應用層。
 

@@ -1,10 +1,13 @@
 import { Marker, type Map as MapLibreMap, type MapMouseEvent, type GeoJSONSource } from 'maplibre-gl';
-import { createCameraController } from './camera';
+import { createCameraController } from './camera.ts';
+import { createSettledUpdate } from './settled-update.ts';
 import type { ContextRegion, Padding, Rect, Region, RegionColor, RegionHit, Regions, View } from './types';
 
 export interface RegionLayerOptions {
   getPadding: () => Padding;
   duration: number;
+  deferUntilMoveEnd?: boolean;
+  fadeDuration?: number;
   getLabelObstacles?: () => Rect[];
   getColor?: RegionColor;
   fillOpacity?: number;
@@ -22,6 +25,13 @@ export interface RegionLayerOptions {
 /** Polygon rendering and hit testing, with no knowledge of page DOM or data I/O. */
 export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions) {
   const camera = createCameraController(map, options.getPadding, options.duration);
+  const updates = createSettledUpdate(map);
+  const reveals = createSettledUpdate(map);
+  const fadeDuration = options.duration === 0 ? 0 : options.fadeDuration ?? 0;
+  let revealing = false;
+  let afterRender: (() => void) | undefined;
+  let displayedView: View | null = null;
+  let displayedContext: ContextRegion[] = [];
   let mapReady = map.loaded();
   let pendingRestore = false;
   let view: View | null = null;
@@ -33,7 +43,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
 
   const onLoad = () => {
     mapReady = true;
-    if (view) renderMap(view, pendingRestore);
+    if (view) present(view, pendingRestore);
     options.onReady?.();
   };
   const onResize = () => {
@@ -41,11 +51,12 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     if (view && mapReady && !camera.isPreviewing) camera.fit(view, 0);
   };
   const onClick = (event: MapMouseEvent) => {
+    if (updates.pending || revealing) return;
     const hit = regionAt(event.point);
     if (hit) options.onSelect(hit);
   };
   const onMove = (event: MapMouseEvent) => {
-    if (busy) return;
+    if (busy || updates.pending || revealing) return;
     const hit = regionAt(event.point);
     if (!hit) { clearHover(); return; }
     const code = hit.region.properties.code;
@@ -59,6 +70,8 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   const hideTooltip = () => options.onHoverEnd?.();
   map.on('load', onLoad);
   map.on('move', scheduleLabels);
+  map.on('moveend', scheduleLabels);
+  map.on('sourcedata', checkReveal);
   map.on('resize', onResize);
   map.on('click', onClick);
   map.on('mousemove', onMove);
@@ -68,16 +81,16 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
 
   function regionAt(point: { x: number; y: number }): RegionHit | null {
     const layers = ['region-fill', 'context-fill'].filter((id) => map.getLayer(id));
-    if (!layers.length || !view) return null;
+    if (!layers.length || !displayedView) return null;
     // Rendered features are ordered from top to bottom, so child polygons win
     // over the coarser surrounding boundaries at their shared edges.
     for (const feature of map.queryRenderedFeatures([point.x, point.y], { layers })) {
       const code = feature.properties.code;
       if (feature.source === 'regions') {
-        const region = view.data.features.find((candidate) => candidate.properties.code === code);
+        const region = displayedView.data.features.find((candidate) => candidate.properties.code === code);
         if (region) return { region, source: 'regions' };
       } else {
-        const entry = contextRegions.find((candidate) => candidate.region.properties.code === code);
+        const entry = displayedContext.find((candidate) => candidate.region.properties.code === code);
         if (entry) return { ...entry, source: 'context' };
       }
     }
@@ -88,8 +101,46 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     if (hovered && map.getSource(hovered.source)) map.setFeatureState({ source: hovered.source, id: hovered.code }, { hover: false });
     hovered = null; map.getCanvas().style.cursor = ''; options.onHoverEnd?.();
   }
-  function renderMap(current: View, restore: boolean) {
+  function present(current: View, restore: boolean) {
+    updates.cancel(); reveals.cancel();
+    if (restore) camera.restore(current);
+    else camera.fit(current);
+    const update = () => {
+      displayedView = current; displayedContext = contextRegions;
+      renderMap(current);
+      afterRender?.(); afterRender = undefined;
+    };
+    if (options.deferUntilMoveEnd) updates.queue(update);
+    else update();
+  }
+
+  function setOpacity(visible: boolean) {
+    const transition = { duration: visible ? fadeDuration : 0, delay: 0 };
+    for (const id of ['region-fill', 'context-fill', 'region-missing']) if (map.getLayer(id)) {
+      map.setPaintProperty(id, 'fill-layer-opacity-transition', transition);
+      map.setPaintProperty(id, 'fill-layer-opacity', visible ? 1 : 0);
+    }
+    for (const [id, opacity] of [['region-line', .62], ['context-line', .65], ['region-emphasis', 1], ['context-emphasis', 1]] as const) if (map.getLayer(id)) {
+      map.setPaintProperty(id, 'line-opacity-transition', transition);
+      map.setPaintProperty(id, 'line-opacity', visible ? opacity : 0);
+    }
+    for (const { element } of labels) {
+      element.style.transition = visible ? `opacity ${fadeDuration}ms ease-out` : 'none';
+      element.style.opacity = visible ? '1' : '0';
+    }
+  }
+  function checkReveal() {
+    if (!revealing || updates.pending) return;
+    reveals.queue(() => {
+      if (!revealing || !map.isSourceLoaded('regions') || !map.isSourceLoaded('context')) return;
+      revealing = false; setOpacity(true); scheduleLabels();
+    });
+  }
+
+  function renderMap(current: View) {
     clearHover();
+    revealing = fadeDuration > 0;
+    if (revealing) setOpacity(false);
     // Keep vector basemap labels above the administrative fill and outlines.
     const beforeLabel = map.getStyle().layers.find((layer) => layer.type === 'symbol')?.id;
     const surrounding: Regions = { type: 'FeatureCollection', features: contextRegions.map(({ region }) => region) };
@@ -160,25 +211,29 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
       const marker = new Marker({ element: label, anchor: 'center' }).setLngLat(region.properties.label).addTo(map);
       labels.push({ marker, element: label, region, context });
     }
-    if (restore) camera.restore(current);
-    else camera.fit(current);
+    if (revealing) { setOpacity(false); checkReveal(); }
+    else if (options.fadeDuration) setOpacity(true);
     scheduleLabels();
   }
 
   function scheduleLabels() {
-    if (renderFrame) return;
+    // MapLibre moves marker positions itself; avoid layout reads and collision
+    // calculations on every animation frame, particularly on mobile.
+    if (renderFrame || map.isMoving()) return;
     renderFrame = requestAnimationFrame(() => { renderFrame = 0; layoutLabels(); });
   }
   function layoutLabels() {
-    if (!mapReady || !view) return;
+    if (!mapReady || !displayedView || map.isMoving()) return;
     const occupied = options.getLabelObstacles?.() ?? [];
-    const ordered = [...labels].sort((a, b) => Number(b.region.id === view!.selected?.id) - Number(a.region.id === view!.selected?.id) || Number(a.context) - Number(b.context) || Number(a.region.properties.unassigned) - Number(b.region.properties.unassigned));
-    for (const { region, element } of ordered) {
-      const p = map.project(region.properties.label);
-      const width = element.offsetWidth + 12; const height = 26;
+    const ordered = [...labels].sort((a, b) => Number(b.region.id === displayedView!.selected?.id) - Number(a.region.id === displayedView!.selected?.id) || Number(a.context) - Number(b.context) || Number(a.region.properties.unassigned) - Number(b.region.properties.unassigned));
+    const candidates = ordered.map(label => ({ ...label, width: label.element.offsetWidth + 12, point: map.project(label.region.properties.label) }));
+    const containerWidth = map.getContainer().clientWidth;
+    const containerHeight = map.getContainer().clientHeight;
+    for (const { region, element, width, point: p } of candidates) {
+      const height = 26;
       const r = { x: p.x - width / 2, y: p.y - height / 2, w: width, h: height };
       const collision = occupied.some((o) => r.x < o.x + o.w && r.x + r.w > o.x && r.y < o.y + o.h && r.y + r.h > o.y);
-      const outside = p.x < 15 || p.x > map.getContainer().clientWidth - 25 || p.y < 15 || p.y > map.getContainer().clientHeight - 45;
+      const outside = p.x < 15 || p.x > containerWidth - 25 || p.y < 15 || p.y > containerHeight - 45;
       const tooSmall = region.properties.unassigned && map.getZoom() < 12;
       element.style.visibility = outside || collision || tooSmall ? 'hidden' : 'visible';
       if (!outside && !collision && !tooSmall) occupied.push(r);
@@ -191,14 +246,19 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     previewRegion: camera.previewRegion,
     previewPoint: camera.previewPoint,
     cancelPreview: camera.cancelPreview,
-    render(current: View, surrounding: ContextRegion[], restore = false) {
-      view = current; contextRegions = surrounding; pendingRestore = restore;
-      if (mapReady) renderMap(current, restore);
+    render(current: View, surrounding: ContextRegion[], restore = false, onRendered?: () => void) {
+      view = current; contextRegions = surrounding; pendingRestore = restore; afterRender = onRendered;
+      if (mapReady) present(current, restore);
     },
-    setBusy(loading: boolean) { busy = loading; if (loading) clearHover(); },
+    setBusy(loading: boolean) {
+      busy = loading;
+      if (loading) clearHover();
+    },
     scheduleLabels,
     destroy() {
+      updates.destroy(); reveals.destroy(); revealing = false; afterRender = undefined;
       map.off('load', onLoad); map.off('move', scheduleLabels); map.off('resize', onResize);
+      map.off('moveend', scheduleLabels); map.off('sourcedata', checkReveal);
       map.off('click', onClick); map.off('mousemove', onMove); map.off('movestart', hideTooltip);
       map.getCanvas().removeEventListener('mouseleave', clearHover);
       if (renderFrame) cancelAnimationFrame(renderFrame);
