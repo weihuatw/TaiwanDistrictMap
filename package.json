@@ -17,7 +17,10 @@
     "school:fetch": "python3 scripts/school/fetch.py && ${SCHOOL_PYTHON:-python3} scripts/school/fetch-national.py && ${SCHOOL_PYTHON:-python3} scripts/school/fetch-moe.py",
     "school:build": "node scripts/school/build.mjs",
     "school:check": "node scripts/school/check.mjs",
-    "school:parse": "${SCHOOL_PYTHON:-python3} scripts/school/parse-national.py"
+    "school:parse": "${SCHOOL_PYTHON:-python3} scripts/school/parse-national.py",
+    "housing:fetch": "python3 scripts/housing/fetch.py",
+    "housing:build": "python3 scripts/housing/build.py",
+    "housing:check": "node scripts/housing/check.mjs"
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "0.51.3",

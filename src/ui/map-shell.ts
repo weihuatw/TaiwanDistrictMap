@@ -95,6 +95,10 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   const panelResize = new ResizeObserver(updateSheet); panelResize.observe(infoPanel);
   infoPanel.addEventListener('transitionend', updateSheet);
   if (options.brandTitle) el('brand-title').textContent = options.brandTitle;
+  const currentPage = location.pathname.split('/').filter(Boolean).at(-1) ?? 'index.html';
+  root.querySelectorAll<HTMLAnchorElement>('[data-map-page]').forEach((link) => {
+    if (link.dataset.mapPage === currentPage) link.setAttribute('aria-current', 'page');
+  });
   if (options.loadingText) el('loading-text').textContent = options.loadingText;
   if (options.sourceIntro) root.querySelector<HTMLElement>('.source-intro')!.textContent = options.sourceIntro;
   const getColor = options.getColor ?? ((region: Region) => region.properties.color);

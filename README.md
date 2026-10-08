@@ -6,11 +6,14 @@
 
 另有 [學區地圖](school.html)，提供全臺22縣市的國小、國中位置與已收錄的官方學區；資料年份與缺漏分別標示。進入行政區先顯示學校點位，點校後才顯示所屬里界，包含部分鄰與共同學區；國小、國中可獨立勾選。來源及重建方式見 [學區地圖說明](docs/school.md)。
 
+另有 [實價登錄房價地圖](housing.html)，依官方買賣批次資料呈現 2024、2025 年住宅成交單價中位數、樣本數與案件明細。第一版顯示縣市與鄉鎮市區，免費批次資料沒有座標，詳見 [房價地圖說明](docs/housing.md)。
+
 GitHub repo：[weihuatw/TaiwanDistrictMap](https://github.com/weihuatw/TaiwanDistrictMap)。網站透過 GitHub Actions 發布至 GitHub Pages：
 
 - [行政區地圖](https://weihuatw.github.io/TaiwanDistrictMap/)
 - [2024所得地圖](https://weihuatw.github.io/TaiwanDistrictMap/income.html)
 - [學區地圖](https://weihuatw.github.io/TaiwanDistrictMap/school.html)
+- [實價登錄房價地圖](https://weihuatw.github.io/TaiwanDistrictMap/housing.html)
 
 ## 本機啟動
 
@@ -35,6 +38,7 @@ npm run dev -- --port 5173 --strictPort
 開啟 <http://127.0.0.1:5173/>。沒有 key 時仍可操作官方行政區圖形，底圖顯示為資料預覽背景。
 
 所得頁開啟 <http://127.0.0.1:5173/income.html>；學區頁開啟 <http://127.0.0.1:5173/school.html>。
+房價頁開啟 <http://127.0.0.1:5173/housing.html>；先執行 `npm run housing:fetch` 與 `npm run housing:build` 產生資料。
 
 TomTom key 支援網域白名單。使用此專案專用的 key，設定開發及發布網站的允許網域與所需地圖產品。前端變數會進入瀏覽器程式和地圖請求；環境檔的作用是避免將 key 提交到原始碼，並非對訪客隱藏 key。
 

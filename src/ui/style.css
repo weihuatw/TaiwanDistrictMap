@@ -18,6 +18,10 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .brand { display: flex; align-items: center; gap: 9px; font-size: 10px; letter-spacing: 1.5px; font-weight: 650; color: #6d8178; }
 .brand-icon { display: grid; place-items: center; width: 27px; height: 29px; border-radius: 7px; font-size: 14px; color: #eff7ee; background: var(--green); letter-spacing: 0; }
 .brand-separator { color: #b1bfb7; padding: 0 4px; }
+.map-links { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+.map-links a { border: 1px solid #e0e9e1; border-radius: 999px; padding: 5px 9px; color: #5e7669; background: #f7faf6; text-decoration: none; font-size: 10px; line-height: 1; white-space: nowrap; }
+.map-links a:hover, .map-links a[aria-current='page'] { color: #245a45; border-color: #c7dccb; background: #eaf3e9; }
+.map-links a[aria-current='page'] { font-weight: 700; }
 .heading-row { display: flex; align-items: center; gap: 12px; margin-top: 17px; }
 h1 { margin: 0; font-size: 28px; font-weight: 650; letter-spacing: 1px; line-height: 1.3; }
 .level-badge { font-size: 11px; border: 1px solid #d3e5d8; background: #eef5ee; color: #42725c; padding: 4px 8px; border-radius: 6px; white-space: nowrap; }
@@ -96,6 +100,8 @@ h1 { margin: 0; font-size: 28px; font-weight: 650; letter-spacing: 1px; line-hei
   .info-content .selection-card { position: static; box-shadow: none; background: transparent; border: 0; margin: 12px 0 0; padding: 0; max-width: none; }
   .brand { font-size: 9px; letter-spacing: 1px; gap: 7px; }
   .brand-icon { width: 23px; height: 25px; font-size: 12px; }
+  .map-links { gap: 5px; margin-top: 9px; }
+  .map-links a { padding: 5px 8px; font-size: 10px; }
   .heading-row { margin-top: 12px; gap: 8px; }
   h1 { font-size: 23px; }
   .breadcrumbs { font-size: 11px; margin-top: 5px; }

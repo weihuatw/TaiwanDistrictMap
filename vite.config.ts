@@ -7,5 +7,6 @@ export default defineConfig({
     admin: resolve(import.meta.dirname, 'index.html'),
     income: resolve(import.meta.dirname, 'income.html'),
     school: resolve(import.meta.dirname, 'school.html'),
+    housing: resolve(import.meta.dirname, 'housing.html'),
   } } },
 });
