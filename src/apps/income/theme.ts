@@ -2,7 +2,7 @@ import type { IncomeRecord } from './types';
 
 // Fixed absolute thresholds, in 萬元 per filing household per year.
 export const BREAKS = [55, 65, 75, 90, 110, 150];
-export const COLORS = ['#a4cbe5', '#7bb3d7', '#5098c4', '#3079a7', '#205b85', '#164269', '#102d4d'];
+export const COLORS = ['#dceee7', '#b6dacb', '#96cbb5', '#83bfa9', '#559e88', '#337d6a', '#1e594c'];
 export const LABELS = ['未滿55', '55–65', '65–75', '75–90', '90–110', '110–150', '150以上'];
 export const FILL_OPACITY = 0.38;
 export const MISSING_COLOR = '#b9c1c9';

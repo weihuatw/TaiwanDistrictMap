@@ -52,7 +52,7 @@ export function startIncomeApp(root: HTMLElement) {
     layer = createRegionLayer(basemap.map, {
       getColor, isMissing: (region) => income.get(region.properties.code)?.meanK == null,
       fillOpacity: FILL_OPACITY, hoverOpacity: FILL_OPACITY, selectedOpacity: FILL_OPACITY,
-      outlineColor: '#526f83', emphasisColor: '#153f61',
+      outlineColor: '#59796e', emphasisColor: '#174d3f',
       getPadding: shell.getPadding,
       getLabelObstacles: () => [...shell.getLabelObstacles(), ...panel.obstacles()],
       duration: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 720,

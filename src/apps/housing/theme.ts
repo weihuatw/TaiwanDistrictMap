@@ -1,7 +1,7 @@
 import type { HousingSummary } from './types';
 
 export const BREAKS = [15,25,40,60,80];
-export const COLORS = ['#dceee7','#b6dacb','#83bfa9','#559e88','#337d6a','#1e594c'];
+export const COLORS = ['#fff0df','#ffd0a1','#ffad6b','#f47c42','#d94f32','#ad2d27'];
 export const LABELS = ['<15','15–25','25–40','40–60','60–80','≥80'];
 export const MISSING = '#d9dedc';
 export function color(summary: HousingSummary | null | undefined) {

@@ -58,7 +58,7 @@ export function startHousingApp(root:HTMLElement){
   }
   try{
     basemap=createMap({container:shell.mapContainer,apiKey:import.meta.env.VITE_TOMTOM_API_KEY,style:'monoLight',onStatus:shell.setBasemapStatus});
-    layer=createRegionLayer(basemap.map,{getColor,isMissing:(r)=>{const s=housing.get(year,group,r.properties.code);return !s||s.status==='no_samples'||s.status==='insufficient';},fillOpacity:.4,hoverOpacity:.4,selectedOpacity:.4,outlineColor:'#59796e',emphasisColor:'#174d3f',getPadding:shell.getPadding,getLabelObstacles:shell.getLabelObstacles,duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:720,onReady:shell.markMapReady,onHover:shell.showTooltip,onHoverEnd:shell.hideTooltip,onSelect:(hit)=>{
+    layer=createRegionLayer(basemap.map,{getColor,isMissing:(r)=>{const s=housing.get(year,group,r.properties.code);return !s||s.status==='no_samples'||s.status==='insufficient';},fillOpacity:.4,hoverOpacity:.4,selectedOpacity:.4,outlineColor:'#a86243',emphasisColor:'#812f27',getPadding:shell.getPadding,getLabelObstacles:shell.getLabelObstacles,duration:matchMedia('(prefers-reduced-motion: reduce)').matches?0:720,onReady:shell.markMapReady,onHover:shell.showTooltip,onHoverEnd:shell.hideTooltip,onSelect:(hit)=>{
       if(!layer?.ready||!navigator.current)return;
       if(hit.parentIndex!==undefined){selectedTown=null;void navigator.switchTo(hit.region,hit.parentIndex);return;}
       choose(hit.region);
