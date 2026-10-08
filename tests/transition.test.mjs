@@ -3,15 +3,16 @@ import assert from 'node:assert/strict';
 import { RegionNavigator } from '../src/map-core/navigation.ts';
 import { SchoolNavigator } from '../src/apps/school/navigation.ts';
 import { createCameraController } from '../src/map-core/camera.ts';
-const region = (code, bounds=[121,24,122,25]) => ({id:code,properties:{code,focusBounds:bounds,bounds}});
+const region = (code, bounds=[121,24,122,25]) => ({id:code,properties:{code,level:'county',focusBounds:bounds,bounds}});
 const county=region('63000'),town=region('63000010');
 const data=(...features)=>({type:'FeatureCollection',features});
 const original={center:[120,23],zoom:7,bearing:0,pitch:0};
 const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
-function cameraFixture(){
-  const fits=[],eases=[];let live=original;
-  const map={getCenter:()=>({lng:live.center[0],lat:live.center[1]}),getZoom:()=>live.zoom,getBearing:()=>live.bearing,getPitch:()=>live.pitch,fitBounds:(bounds,options)=>fits.push({bounds,options}),easeTo:options=>eases.push(options)};
-  return {camera:createCameraController(map,()=>({top:50,left:20,right:50,bottom:180}),720),fits,eases,pan:()=>{live={...original,center:[121.5,24.5],zoom:11};}};
+function cameraFixture(initialZoom=7){
+  const fits=[],eases=[];let live={...original,zoom:initialZoom};
+  let padding={top:50,left:20,right:50,bottom:180};
+  const map={getCenter:()=>({lng:live.center[0],lat:live.center[1]}),getZoom:()=>live.zoom,getBearing:()=>live.bearing,getPitch:()=>live.pitch,cameraForBounds:(bounds,options)=>{fits.push({bounds,options});return {center:[121.5,24.5],zoom:Math.min(15,options.maxZoom),padding:options.padding};},easeTo:options=>eases.push(options)};
+  return {camera:createCameraController(map,()=>padding,720),fits,eases,setPadding:value=>{padding=value;},pan:()=>{live={...original,center:[121.5,24.5],zoom:11};}};
 }
 test('Region navigation starts the preview before I/O and commits only after data resolves',async()=>{
   const pending=deferred(),order=[];
@@ -36,19 +37,53 @@ test('An identical final region fit keeps the original animation and saved retur
   const f=cameraFixture();f.camera.previewRegion(county);f.pan();
   assert.deepEqual(f.camera.capture(),original);
   f.camera.fit({level:'town',path:[county],selected:null});assert.equal(f.fits.length,1);assert.equal(f.camera.isPreviewing,false);
-  f.camera.cancelPreview();assert.equal(f.eases.length,0);
+  f.camera.cancelPreview();assert.equal(f.eases.length,1);
 });
 test('Cancelled or failed previews restore the camera before the first pending selection',()=>{
   const f=cameraFixture();f.camera.previewRegion(county);f.pan();f.camera.previewRegion(region('other',[120,22,121,23]));
   f.camera.cancelPreview();assert.deepEqual(f.eases.at(-1).center,original.center);assert.equal(f.eases.at(-1).zoom,7);assert.equal(f.camera.isPreviewing,false);
-  f.camera.cancelPreview();assert.equal(f.eases.length,1);
+  f.camera.cancelPreview();assert.equal(f.eases.length,3);
 });
 test('A school point preview reframes to the loaded cross-district catchment',()=>{
-  const f=cameraFixture();f.camera.previewPoint([121.5,25]);assert.equal(f.eases[0].zoom,14);
+  const f=cameraFixture();f.camera.previewPoint([121.5,25]);assert.equal(f.eases[0].zoom,7);
   f.camera.fit({level:'village',path:[region('catchment',[121,24,123,26])],selected:null});
   assert.deepEqual(f.fits[0].bounds,[[121,24],[123,26]]);assert.equal(f.camera.isPreviewing,false);
 });
 test('Returning during a preview replaces its animation with the saved viewport',()=>{
   const f=cameraFixture();f.camera.previewRegion(county);f.camera.restore({camera:original});
   assert.equal(f.camera.isPreviewing,false);assert.deepEqual(f.eases.at(-1).center,original.center);
+});
+
+test('School previews preserve both overview and user-adjusted zoom until bounds are ready',()=>{
+  for(const zoom of [10,13,17]) {
+    const f=cameraFixture(zoom);f.camera.previewPoint([121.5,25]);
+    assert.equal(f.eases[0].zoom,zoom);
+    assert.deepEqual(f.eases[0].padding,{top:0,right:0,bottom:0,left:0});
+    assert.deepEqual(f.eases[0].offset,[-15,-65]);
+    f.camera.fit({level:'village',path:[town],selected:null});
+    assert.equal(f.eases.length,2);assert.equal(f.eases[1].zoom,15);
+  }
+});
+test('Repeated viewport fits reserve the sheet once and do not retain padding or use flight arcs',()=>{
+  const f=cameraFixture();
+  for(let i=0;i<3;i++)f.camera.fit({level:'town',path:[county],selected:null});
+  for(const fit of f.fits)assert.equal(fit.options.absolutePadding,true);
+  for(const ease of f.eases){
+    assert.deepEqual(ease.padding,{top:0,right:0,bottom:0,left:0});
+    assert.deepEqual(ease.offset,[-15,-65]);assert.equal(ease.zoom,14);
+  }
+});
+test('Small towns and catchments can fill the viewport beyond zoom 14',()=>{
+  const f=cameraFixture(),smallTown={...town,properties:{...town.properties,level:'town'}};
+  f.camera.previewRegion(smallTown);
+  f.camera.fit({level:'village',path:[smallTown],selected:null});
+  assert.equal(f.fits.length,1);assert.equal(f.eases[0].zoom,15);
+  f.camera.fit({level:'detail',path:[smallTown],selected:smallTown});
+  assert.equal(f.fits.at(-1).options.maxZoom,16);
+});
+test('The final region fit updates when the mobile sheet height changes while loading',()=>{
+  const f=cameraFixture();f.camera.previewRegion(county);
+  f.setPadding({top:50,left:20,right:50,bottom:300});
+  f.camera.fit({level:'town',path:[county],selected:null});
+  assert.equal(f.fits.length,2);assert.deepEqual(f.eases.at(-1).offset,[-15,-125]);
 });
