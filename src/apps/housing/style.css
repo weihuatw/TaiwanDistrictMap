@@ -18,7 +18,7 @@
 .housing-description,.housing-spread,.housing-exclusions { margin:6px 0 0; color:#7a8e83; font-size:9px; line-height:1.55; }
 .housing-facts { display:flex; gap:14px; margin-top:10px; color:#7a8e83; font-size:9px; }
 .housing-facts b { color:#466b5a; font-size:11px; }
-.housing-legend { position:absolute; left:24px; bottom:42px; width:292px; padding:15px 16px 12px; border:1px solid #dce7e1; border-radius:14px; background:#fffffcf5; box-shadow:0 5px 22px #26435912; pointer-events:auto; backdrop-filter:blur(14px); }
+.housing-legend { position:absolute; right:24px; bottom:42px; width:292px; padding:15px 16px 12px; border:1px solid #dce7e1; border-radius:14px; background:#fffffcf5; box-shadow:0 5px 22px #26435912; pointer-events:auto; backdrop-filter:blur(14px); }
 .housing-legend-title { display:flex; justify-content:space-between; color:#416956; font-size:11px; }
 .housing-legend-title span { color:#87988f; font-size:9px; }
 .housing-scale { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:4px; margin-top:11px; }
