@@ -2,7 +2,7 @@
 
 行政區入口：[index.html](../index.html)。資料採內政部戶政司[村里戶數、單一年齡人口（新增區域代碼）](https://data.gov.tw/dataset/77132)，按統計年月製作靜態快照，前端不即時連線到戶政司。
 
-人口表示戶籍登記人口，不代表常住或實際居住人口。詳細資訊卡標示資料月底及來源。未編定範圍顯示無村里統計，不當作人口為零。
+人口表示戶籍登記人口，不代表常住或實際居住人口。桌面與手機都在原本資訊面板下方顯示目前全臺、縣市、鄉鎮市區或所選村里的資料。人口區可收折，收折時保留人口總數；展開狀態在同一頁的區域切換間保留。未編定範圍顯示無村里統計，不當作人口為零。
 
 ## 資料設計
 
@@ -32,4 +32,4 @@ npm run population:check
 
 ## 共用前端讀取
 
-行政區資訊卡透過 `renderSelectionDetails` 插槽載入村里摘要；其他地圖可直接使用 `PopulationRepository`，依代碼呼叫 `getVillage`、`getTown`、`getCounty`、`getNational` 或 `getVillageAges`。方法回傳資料年月及來源標籤；成功結果快取，失敗不快取。請使用 `import.meta.env.BASE_URL` 組合資料目錄，並在呼叫端忽略過期選取的非同步結果。
+行政區頁透過共用 shell 的 `infoExtra` 插槽及 `src/apps/admin/population-panel.ts` 顯示目前層級的摘要；其他地圖可直接使用 `PopulationRepository`，依代碼呼叫 `getVillage`、`getTown`、`getCounty`、`getNational` 或 `getVillageAges`。方法回傳資料年月及來源標籤；成功結果快取，失敗不快取。請使用 `import.meta.env.BASE_URL` 組合資料目錄，並在呼叫端忽略過期選取的非同步結果。

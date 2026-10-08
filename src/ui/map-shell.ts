@@ -277,6 +277,7 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   return {
     root,
     viewExtra: el('view-extra'),
+    infoExtra: el('info-extra'),
     uiContainer: root.querySelector<HTMLElement>('.map-ui')!,
     sourceContent: el('source-content'),
     mapContainer, render, setBusy, showError, showInitializationError, setBasemapStatus,

@@ -143,7 +143,7 @@ Python 標準函式庫解析官方 HTML，需注意嵌套表格，不能漏掉�
 使用內政部戶政司村里戶數及單一年齡人口資料，呈現戶籍人口，不能稱為常住人口。完整來源、代碼對照、更新流程及讀取介面見 `docs/population.md`。
 
 - `src/data/population.ts` 是主題無關的讀取介面，提供村里、鄉鎮、縣市、全臺彙總及單一年齡性別資料。不要把人口欄位寫回共用 GeoJSON，也不要讓只需要總人口的頁面下載年齡分片。
-- 行政區頁的詳細資訊卡由共用 shell 插槽顯示村里戶數、總人口與男女數；載入失敗可重試，較舊的選取請求不得覆寫新狀態。
+- 行政區頁透過共用 shell 的 `infoExtra` 插槽，將人口接在原本資訊面板下方；全臺、縣市、行政區及村里均顯示目前範圍的總人口，可展開男女與戶數或收折只留總數。區域切換保留展開狀態；載入失敗可重試，較舊的選取請求不得覆寫新狀態。
 - 11508 基準有 7,781 筆官方村里資料；7,780 個具名界線皆對應，瑪家鄉三和村代碼 `10013280006` 有人口但未混入全國主圖層，206 個未編定範圍沒有村里人口。來源名稱有 23 筆字形差異，依代碼連接並保留報告。
 - 原始檔在忽略提交的 `data/raw/population/`，來源與 SHA-256 在 `data/population/sources.json`，預期例外在 `data/population/expected-exceptions.json`，輸出在 `public/data/population/{西元年月}/`。
 
@@ -228,7 +228,7 @@ npm run build
 git diff --check
 ```
 
-最近一次全套為 69 個 Node 測試、8 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
+最近一次全套為 71 個 Node 測試、8 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
 
 | 測試 | 主要涵蓋 |
 | --- | --- |
