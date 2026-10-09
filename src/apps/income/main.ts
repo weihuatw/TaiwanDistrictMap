@@ -1,3 +1,4 @@
+import type { HashRouter, Route } from '../../routing/hash-router';
 import { BoundaryRepository } from '../../map-core/boundaries';
 import { createMap } from '../../map-core/create-map';
 import { RegionNavigator } from '../../map-core/navigation';
@@ -9,7 +10,7 @@ import { createIncomePanel } from './panel';
 import { FILL_OPACITY, formatWan, recordColor } from './theme';
 import type { IncomeManifest } from './types';
 
-export function startIncomeApp(root: HTMLElement) {
+export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
   const base = import.meta.env.BASE_URL;
   const boundaries = new BoundaryRepository(`${base}data/`);
   const income = new IncomeRepository(`${base}data/income/2024/`);
@@ -40,6 +41,7 @@ export function startIncomeApp(root: HTMLElement) {
       return geometry;
     },
     (view, restore = false) => {
+      routing?.commit({ theme: 'income', ids: view.path.map(r => r.properties.code), query: '' });
       shell.render(view); panel.render(view, manifest);
       layer?.render(view, navigator.context, restore);
     },
@@ -47,6 +49,7 @@ export function startIncomeApp(root: HTMLElement) {
     (error, retry) => shell.showError(error, retry),
     region => layer?.previewRegion(region),
   );
+  function restoreRoute(route: Route) { return navigator.restorePath(route.ids); }
   try {
     basemap = createMap({ container: shell.mapContainer, apiKey: import.meta.env.VITE_TOMTOM_API_KEY, style: 'monoLight', onStatus: shell.setBasemapStatus });
     layer = createRegionLayer(basemap.map, {
@@ -63,12 +66,12 @@ export function startIncomeApp(root: HTMLElement) {
         else void navigator.enter(hit.region, layer.camera());
       },
     });
-    void navigator.start();
+    if (routing) void restoreRoute(routing.current); else void navigator.start();
   } catch { shell.showInitializationError(() => location.reload()); }
   void Promise.all([boundaries.manifest(), income.manifest()])
     .then(([geometry, stats]) => { if (alive) { shell.renderManifest(geometry); panel.showSources(stats); } })
     .catch(() => { if (alive) shell.showManifestError(); });
-  return { destroy() {
+  return { restoreRoute, destroy() {
     if (!alive) return;
     alive = false; navigator.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy(); root.classList.remove('income-page');
   } };

@@ -195,3 +195,30 @@ test('Regions sharing a boundary are colored differently', () => {
   const b = { geometry: { type: 'Polygon', coordinates: [[[1, 0], [2, 0], [1, 1], [1, 0]]] }, properties: {} };
   colorRegions([a, b]); assert.notEqual(a.properties.color, b.properties.color);
 });
+
+test('Shared village links resolve all ancestors with one committed render', async () => {
+  const { nav, events } = fixture();
+  await nav.restorePath([county.id, town.id, village.id]);
+  assert.equal(events.length, 1); assert.equal(nav.current.level, 'detail');
+  assert.deepEqual(nav.current.path.map(f => f.id), [county.id, town.id, village.id]);
+  nav.back(); assert.equal(nav.current.level, 'village');
+});
+test('Shared-link restoration preserves ancestor camera and newer navigation wins', async () => {
+  let resolve;
+  const { nav, events } = fixture(file => file === 'counties.geojson' ? Promise.resolve(data(county)) : new Promise(r => { resolve = r; }));
+  await nav.start(); const first = nav.enter(county, camera); resolve(data(town)); await first;
+  const pending = nav.restorePath([county.id, town.id]);
+  await new Promise(r => setImmediate(r)); nav.home();
+  const count = events.length; resolve(data(town)); await pending;
+  assert.equal(events.length, count); assert.equal(nav.current.level, 'county');
+});
+test('Housing links stop at town selection and sibling selections do not drill into villages', async () => {
+  const { nav } = fixture();
+  await nav.restorePath([county.id, town.id], true);
+  assert.equal(nav.current.level, 'town'); assert.equal(nav.current.selected.id, town.id);
+  nav.selectTown(null); assert.equal(nav.current.selected, null); assert.equal(nav.stack.length, 2);
+});
+test('Invalid shared links are reported and leave an initialized home view', async () => {
+  const { nav, errors } = fixture(); await nav.restorePath(['99999']);
+  assert.equal(errors.length, 1); assert.equal(nav.current.level, 'county');
+});
