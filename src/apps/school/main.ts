@@ -154,7 +154,7 @@ export function startSchoolApp(root: HTMLElement) {
   try {
     basemap = createMap({ container: shell.mapContainer, apiKey: import.meta.env.VITE_TOMTOM_API_KEY, onStatus: shell.setBasemapStatus });
     layer = createRegionLayer(basemap.map, {
-      getColor, fillOpacity: .35, hoverOpacity: .47, contextOpacity: .32, contextHoverOpacity: .42,
+      getColor, fillOpacity: .35, hoverOpacity: .47, contextOpacity: .4, contextHoverOpacity: .5,
       deferUntilMoveEnd: true, fadeDuration: 180,
       getPadding: shell.getPadding,
       getLabelObstacles: shell.getLabelObstacles,

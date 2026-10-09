@@ -57,9 +57,9 @@ function fixture(duration = 720, renderOptions = {}) {
 }
 
 test('Context fill opacity can be tuned per map theme', () => {
-  const f = fixture(0, { contextOpacity: .32, contextHoverOpacity: .42 });
+  const f = fixture(0, { contextOpacity: .4, contextHoverOpacity: .5 });
   f.layer.render(view('selected'), [{ region: county('neighbor'), parentIndex: 0 }]); f.tick();
-  assert.deepEqual(f.layers.get('context-fill').paint['fill-opacity'], ['case', ['boolean', ['feature-state', 'hover'], false], .42, .32]);
+  assert.deepEqual(f.layers.get('context-fill').paint['fill-opacity'], ['case', ['boolean', ['feature-state', 'hover'], false], .5, .4]);
   f.layer.destroy();
 });
 
