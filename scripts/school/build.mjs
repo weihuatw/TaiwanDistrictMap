@@ -10,6 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const json = async (file) => JSON.parse(await readFile(path.join(root, file), 'utf8'));
 const write = async (file, data) => { await mkdir(path.dirname(path.join(root, file)), { recursive: true }); await writeFile(path.join(root, file), JSON.stringify(data) + '\n'); };
 const sources = [...await json('data/school/sources.json'), ...await json('data/school/national-downloads.json'),...await json('data/school/moe-sources.json'),...await json('data/school/site-sources.json')];
+const nationalAliases = await json('data/school/aliases.json');
 const counties = (await json('public/data/counties.geojson')).features;
 const towns = (await Promise.all(counties.map(c => json(`public/data/towns/${c.properties.code}.geojson`)))).flatMap(c => c.features);
 const norm = s => s.replaceAll('台', '臺').replace(/\s/g, '');
@@ -130,7 +131,7 @@ const nationalReport = await attachNational({root, records, campuses:[...largest
 for(const r of records.values()) r.catchment?.villages.sort((a,b)=>a.code.localeCompare(b.code));
 for(const t of towns) await write(`public/data/school/towns/${t.properties.code}.json`,[...records.values()].filter(r=>r.townCode===t.properties.code).sort((a,b)=>a.name.localeCompare(b.name,'zh-Hant')));
 await writeVillageIndexes([...records.values()], towns.map(t=>t.properties.code), root);
-const report={national:nationalReport,unmatchedSchools,unmatchedVillages,supplementedSchools,skippedLocations,schoolAliases:aliases,villageAliases:{'萬華區 糖?里':'萬華區 糖廍里'}};
+const report={national:nationalReport,unmatchedSchools,unmatchedVillages,supplementedSchools,skippedLocations,schoolAliases:aliases,villageAliases:{'萬華區 糖?里':'萬華區 糖廍里'},scopedVillageAliases:nationalAliases.villages};
 await write('public/data/school/join-report.json',report);
 const counts={schools:records.size,elementary:[...records.values()].filter(r=>r.level==='elementary').length,junior:[...records.values()].filter(r=>r.level==='junior').length,withCatchment:[...records.values()].filter(r=>r.catchment).length};
 const usedSources=new Set([...records.values()].flatMap(r=>[r.positionSource,r.catchment?.sourceId,...(r.catchment?.sourceIds??[])]).filter(Boolean));

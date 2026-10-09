@@ -93,13 +93,31 @@ export async function attachNational({root,records,campuses,shelters,towns,villa
     for(const part of row.parts){
       let text=part.text;
       for(const other of groups.values())if(other.name?.length>2)text=text.replaceAll(other.name,'【學校】');
-      const result=resolveVillageLinks({text,countyCode:row.countyCode,townName:part.townName||c.town.name,omitVillageSuffix:part.omitVillageSuffix&&!/等國小學區|之學區/.test(text),shared:part.shared,partial:part.partial},villages.map(v=>v.properties),towns.map(t=>({name:t.properties.name,countyName:t.properties.countyName,countyCode:t.properties.countyCode})));
+      const result=resolveVillageLinks({text,countyCode:row.countyCode,townName:part.townName||c.town.name,omitVillageSuffix:part.omitVillageSuffix&&!/等國小學區|之學區/.test(text),shared:part.shared,partial:part.partial,villageAliases:nationalAliases.villages},villages.map(v=>v.properties),towns.map(t=>({name:t.properties.name,countyName:t.properties.countyName,countyCode:t.properties.countyCode})));
       for(const v of result.links)add(r,v,v.partial,v.shared);
       for(const v of result.unresolved){
         unmatchedVillages.push({schoolId:r.id,sourceId:row.sourceId,...v});
         r.catchment.unresolvedVillages??=[];
         if(!r.catchment.unresolvedVillages.includes(v.name))r.catchment.unresolvedVillages.push(v.name);
       }
+    }
+    // Some official tables place a school's only mapped range in a note such as
+    // "共同學區：甲里、乙里" while leaving the main catchment cell empty.
+    for(const note of row.notes.matchAll(/(?:共同|自由)學區\s*[:：]\s*([^。；;]*)/gu)){
+      const scope=note[1];if(!scope.trim())continue;
+      const result=resolveVillageLinks({text:scope,countyCode:row.countyCode,townName:c.town.name,omitVillageSuffix:true,shared:/共同學區/u.test(note[0]),villageAliases:nationalAliases.villages},villages.map(v=>v.properties),towns.map(t=>({name:t.properties.name,countyName:t.properties.countyName,countyCode:t.properties.countyCode})));
+      for(const v of result.links)add(r,v,v.partial,v.shared);
+      for(const v of result.unresolved){
+        unmatchedVillages.push({schoolId:r.id,sourceId:row.sourceId,...v});
+        r.catchment.unresolvedVillages??=[];
+        if(!r.catchment.unresolvedVillages.includes(v.name))r.catchment.unresolvedVillages.push(v.name);
+      }
+    }
+    // These official notes make every resident of the county eligible outside
+    // the ordinary assigned zones, so expose the county as a shared catchment.
+    if(/設籍本縣之學生|得不受本縣學區限制/u.test(row.notes)){
+      const result=resolveVillageLinks({text:'全縣',countyCode:row.countyCode,townName:c.town.name,shared:true,villageAliases:nationalAliases.villages},villages.map(v=>v.properties),towns.map(t=>({name:t.properties.name,countyName:t.properties.countyName,countyCode:t.properties.countyCode})));
+      for(const v of result.links)add(r,v,v.partial,v.shared);
     }
   }
 

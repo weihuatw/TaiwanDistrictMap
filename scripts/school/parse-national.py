@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Extract source rows before matching schools or villages; preserve raw wording."""
-import csv,json,re,unicodedata,zipfile
+import argparse,csv,json,re,unicodedata,zipfile
 from pathlib import Path
-from lxml import html,etree
-import pdfplumber
+from xml.etree import ElementTree as ET
 ROOT=Path(__file__).resolve().parents[2];RAW=ROOT/'data/raw/school/nationwide';OUT=ROOT/'data/build/school'
 
 def clean(t):return re.sub(r'\s+','',unicodedata.normalize('NFKC',t or '')).replace('台','臺')
@@ -36,6 +35,7 @@ def part(text,town='',shared=False,partial=False):return dict(text=text or '',to
 def tables(s):
  cache=OUT/(s['id']+'-tables.json')
  if cache.exists():return json.loads(cache.read_text())
+ import pdfplumber
  file=RAW/(s['id']+'.pdf')
  with pdfplumber.open(file) as doc:
   result=[]
@@ -51,6 +51,10 @@ def parse_pdf(s):
  pages=tables(s);(OUT/(s['id']+'-tables.json')).write_text(json.dumps(pages,ensure_ascii=False,indent=2))
  id=s['id'];current=None;schoolTown='';town=s.get('town','');lastColumns={}
  for p in pages:
+  # Changhua's PDF continues town groups across pages without repeating the township.
+  # Do not carry the prior page's last town onto a new page; school matching supplies
+  # the local context and explicit cross-town ranges remain in the source wording.
+  if id=='changhua':town=''
   pageSource={**s}
   if s['level']=='both':
    heading=clean(p['text'][:170])
@@ -146,7 +150,16 @@ def parse_pdf(s):
     if is_school(school) and len(school)<40:current=school;emit(pageSource,current,town,[part(r[2],town)],r[3] if id not in ['taitung-elementary'] else r[4],p['page'])
     elif not school and current and r[2] and n[0] not in ['鄉鎮市','行政區']:emit(pageSource,current,town,[part(r[2],town)],page=p['page'])
 
-for s in json.loads((ROOT/'data/school/national-sources.json').read_text()):
+all_sources=json.loads((ROOT/'data/school/national-sources.json').read_text())
+parser=argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--source',action='append',help='Parse only the selected source ID; may be repeated.')
+args=parser.parse_args()
+sources=all_sources
+if args.source:
+ missing=set(args.source)-{s['id'] for s in all_sources}
+ if missing:raise SystemExit('Unknown source ID: '+', '.join(sorted(missing)))
+ sources=[s for s in all_sources if s['id'] in args.source]
+for s in sources:
  fmt=s['format'];f=RAW/(s['id']+'.'+fmt)
  if not f.exists() or fmt=='page':continue
  start=len(rows)
@@ -158,18 +171,23 @@ for s in json.loads((ROOT/'data/school/national-sources.json').read_text()):
    if s['id'].startswith('newtaipei'):emit(s,r['sname'],r['district'],[part(r['pzoon'],r['district']),part(r['fzoon'],r['district'],shared=True)],r['mark'])
    else:emit(s,r['校名'],'',[part(r['學區範圍'])])
  elif fmt=='html':
+  from lxml import html
   doc=html.fromstring(f.read_bytes())
   for tr in doc.xpath('//tr'):
    cells=tr.xpath('./td|./th');r=[c.text_content().strip() for c in cells]
    if len(r)==3 and is_school(clean(r[1])) and len(clean(r[1]))<40:emit(s,r[1],r[0],[part(r[2],r[0])])
  elif fmt=='odt':
-  with zipfile.ZipFile(f) as z:doc=etree.fromstring(z.read('content.xml'))
+  with zipfile.ZipFile(f) as z:doc=ET.fromstring(z.read('content.xml'))
   ns={'t':'urn:oasis:names:tc:opendocument:xmlns:table:1.0','text':'urn:oasis:names:tc:opendocument:xmlns:text:1.0'};currentTown=''
-  for tr in doc.xpath('//t:table-row',namespaces=ns):
-   r=['\n'.join(c.xpath('.//text:p//text()',namespaces=ns)) for c in tr.xpath('./t:table-cell|./t:covered-table-cell',namespaces=ns)]
+  for tr in doc.findall('.//t:table-row',ns):
+   cells=[c for c in list(tr) if c.tag in ('{'+ns['t']+'}table-cell','{'+ns['t']+'}covered-table-cell')]
+   r=['\n'.join(value for p in c.findall('.//text:p',ns) if (value:=''.join(p.itertext()).strip())) for c in cells]
    if len(r)<3:continue
    if clean(r[0]).endswith(('鄉','鎮','市')):currentTown=clean(r[0])
-   if is_school(clean(r[1])) and len(clean(r[1]))<40:emit(s,r[1],currentTown,[part(r[2],currentTown),part(r[3] if len(r)>3 else '',currentTown,shared=True)])
- print(s['id'],len(rows)-start,flush=True)
+   if is_school(clean(r[1])) and len(clean(r[1]))<40:emit(s,r[1],currentTown,[part(r[2],currentTown),part(r[3] if len(r)>3 else '',currentTown,shared=True)],notes=r[4] if len(r)>4 else '')
+print(s['id'],len(rows)-start,flush=True)
+if args.source:
+ existing=json.loads((OUT/'national-rows.json').read_text()) if (OUT/'national-rows.json').exists() else []
+ rows=[r for r in existing if r['sourceId'] not in args.source]+rows
 OUT.mkdir(parents=True,exist_ok=True);(OUT/'national-rows.json').write_text(json.dumps(rows,ensure_ascii=False,indent=2)+'\n')
 print('TOTAL',len(rows))

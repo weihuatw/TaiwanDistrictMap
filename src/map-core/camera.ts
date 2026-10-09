@@ -3,6 +3,17 @@ import type { Camera, Padding, Region, View } from './types';
 
 export const TAIWAN_BOUNDS: LngLatBoundsLike = [[118.05, 21.75], [122.12, 26.42]];
 
+function detailBounds(region: Region) {
+  const full=region.properties.bounds,focus=region.properties.focusBounds;
+  const fullArea=(full[2]-full[0])*(full[3]-full[1]);
+  const focusArea=(focus[2]-focus[0])*(focus[3]-focus[1]);
+  const fullSpan=Math.max(full[2]-full[0],full[3]-full[1]);
+  // Some village polygons include distant offshore islets. Keep their full official
+  // geometry, but center detail views on the Taiwan-area bounds when those islets
+  // would make the selected village unreadably small or send the camera far away.
+  return fullSpan>0.5&&fullArea>Math.max(focusArea*25,0.02)?focus:full;
+}
+
 export function createCameraController(map: Map, getPadding: () => Padding, duration: number) {
   const zeroPadding = { top: 0, right: 0, bottom: 0, left: 0 };
   let preview: { original: Camera; frame: string | null } | null = null;
@@ -21,7 +32,7 @@ export function createCameraController(map: Map, getPadding: () => Padding, dura
   };
   const fit = (view: View, animationDuration = duration) => {
     const region = view.selected ?? view.path.at(-1);
-    const bounds = region ? view.level === 'detail' ? region.properties.bounds : region.properties.focusBounds : null;
+    const bounds = region ? view.level === 'detail' ? detailBounds(region) : region.properties.focusBounds : null;
     const target: LngLatBoundsLike = bounds ? [[bounds[0], bounds[1]], [bounds[2], bounds[3]]] : TAIWAN_BOUNDS;
     const maxZoom = view.level === 'detail' || view.level === 'village' ? 16 : 14;
     const alreadyMoving = preview?.frame === frameKey(target, maxZoom);

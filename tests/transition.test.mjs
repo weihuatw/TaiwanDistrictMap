@@ -81,6 +81,13 @@ test('Small towns and catchments can fill the viewport beyond zoom 14',()=>{
   f.camera.fit({level:'detail',path:[smallTown],selected:smallTown});
   assert.equal(f.fits.at(-1).options.maxZoom,16);
 });
+test('Detail camera bounds ignore distant offshore fragments when they overwhelm the local village',()=>{
+  const f=cameraFixture();
+  const dashi={...town,properties:{...town.properties,level:'village',bounds:[121.839048,24.927924,124.561154,25.928878],focusBounds:[121.839048,24.927924,121.904671,24.964388]}};
+  f.camera.fit({level:'detail',path:[dashi],selected:dashi});
+  assert.deepEqual(f.fits[0].bounds,[[121.839048,24.927924],[121.904671,24.964388]]);
+  assert.equal(f.fits[0].options.maxZoom,16);
+});
 test('The final region fit updates when the mobile sheet height changes while loading',()=>{
   const f=cameraFixture();f.camera.previewRegion(county);
   f.setPadding({top:50,left:20,right:50,bottom:300});
