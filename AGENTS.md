@@ -45,7 +45,7 @@ npm run dev -- --port 5173 --strictPort
 - `src/routing/hash-router.ts` 管理每層一筆的瀏覽器歷史：下鑽新增、同層切換／篩選替換、跨祖先切換重建分支，直接連結補父層。網站返回、麵包屑與瀏覽器返回遵循相同階層。
 - `RegionNavigator.restorePath()`、`SchoolNavigator.restorePath()` 原子還原深層路由，沿用請求序號、重試與相機還原。房價選取也由 navigator 管理。
 - query 在 hash 內，以路由解析；不要直接寫 `location.search` 或從 panel 呼叫 `history.replaceState()` 破壞路由歷史。
-- 根入口只靜態載入共用 CSS 與路由器，再依 hash 動態載入當前主題程式；各主題 CSS 由自己的 `src/apps/<theme>/main.ts` 引入。Vite 將共同地圖核心抽成共享 chunk，只在進入地圖時載入。不要在 `src/main.ts` 靜態匯入所有主題，亦不要改成先等待 CSS 再匯入主題程式的串行流程。
+- 根 HTML 的 build bootstrap 依 hash 提前預載當前主題的靜態依賴、CSS 與 counties，再由路由器正常動態匯入；共用 CSS 靜態載入，主題 CSS 由自己的 `src/apps/<theme>/main.ts` 引入。CSS preload 只提前下載，Vite 仍套用並等待它就緒。不要在 `src/main.ts` 靜態匯入所有主題，亦不要改成先等待 CSS 再下載主題程式的串行流程。
 - 同主題路由還原沿用已啟動應用；跨主題先清理舊應用，再載入新主題。`src/routing/theme-app-host.ts` 的請求序號會丟棄晚到的舊主題模組載入；載入失敗要能重試。分享在資料載入及錯誤期間停用。
 - 路由回歸見 `tests/routing.test.mjs`。新增主題需同步更新主題路由、啟動器與 shell 連結；舊 HTML 多入口可作相容入口，無須生成各區 HTML。
 
@@ -54,6 +54,7 @@ npm run dev -- --port 5173 --strictPort
 | 位置 | 責任與修改時注意事項 |
 | --- | --- |
 | `src/main.ts`、`src/routing/theme-app-host.ts`、各應用 `entry.ts` | 共用路由啟動器按需載入單一主題；共用 CSS 靜態載入、主題 CSS 隨主題模組載入；舊 HTML 保持為相容轉址入口 |
+| `scripts/vite/initial-preload.mjs` | 正式建置時依實際 chunk 產生根 HTML 的 hash 主題 preload；只提前下載目前主題靜態依賴／CSS 及 counties，支援當次 base |
 | `src/map-core/create-map.ts` | TomTom 底圖、無 key 預覽、MapLibre worker、縮放與比例尺控制 |
 | `src/map-core/boundaries.ts` | 按父層分檔載入 GeoJSON；成功結果快取，失敗不快取，請求逾時 20 秒 |
 | `src/map-core/navigation.ts` | 基本與所得頁導覽、歷史視角、灰色鄰區切換、非同步請求序號 |
@@ -101,6 +102,7 @@ npm run dev -- --port 5173 --strictPort
 - 使用 `easeTo()` 讓 zoom 直接插值；一般 `fitBounds()` 預設的 `flyTo()` 可能為飛行弧線先縮小，需避免再引入縮放反轉。
 - 村里概覽、學區及 detail 的 maxZoom 為 16；全臺／縣市相關概覽為 14。小區域不應一律被限制在 14。
 - 相同預覽與最後取景不用重新啟動動畫。去重鍵需包含 bounds、maxZoom、padding；資訊面板高度改變時仍要更新取景。
+- 第一個 View 直接定位（duration 0），包含深層連結及晚到樣式；既有預覽、後續進入／同層切換／返回保留動畫與先前視角。不要重新引入學區首載等待 720ms 取景動畫才畫界線。
 - 地圖 resize 可重新 fit；預覽未完成時不能被舊 View 的 resize fit 打斷。
 
 相關回歸測試集中在 `tests/transition.test.mjs`。
@@ -261,12 +263,13 @@ npm run build
 git diff --check
 ```
 
-2026-10-09 路由更新後全套為 96 個 Node 測試、12 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
+2026-10-09 首載更新後全套為 105 個 Node 測試、12 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
 
 | 測試 | 主要涵蓋 |
 | --- | --- |
 | `tests/navigation.test.mjs`、`boundaries.test.mjs` | 導覽、快取、競態、返回、失敗重試及清理 |
 | `tests/transition.test.mjs` | I/O 前預覽、單次縮放、padding、返回／取消、手機面板高度變化 |
+| `tests/initial-preload.test.mjs`、`region-layer.test.mjs` | build preload 的目前主題／靜態依賴／base／CSS 等待、首次直接定位、後續動畫、晚到樣式及更新排程 |
 | `tests/school.test.mjs`、`school-data.test.mjs` | 第三層學校模式、filter、跨區學區、解析與里名語境 |
 | `tests/income.test.mjs`、`income_parser_test.py` | 指標、路徑、級距、缺漏及嵌套 HTML |
 | `tests/population.test.mjs`、`scripts/population/check.py` | 人口分片快取／重試、年月、村里代碼、年齡與行政區加總 |

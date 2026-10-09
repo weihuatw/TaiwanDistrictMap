@@ -22,7 +22,7 @@ const view = code => ({ level: 'town', path: [county('parent')], data: { type: '
 
 function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
   let moving = false, nextFrame = 0, layouts = 0, hasStyle = styleAvailable;
-  const frames = new Map(), events = new Map(), sources = new Map(), layers = new Map();
+  const frames = new Map(), events = new Map(), sources = new Map(), layers = new Map(), eases = [];
   const canvas = { style: {}, addEventListener() {}, removeEventListener() {} };
   const container = { clientWidth: 390, clientHeight: 844 };
   globalThis.requestAnimationFrame = fn => { frames.set(++nextFrame, fn); return nextFrame; };
@@ -35,7 +35,7 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
     off(name, fn) { events.get(name)?.delete(fn); },
     getCenter: () => ({ lng: 120, lat: 23 }), getZoom: () => 7, getBearing: () => 0, getPitch: () => 0,
     cameraForBounds: () => ({ center: [121.5, 24.5], zoom: 11 }),
-    easeTo(options) { moving = options.duration > 0; },
+    easeTo(options) { eases.push(options); moving = options.duration > 0; },
     getCanvas: () => canvas, getContainer: () => container, getStyle: () => ({ layers: [] }),
     getSource: id => sources.get(id), isSourceLoaded: id => sources.get(id)?.loaded ?? false,
     addSource(id, options) { sources.set(id, { data: options.data, loaded: false, setData(data) { this.data = data; this.loaded = false; } }); },
@@ -48,7 +48,7 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
   };
   const layer = createRegionLayer(map, { duration, deferUntilMoveEnd: true, fadeDuration: 180, ...renderOptions,
     getPadding: () => ({ top: 0, right: 0, bottom: 0, left: 0 }), onSelect() {} });
-  return { layer, map, sources, layers, emit, get layouts() { return layouts; },
+  return { layer, map, sources, layers, eases, emit, get layouts() { return layouts; },
     tick() { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(fn => fn()); },
     stop() { moving = false; emit('moveend'); },
     start() { moving = true; emit('movestart'); },
@@ -57,6 +57,34 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
     get listenerCount() { return [...events.values()].reduce((sum, set) => sum + set.size, 0); },
   };
 }
+
+test('First view positions immediately; later navigation and returning retain camera animations', () => {
+  const f = fixture();
+  f.layer.render(view('initial'), [], true); f.tick();
+  assert.equal(f.eases[0].duration, 0);
+  assert.equal(f.sources.get('regions').data.features[0].id, 'initial');
+  f.layer.render(view('next'), []); f.tick();
+  assert.equal(f.eases.at(-1).duration, 720);
+  assert.equal(f.sources.get('regions').data.features[0].id, 'initial');
+  f.stop(); f.tick();
+  const camera = { center: [120, 23], zoom: 7, bearing: 0, pitch: 0 };
+  f.layer.render({ ...view('returned'), camera }, [], true);
+  assert.equal(f.eases.at(-1).duration, 720);
+  assert.deepEqual(f.eases.at(-1).center, camera.center);
+  f.layer.destroy();
+});
+
+test('An initial saved camera restores immediately even when basemap style arrives late', () => {
+  const f = fixture(720, {}, false);
+  const camera = { center: [120, 23], zoom: 7, bearing: 0, pitch: 0 };
+  f.layer.render({ ...view('initial'), camera }, [], true);
+  assert.equal(f.eases.length, 0);
+  f.loadStyle(); f.tick();
+  assert.equal(f.eases[0].duration, 0);
+  assert.deepEqual(f.eases[0].center, camera.center);
+  assert.equal(f.sources.get('regions').data.features[0].id, 'initial');
+  f.layer.destroy();
+});
 
 test('Administrative overlays start on style readiness without waiting for basemap tiles', () => {
   let readyCalls = 0;

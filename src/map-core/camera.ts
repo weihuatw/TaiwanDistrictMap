@@ -29,10 +29,10 @@ export function createCameraController(map: Map, getPadding: () => Padding, dura
     if (alreadyMoving && animationDuration !== 0) return;
     frame(target, maxZoom, animationDuration);
   };
-  const restore = (view: View) => {
+  const restore = (view: View, animationDuration = duration) => {
     preview = null;
-    if (view.camera) map.easeTo({ ...view.camera, duration, padding: zeroPadding });
-    else fit(view);
+    if (view.camera) map.easeTo({ ...view.camera, duration: animationDuration, padding: zeroPadding });
+    else fit(view, animationDuration);
   };
   const previewRegion = (region: Region) => {
     const b = region.properties.focusBounds;

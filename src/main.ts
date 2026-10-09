@@ -20,10 +20,12 @@ function showLoading() {
   root.innerHTML = '<div class="loading-pill" role="status"><span class="spinner" aria-hidden="true"></span><span>載入地圖…</span></div>';
 }
 
-function showLoadError(retry: () => void) {
+function showLoadError() {
   root.className = '';
   root.innerHTML = '<div class="error-banner" role="alert"><span>地圖程式載入失敗，請重試。</span><button type="button">重試</button></div>';
-  root.querySelector('button')?.addEventListener('click', retry, { once: true });
+  // Browsers remember failed module fetches. Reload resets that module map
+  // while retaining the hash and the existing hierarchy history entries.
+  root.querySelector('button')?.addEventListener('click', () => location.reload(), { once: true });
 }
 
 const appHost = createThemeAppHost(routing, loaders, showLoading, showLoadError);

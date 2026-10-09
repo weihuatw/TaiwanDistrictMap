@@ -109,8 +109,11 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   }
   function present(current: View, restore: boolean) {
     updates.cancel(); reveals.cancel();
-    if (restore) camera.restore(current);
-    else camera.fit(current);
+    // The first view has no previous map to transition from. Do not delay its
+    // geometry behind an initial camera animation; retain ongoing previews.
+    const duration = !displayedView && !camera.isPreviewing ? 0 : undefined;
+    if (restore) camera.restore(current, duration);
+    else camera.fit(current, duration);
     const update = () => {
       displayedView = current; displayedContext = contextRegions;
       renderMap(current);
