@@ -135,3 +135,7 @@ npm run preview -- --base /TaiwanDistrictMap/ --port 4173 --strictPort
 TomTom 底圖使用 SDK 的 `standardLight` vector style，語言設為 `zh-Hant`，不載入交通與地形等選用模組。行政區使用 MapLibre GeoJSON 填色／線段圖層，位於底圖文字圖層下方，保持道路及地名文字清晰。底圖、行政區資料和導覽各自獨立。官方文件：[SDK 樣式設定](https://docs.tomtom.com/maps-sdk-js/api-reference/types/map.StyleInput.html)、[Orbis 向量地圖](https://developer.tomtom.com/map-display-api/documentation/tomtom-orbis-maps/v1/product-information/introduction)。
 
 SDK 版本沿用 ParkingMap 的 `0.51.3`；MapLibre 使用相容的 `6.13.0`。圖資處理工具只在建置資料時使用，不包含於前端網頁。
+
+## 分享網址與返回
+
+五個地圖使用根目錄 hash 路由，例如 `#/school/63000/63000020/323604-elementary`。行政區與學校以代碼／ID 識別，「複製分享」附上中文位置標題；同層切換不累積瀏覽器歷史，返回回上一層。舊 `.html` 網址仍可開啟並導向新入口。格式與實作見 [網址與導覽](docs/routing.md)。

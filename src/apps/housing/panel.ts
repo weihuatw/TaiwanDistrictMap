@@ -12,20 +12,21 @@ const area = (n: number | null) => n == null ? '—' : `${(n*121/400).toFixed(1)
 
 export function createHousingPanel(shell: Shell, repo: HousingRepository, onFilter: (year: number, group: HousingGroup) => void) {
   shell.root.classList.add('housing-page');
+  let alive = true;
   const controls=document.createElement('section'); controls.className='housing-controls';
   controls.innerHTML='<label>交易年度 <select id="housing-year" aria-label="交易年度"></select></label><label>住宅型態 <select id="housing-group" aria-label="住宅型態"></select></label>';
   const yearSelect=controls.querySelector<HTMLSelectElement>('#housing-year')!;
   for (const y of [2025,2024]) { const o=document.createElement('option');o.value=String(y);o.textContent=`${y} 年`;yearSelect.append(o); }
   const groupSelect=controls.querySelector<HTMLSelectElement>('#housing-group')!;
   for (const g of GROUPS) { const o=document.createElement('option');o.value=g;o.textContent=groupName(g);groupSelect.append(o); }
-  yearSelect.value=new URLSearchParams(location.search).get('year')==='2024'?'2024':'2025';
-  groupSelect.value=GROUPS.includes(new URLSearchParams(location.search).get('type') as HousingGroup)?new URLSearchParams(location.search).get('type')!: 'standard';
+  yearSelect.value=new URLSearchParams(location.hash.split('?')[1] ?? location.search.slice(1)).get('year')==='2024'?'2024':'2025';
+  groupSelect.value=GROUPS.includes(new URLSearchParams(location.hash.split('?')[1] ?? location.search.slice(1)).get('type') as HousingGroup)?new URLSearchParams(location.hash.split('?')[1] ?? location.search.slice(1)).get('type')!: 'standard';
   shell.viewExtra.append(controls);
   const summary=document.createElement('section');summary.className='housing-summary';summary.setAttribute('aria-label','成交統計');
   summary.innerHTML='<p class="housing-metric-label">可比住宅成交單價中位數</p><strong class="housing-price">載入中…</strong><p class="housing-description"></p><div class="housing-facts"><span>有效樣本 <b class="housing-eligible">—</b></span><span>住宅案件 <b class="housing-residential">—</b></span></div><p class="housing-spread"></p><p class="housing-exclusions"></p>';
   shell.viewExtra.append(summary);
   const legend=document.createElement('section');legend.className='housing-legend';legend.setAttribute('aria-label','房價色階圖例');
-  legend.innerHTML='<div class="housing-legend-title"><strong>成交單價中位數</strong><span>萬元／坪</span></div><div class="housing-scale"></div><p>固定級距；樣本數少於10不著色。</p><div class="housing-key"><span></span>灰色：無足夠可比樣本</div><p class="housing-note">僅統計住家用公寓、華廈與住宅大樓；透天可切換。成交不代表區內所有住宅行情。</p><a class="housing-map-link" href="./index.html">行政區瀏覽 ↗</a>';
+  legend.innerHTML='<div class="housing-legend-title"><strong>成交單價中位數</strong><span>萬元／坪</span></div><div class="housing-scale"></div><p>固定級距；樣本數少於10不著色。</p><div class="housing-key"><span></span>灰色：無足夠可比樣本</div><p class="housing-note">僅統計住家用公寓、華廈與住宅大樓；透天可切換。成交不代表區內所有住宅行情。</p><a class="housing-map-link" href="#/admin">行政區瀏覽 ↗</a>';
   const scale=legend.querySelector('.housing-scale')!;
   for(const [i,label] of LABELS.entries()){const item=document.createElement('div');item.className='housing-scale-item';const sw=document.createElement('span');sw.style.background=COLORS[i];const tx=document.createElement('small');tx.textContent=label;item.append(sw,tx);scale.append(item);}
   shell.uiContainer.append(legend);shell.addMobileContent(legend);
@@ -38,8 +39,10 @@ export function createHousingPanel(shell: Shell, repo: HousingRepository, onFilt
   let year=Number(yearSelect.value), group=groupSelect.value as HousingGroup, manifest:HousingManifest|null=null;
   let currentTown:string|null=null, page=0, request=0, showAll=false;
   let lastView:View|null=null;const national=new Map<string,HousingSummary>();let nationalRequest='';
-  const query=new URLSearchParams(location.search);
-  function updateFilter(){year=Number(yearSelect.value);group=groupSelect.value as HousingGroup;page=0;currentTown=null;query.set('year',String(year));query.set('type',group);history.replaceState(null,'',`${location.pathname}?${query}`);onFilter(year,group);if(manifest)renderSources(manifest);}
+  function updateFilter(){
+    request++; currentTown=null; page=0;
+    onFilter(Number(yearSelect.value), groupSelect.value as HousingGroup);
+  }
   yearSelect.addEventListener('change',updateFilter);groupSelect.addEventListener('change',updateFilter);
   allButton.addEventListener('click',()=>{showAll=!showAll;allButton.textContent=showAll?'只顯示住宅樣本':'顯示排除案件';page=0;if(currentTown)void loadTransactions(currentTown);});
   prev.addEventListener('click',()=>{page=Math.max(0,page-1);if(currentTown)void loadTransactions(currentTown);});
@@ -49,7 +52,7 @@ export function createHousingPanel(shell: Shell, repo: HousingRepository, onFilt
     const token=++request;currentTown=town;pageLabel.textContent='載入成交資料…';rows.replaceChildren();prev.disabled=true;next.disabled=true;
     try{
       const result=await repo.transactionPage(town,year,page);
-      if(token!==request)return;
+      if(!alive || token!==request)return;
       const candidates=result.records.filter(t=>showAll || (t.mainUse==='住家用' && (group==='standard'?['apartment','elevator_low','elevator_high'].includes(t.buildingTypeGroup??''):group==='house'?t.buildingTypeGroup==='house':t.buildingTypeGroup===group)));
       pageLabel.textContent=`第 ${page+1} 批 · 收錄${result.total.toLocaleString()}筆住家型態案件；本批${candidates.length}筆符合所選條件`;
       for(const t of candidates){const row=document.createElement('article');row.className='housing-row';
@@ -60,12 +63,18 @@ export function createHousingPanel(shell: Shell, repo: HousingRepository, onFilt
       }
       if(!candidates.length){const empty=document.createElement('p');empty.textContent='本批沒有符合條件的案件，可切換顯示排除案件或前後批次。';rows.append(empty);}
       prev.disabled=page===0;next.disabled=!result.hasNext;
-    }catch(error){if(token!==request)return;pageLabel.textContent=`成交清單載入失敗：${error instanceof Error?error.message:'未知錯誤'}`;const retry=document.createElement('button');retry.textContent='重試';retry.addEventListener('click',()=>void loadTransactions(town));rows.append(retry);}
+    }catch(error){if(!alive || token!==request)return;pageLabel.textContent=`成交清單載入失敗：${error instanceof Error?error.message:'未知錯誤'}`;const retry=document.createElement('button');retry.textContent='重試';retry.addEventListener('click',()=>void loadTransactions(town));rows.append(retry);}
+  }
+  function setFilter(nextYear: number, nextGroup: HousingGroup) {
+    if (year === nextYear && group === nextGroup) return;
+    year = nextYear; group = nextGroup;
+    yearSelect.value = String(year); groupSelect.value = group;
+    currentTown = null; request++; page = 0;
   }
   function render(view:View){
     lastView=view;const feature=view.selected??view.path.at(-1);const key=`${year}/${group}`;
     const record=feature?repo.get(year,group,feature.properties.code):national.get(key)??null;
-    if(!feature&&!record&&nationalRequest!==key){nationalRequest=key;summary.querySelector<HTMLElement>('.housing-price')!.textContent='載入全臺統計…';void repo.getNational(year,group).then(value=>{if(nationalRequest===key){national.set(key,value);if(lastView)render(lastView);}}).catch(()=>{if(nationalRequest===key)summary.querySelector<HTMLElement>('.housing-price')!.textContent='全臺彙總載入失敗';});}
+    if(!feature&&!record&&nationalRequest!==key){nationalRequest=key;summary.querySelector<HTMLElement>('.housing-price')!.textContent='載入全臺統計…';void repo.getNational(year,group).then(value=>{if(alive && nationalRequest===key){national.set(key,value);if(lastView)render(lastView);}}).catch(()=>{if(alive && nationalRequest===key)summary.querySelector<HTMLElement>('.housing-price')!.textContent='全臺彙總載入失敗';});}
     const price=summary.querySelector<HTMLElement>('.housing-price')!;price.textContent=record?formatPrice(record.status==='insufficient'?null:record.medianWanPing):feature?formatPrice(null):price.textContent;
     summary.querySelector<HTMLElement>('.housing-description')!.textContent=feature?`${feature.properties.name} · ${year} 年 · ${groupName(group)}${record?.status==='low_sample'?' · 樣本偏少':''}`:`${year} 年全臺各縣市成交統計 · ${groupName(group)}`;
     summary.querySelector<HTMLElement>('.housing-eligible')!.textContent=record?record.eligibleCount.toLocaleString('zh-TW'):'—';
@@ -84,5 +93,5 @@ export function createHousingPanel(shell: Shell, repo: HousingRepository, onFilt
     body.style.whiteSpace='pre-line';const audit=document.createElement('a');audit.href=`${BASE}data/housing/reports/serial-conflicts.json`;audit.target='_blank';audit.rel='noopener noreferrer';audit.textContent='批次衝突紀錄 ↗';const license=document.createElement('a');license.href=m.licenseUrl;license.target='_blank';license.rel='noopener noreferrer';license.textContent=m.license+' ↗';section.append(link,body,audit,license);shell.sourceContent.replaceChildren(section);
   }
   function obstacles():Rect[]{if(innerWidth<=760)return[];const origin=shell.mapContainer.getBoundingClientRect(),rect=legend.getBoundingClientRect();return[{x:rect.x-origin.x-6,y:rect.y-origin.y-6,w:rect.width+12,h:rect.height+12}];}
-  return {render,tooltip,showSources,obstacles,get year(){return year},get group(){return group},get onFilter(){return updateFilter}};
+  return {render,tooltip,showSources,obstacles,setFilter,destroy(){alive=false;request++;lastView=null;},get year(){return year},get group(){return group},get onFilter(){return updateFilter}};
 }

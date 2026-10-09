@@ -97,10 +97,22 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   panelResize.observe(el('selection-card'));
   infoPanel.addEventListener('transitionend', updateSheet);
   if (options.brandTitle) el('brand-title').textContent = options.brandTitle;
-  const currentPage = location.pathname.split('/').filter(Boolean).at(-1) ?? 'index.html';
+  const currentPage = location.hash.split('/')[1]?.split('?')[0] ?? 'admin';
   root.querySelectorAll<HTMLAnchorElement>('[data-map-page]').forEach((link) => {
     if (link.dataset.mapPage === currentPage) link.setAttribute('aria-current', 'page');
   });
+  el('share-button').addEventListener('click', async () => {
+    if (mapContainer.getAttribute('aria-busy') === 'true') return;
+    const names = [...root.querySelectorAll('#breadcrumbs > button, #breadcrumbs > span:not(.breadcrumb-divider)')].map(node => node.textContent).filter(name => name && name !== '全臺');
+    const title = `${names.join('・') || '全臺'}｜${options.brandTitle ?? '行政區地圖'}`;
+    const text = `${title}\n${location.href}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      if (!lifetime.signal.aborted) { el('share-button').textContent = '已複製'; announce('已複製中文標題與分享連結。'); }
+    } catch {
+      if (!lifetime.signal.aborted) { window.prompt('請複製以下分享文字', text); announce('請手動複製分享文字。'); }
+    }
+  }, { signal: lifetime.signal });
   if (options.loadingText) el('loading-text').textContent = options.loadingText;
   if (options.sourceIntro) root.querySelector<HTMLElement>('.source-intro')!.textContent = options.sourceIntro;
   const getColor = options.getColor ?? ((region: Region) => region.properties.color);
@@ -110,14 +122,14 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   const hideTooltip = () => { el('hover-tooltip').hidden = true; };
   const clearError = () => { el('error-banner').hidden = true; retry = null; };
   const setBusy = (loading: boolean) => {
-    el('loading').hidden = !loading;
+    el('loading').hidden = !loading; el<HTMLButtonElement>('share-button').disabled = loading || retry !== null;
     mapContainer.setAttribute('aria-busy', String(loading));
     if (loading) hideTooltip();
   };
   const showError = (error: unknown, retryAction: () => void) => {
-    retry = retryAction;
+    retry = retryAction; el<HTMLButtonElement>('share-button').disabled = true;
     // Upstream error messages may contain credentials; show only safe text.
-    el('error-text').textContent = error instanceof Error && error.message === '此區域目前沒有下一層圖資'
+    el('error-text').textContent = error instanceof Error && ['此區域目前沒有下一層圖資', '此網址的行政區不存在', '此網址的學校不存在'].includes(error.message)
       ? error.message : options.errorText ?? '行政區圖資載入失敗，請重試。';
     el('error-banner').hidden = false;
     announce('行政區圖資載入失敗。');
@@ -156,7 +168,7 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     return rectangles;
   };
   function render(current: View) {
-    view = current; clearError();
+    view = current; clearError(); el('share-button').textContent = '複製分享';
     const title = current.selected?.properties.name ?? current.path.at(-1)?.properties.name ?? '臺灣';
     el('location-title').textContent = title;
     document.title = `${title}｜${options.pageTitle ?? '臺灣行政區地圖'}`;
@@ -166,10 +178,11 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
       ? `代碼 ${current.selected!.properties.code}`
       : `${current.data.features.length} 個${levelLabels[current.level]}${current.level === 'village' ? '範圍' : ''}`;
     el('back-button').hidden = current.level === 'county';
-    const previous = current.path.length > 1 ? current.path.at(-2)!.properties.name : '全臺';
+    const breadcrumbPath = current.selected?.properties.level === 'town' ? [...current.path, current.selected] : current.path;
+    const previous = breadcrumbPath.length > 1 ? breadcrumbPath.at(-2)!.properties.name : '全臺';
     el('back-label').textContent = `返回${previous}`;
     const crumbs = el('breadcrumbs'); crumbs.replaceChildren();
-    const names = ['全臺', ...current.path.map((f) => f.properties.name)];
+    const names = ['全臺', ...breadcrumbPath.map((f) => f.properties.name)];
     for (const [i, name] of names.entries()) {
       if (i) { const separator = document.createElement('span'); separator.className = 'breadcrumb-divider'; separator.textContent = '›'; crumbs.append(separator); }
       if (i < names.length - 1) {

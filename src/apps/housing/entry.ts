@@ -1,8 +1,4 @@
-import '../../ui/style.css';
-import './style.css';
-import { startHousingApp } from './main';
-
-const root=document.getElementById('app');
-if(!root)throw new Error('Missing application root');
-const app=startHousingApp(root);
-import.meta.hot?.dispose(()=>app.destroy());
+const query = location.hash.includes('?') ? location.hash.split('?')[1] : location.search.slice(1);
+const path = location.hash.startsWith('#/housing') ? location.hash : '#/housing' + (query ? '?' + query : '');
+location.replace(import.meta.env.BASE_URL + path);
+export {};

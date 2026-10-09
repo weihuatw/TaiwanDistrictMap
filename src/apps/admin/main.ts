@@ -1,3 +1,4 @@
+import type { HashRouter, Route } from '../../routing/hash-router';
 import { BoundaryRepository } from '../../map-core/boundaries';
 import { createMap } from '../../map-core/create-map';
 import { RegionNavigator } from '../../map-core/navigation';
@@ -8,7 +9,7 @@ import { PopulationRepository } from '../../data/population';
 import { createPopulationPanel } from './population-panel';
 
 /** Compose the administrative explorer from shared map and UI modules. */
-export function startAdminApp(root: HTMLElement) {
+export function startAdminApp(root: HTMLElement, routing?: HashRouter) {
   const boundaries = new BoundaryRepository(`${import.meta.env.BASE_URL}data/`);
   const population = new PopulationRepository(`${import.meta.env.BASE_URL}data/population/`);
   const getColor = (region: Region) => region.properties.color;
@@ -30,6 +31,7 @@ export function startAdminApp(root: HTMLElement) {
   const navigator = new RegionNavigator(
     (file) => boundaries.load(file),
     (view, restore = false) => {
+      routing?.commit({ theme: 'admin', ids: view.path.map(r => r.properties.code), query: '' });
       shell.render(view);
       populationPanel.render(view);
       layer?.render(view, navigator.context, restore);
@@ -38,6 +40,7 @@ export function startAdminApp(root: HTMLElement) {
     (error, retry) => shell.showError(error, retry),
     region => layer?.previewRegion(region),
   );
+  function restoreRoute(route: Route) { return navigator.restorePath(route.ids); }
   try {
     basemap = createMap({ container: shell.mapContainer, apiKey: import.meta.env.VITE_TOMTOM_API_KEY, onStatus: shell.setBasemapStatus });
     layer = createRegionLayer(basemap.map, {
@@ -54,13 +57,14 @@ export function startAdminApp(root: HTMLElement) {
         else void navigator.enter(hit.region, layer.camera());
       },
     });
-    void navigator.start();
+    if (routing) void restoreRoute(routing.current); else void navigator.start();
   } catch { shell.showInitializationError(() => location.reload()); }
   void boundaries.manifest()
     .then((manifest) => { if (alive) shell.renderManifest(manifest); })
     .catch(() => { if (alive) shell.showManifestError(); });
 
   return {
+    restoreRoute,
     destroy() {
       if (!alive) return;
       alive = false; populationPanel.destroy(); navigator.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy();

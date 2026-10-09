@@ -80,6 +80,47 @@ export class RegionNavigator {
     } catch (error) { if (token === this.sequence) this.onError(error, () => this.drill(feature, parentIndex, camera)); }
     finally { if (token === this.sequence) this.onBusy(false); }
   }
+  /** Resolve a shared link atomically, retaining ancestor cameras when available. */
+  async restorePath(ids: string[], townSelection = false): Promise<void> {
+    const token = ++this.sequence;
+    this.onBusy(true);
+    try {
+      const data = await this.load(dataPath('county'));
+      if (token !== this.sequence) return;
+      const previous = this.history;
+      const root = previous[0] ?? { level: 'county' as const, path: [], data, camera: null, selected: null };
+      const next: View[] = [{ ...root, selected: null }];
+      for (const [index, code] of ids.entries()) {
+        const parent = next.at(-1)!;
+        const feature = parent.data.features.find(f => f.properties.code === code);
+        if (!feature) {
+          if (token !== this.sequence) return;
+          if (!this.history.length) { this.history = [next[0]]; this.onChange(this.current!, true); }
+          throw new Error('此網址的行政區不存在');
+        }
+        if (townSelection && index === 1) { next[next.length - 1] = { ...parent, selected: feature }; break; }
+        if (parent.level === 'village') {
+          next.push({ ...parent, level: 'detail', path: [...parent.path, feature], selected: feature });
+        } else {
+          const level = parent.level === 'county' ? 'town' : 'village';
+          const children = await this.load(dataPath(level, code));
+          if (token !== this.sequence) return;
+          const saved = previous[index + 1];
+          const same = saved?.path.map(f => f.properties.code).join('/') === ids.slice(0, index + 1).join('/');
+          next.push({ level, path: [...parent.path, feature], data: children, camera: same ? saved.camera : null, selected: null });
+        }
+      }
+      if (token !== this.sequence) return;
+      this.history = next; this.onChange(this.current!, true);
+    } catch (error) { if (token === this.sequence) this.onError(error, () => this.restorePath(ids, townSelection)); }
+    finally { if (token === this.sequence) this.onBusy(false); }
+  }
+  selectTown(feature: Region | null) {
+    if (this.current?.level !== 'town') return;
+    ++this.sequence; this.onBusy(false);
+    this.history[this.history.length - 1] = { ...this.current, selected: feature };
+    this.onChange(this.current!, true);
+  }
   destroy() { ++this.sequence; this.history = []; }
   back() { this.goTo(this.stack.length - 2); }
   home() { if (this.stack[0]) this.stack[0].camera = null; this.goTo(0); }

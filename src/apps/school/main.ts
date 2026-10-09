@@ -1,3 +1,5 @@
+import './style.css';
+import type { HashRouter, Route } from '../../routing/hash-router';
 import { BoundaryRepository } from '../../map-core/boundaries';
 import { createMap } from '../../map-core/create-map';
 import { createRegionLayer } from '../../map-core/region-layer';
@@ -8,7 +10,7 @@ import { SchoolNavigator, polygonView } from './navigation';
 import { createSchoolMarkers } from './markers';
 import { levelName, schoolColor, type School, type SchoolView, type SchoolManifest } from './types';
 
-export function startSchoolApp(root: HTMLElement) {
+export function startSchoolApp(root: HTMLElement, routing?: HashRouter) {
   root.classList.add('school-page');
   const base = import.meta.env.BASE_URL;
   const boundaries = new BoundaryRepository(`${base}data/`);
@@ -78,6 +80,8 @@ export function startSchoolApp(root: HTMLElement) {
       shell.render(polygons); renderChrome(view);
       if (search) { el<HTMLInputElement>('region-search').value = search; shell.refreshList(); }
       previousPath = pathKey;
+      for (const level of ['elementary', 'junior'] as const) el<HTMLInputElement>(`filter-${level}`).checked = navigator.filter[level];
+      routing?.commit({ theme: 'school', ids: [...view.path.map(r => r.properties.code), ...(view.selected ? [view.selected.id] : [])], query: new URLSearchParams(Object.entries(navigator.filter).filter(([, checked]) => !checked).map(([level]) => [level, 'false'])).toString() });
       const visibleSchools = navigator.visibleSchools;
       layer?.render(polygons, navigator.context, restore, () => {
         markers?.render(view.level === 'school' ? visibleSchools : [], view.selected, view.level === 'school' ? view.path.at(-1) : undefined);
@@ -151,6 +155,7 @@ export function startSchoolApp(root: HTMLElement) {
     }
   }
 
+  function restoreRoute(route: Route) { const params = new URLSearchParams(route.query); if (!navigator.current || !routing?.isHistoryNavigation) for (const level of ['elementary', 'junior'] as const) navigator.filter[level] = params.get(level) !== 'false'; return navigator.restorePath(route.ids); }
   try {
     basemap = createMap({ container: shell.mapContainer, apiKey: import.meta.env.VITE_TOMTOM_API_KEY, onStatus: shell.setBasemapStatus });
     layer = createRegionLayer(basemap.map, {
@@ -167,7 +172,7 @@ export function startSchoolApp(root: HTMLElement) {
       },
     });
     markers = createSchoolMarkers(basemap.map, chooseSchool);
-    void navigator.start();
+    if (routing) void restoreRoute(routing.current); else void navigator.start();
   } catch { shell.showInitializationError(() => location.reload()); }
   void Promise.all([boundaries.manifest(), schools.manifest()]).then(([geometry, manifest]) => {
     if (!alive) return;
@@ -185,7 +190,7 @@ export function startSchoolApp(root: HTMLElement) {
     const audit = document.createElement('a'); audit.href = `${base}data/school/join-report.json`; audit.textContent = '查看資料對照紀錄 ↗'; audit.target = '_blank'; audit.rel = 'noopener noreferrer'; audit.className = 'license-link';
     shell.sourceContent.append(note, audit);
   }).catch(() => { if (alive) shell.showManifestError(); });
-  return { destroy() {
+  return { restoreRoute, destroy() {
     if (!alive) return;
     alive = false; navigator.destroy(); markers?.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy(); root.classList.remove('school-page');
   } };
