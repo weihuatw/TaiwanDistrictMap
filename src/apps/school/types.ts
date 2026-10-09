@@ -12,7 +12,7 @@ export interface SchoolManifest {
   sources: { id: string; title: string; provider: string; datasetUrl: string; release: string; downloadedAt: string; sha256: string }[];
   counts: { schools: number; elementary: number; junior: number; withCatchment: number };
   coverage?: { countyCode: string; countyName: string; schools: number; withCatchment: number; years: number[] }[];
-  catchmentCounties: string[]; catchmentYear: number; notes: string[]; unmatchedSchools: number; unmatchedVillages: number;
+  catchmentCounties: string[]; catchmentYear: number; villageIndex?: string; notes: string[]; unmatchedSchools: number; unmatchedVillages: number;
 }
 export interface SchoolView {
   level: 'county' | 'town' | 'school'; path: Region[]; data: Regions;

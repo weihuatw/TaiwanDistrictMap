@@ -5,7 +5,7 @@ const json = async file => JSON.parse(await readFile(new URL('../../'+file, impo
 const manifest=await json('public/data/school/manifest.json');
 const counties=(await json('public/data/counties.geojson')).features;
 const towns=(await Promise.all(counties.map(c=>json(`public/data/towns/${c.properties.code}.geojson`)))).flatMap(c=>c.features);
-const ids=new Set(), codes=new Set(), sourceIds=new Set(manifest.sources.map(s=>s.id));
+const ids=new Set(), codes=new Set(), sourceIds=new Set(manifest.sources.map(s=>s.id)), villageSchools=new Map();
 const counts={schools:0,elementary:0,junior:0,withCatchment:0};
 const villageCollections=new Map();let crossTown=0,partial=0,shared=0,mapped=0,taipei=0;
 for(const t of towns){
@@ -30,6 +30,7 @@ for(const t of towns){
    const feature=villageCollections.get(v.townCode).features.find(f=>f.properties.code===v.code);
    assert.ok(feature,`${s.name}: missing village ${v.code}`);assert.equal(feature.properties.name,v.name);assert.equal(feature.properties.townCode,v.townCode);
    assert.equal(typeof v.partial,'boolean');assert.equal(typeof v.shared,'boolean');
+   const refs=villageSchools.get(v.townCode)??new Map();const list=refs.get(v.code)??[];list.push({id:s.id,townCode:s.townCode});refs.set(v.code,list);villageSchools.set(v.townCode,refs);
    if(v.townCode!==s.townCode)crossTown++;if(v.partial)partial++;if(v.shared)shared++;
   }
  }
@@ -40,4 +41,11 @@ const daguan=(await json('public/data/school/towns/65000060.json')).find(s=>s.le
 assert.ok(daguan);assert.deepEqual(new Set(daguan.catchment.villages.map(v=>v.name)),new Set(['德安里','小城里','吉祥里','玫瑰里','明城里','達觀里','雙城里','日興里','香坡里']));
 const report=await json('public/data/school/join-report.json');assert.deepEqual(report.unmatchedSchools,[]);assert.deepEqual(report.unmatchedVillages,[]);
 assert.equal(manifest.unmatchedSchools,report.national.unmatchedSchools.length);assert.equal(manifest.unmatchedVillages,report.national.unmatchedVillages.length);
-console.log(`School data: ${counts.schools} records in 22 counties, ${counts.withCatchment} official catchment records (${mapped} with village geometry); ${partial} partial, ${shared} shared, ${crossTown} cross-district links verified.`);
+assert.equal(manifest.villageIndex,'villages/{townCode}.json');
+for(const town of towns){
+ const code=town.properties.code,index=await json(`public/data/school/villages/${code}.json`);
+ assert.equal(index.townCode,code);
+ const expected=Object.fromEntries([...(villageSchools.get(code)??new Map()).entries()].sort(([a],[b])=>a.localeCompare(b)).map(([village,refs])=>[village,refs.sort((a,b)=>a.id.localeCompare(b.id))]));
+ assert.deepEqual(index.villages,expected,`Village school index mismatch for ${code}`);
+}
+console.log(`School data: ${counts.schools} records in 22 counties, ${counts.withCatchment} official catchment records (${mapped} with village geometry); ${partial} partial, ${shared} shared, ${crossTown} cross-district links and reverse indexes verified.`);

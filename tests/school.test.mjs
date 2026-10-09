@@ -70,6 +70,23 @@ test('School I/O preserves codes, caches successes, retries failures and loads n
   await assert.rejects(repository.load('63000010'));assert.equal((await repository.load('63000010')).length,2);await repository.load('63000010');assert.equal(calls,2);
   assert.deepEqual(await repository.load('65000010'),[]);await repository.load('65000010');assert.equal(calls,3);await assert.rejects(repository.load('../private'));
 });
+test('Village school lookup follows reverse indexes to schools in other town shards',async()=>{
+  const calls=[];const manifest={sources:[],villageIndex:'villages/{townCode}.json'};
+  const repository=new SchoolRepository('/data/school/',async url=>{
+    calls.push(url);
+    if(url.endsWith('/manifest.json'))return Response.json(manifest);
+    if(url.endsWith('/villages/65000010.json'))return Response.json({townCode:'65000010',villages:{[crossVillage.id]:[{id:elementary.id,townCode:elementary.townCode}]}});
+    if(url.endsWith('/villages/63000010.json'))return Response.json({townCode:'63000010',villages:{'63000010S01':[]}});
+    if(url.endsWith('/towns/63000010.json'))return Response.json([elementary]);
+    throw new Error(`Unexpected request ${url}`);
+  });
+  const result=await repository.schoolsForVillage(crossVillage.id);
+  assert.deepEqual(result,[elementary]);
+  assert.deepEqual(await repository.schoolsForVillage(crossVillage.id),[elementary]);
+  assert.deepEqual(calls,['/data/school/manifest.json','/data/school/villages/65000010.json','/data/school/towns/63000010.json']);
+  assert.deepEqual(await repository.schoolsForVillage('63000010S01'),[]);
+  await assert.rejects(repository.schoolsForVillage('6500001000'));
+});
 test('Catchment fitting includes cross-district bounds without mutating cached town boundaries',async()=>{
   const f=fixture();await inTown(f);const before=JSON.stringify(town);await f.nav.choose(elementary,camera);
   const v=polygonView(f.nav.current);assert.equal(JSON.stringify(town),before);assert.notEqual(v.path.at(-1),town);assert.equal(v.data.features.length,2);

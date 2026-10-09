@@ -18,6 +18,7 @@
     "school:build": "node scripts/school/build.mjs",
     "school:check": "node scripts/school/check.mjs",
     "school:parse": "${SCHOOL_PYTHON:-python3} scripts/school/parse-national.py",
+    "school:index": "node scripts/school/build-village-index.mjs",
     "housing:fetch": "python3 scripts/housing/fetch.py",
     "housing:build": "python3 scripts/housing/build.py",
     "housing:check": "node scripts/housing/check.mjs",

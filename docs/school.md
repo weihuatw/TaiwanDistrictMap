@@ -36,7 +36,7 @@ npm run build
 
 教育部名錄使用其公開學校搜尋表單查詢國小、國中，保留學校代碼與附設學部代碼後綴。校地使用 119、121 分帶圖資轉成 WGS84。校名依縣市、行政區與學制精確匹配，明確別名保存於 `aliases.json`，不任意以相似校名替代。
 
-公開學校資料為 `public/data/school/towns/{TOWNCODE}.json`，368 個行政區各有檔案，前端依需求載入與快取。國小、國中學校代碼與學部共同構成識別鍵。
+公開學校資料為 `public/data/school/towns/{TOWNCODE}.json`，368 個行政區各有檔案，前端依需求載入與快取。`public/data/school/villages/{TOWNCODE}.json` 是村里到學校的反向索引，包含跨鄉鎮設校的學區；村里資訊卡藉此完整列出涵蓋該里的學校。`school:build` 會一併產生索引，只需重建索引時可執行 `node scripts/school/build-village-index.mjs`。國小、國中學校代碼與學部共同構成識別鍵。
 
 ## 驗證
 

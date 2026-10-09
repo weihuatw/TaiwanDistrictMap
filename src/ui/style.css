@@ -77,13 +77,15 @@ h1 { margin: 0; font-size: 28px; font-weight: 650; letter-spacing: 1px; line-hei
 .population-retry { border: 0; padding: 0; background: transparent; color: #2a6d54; text-decoration: underline; }
 .population-source { display: inline-block; margin-top: 4px; color: #2a6d54; font-size: 10px; text-decoration: none; }
 .population-source:hover { text-decoration: underline; }
-.population-panel { margin-top: 13px; padding-top: 11px; border-top: 1px solid #e6ece7; font-size: 12px; }
-.population-panel summary { display: flex; align-items: center; flex-wrap: wrap; gap: 5px 8px; cursor: pointer; list-style: none; color: #456658; }
-.population-panel summary::-webkit-details-marker { display: none; }
-.population-panel summary::after { content: '⌄'; margin-left: auto; color: #6d8178; }
-.population-panel[open] summary::after { content: '⌃'; }
-.population-panel summary:focus-visible { outline: 3px solid #33816d; outline-offset: 3px; border-radius: 3px; }
-.population-panel summary strong { color: #23453d; font-variant-numeric: tabular-nums; }
+.population-panel, .admin-fact-panel { margin-top: 13px; padding-top: 11px; border-top: 1px solid #e6ece7; font-size: 12px; }
+.population-panel summary, .admin-fact-panel summary { display: flex; align-items: center; gap: 6px; cursor: pointer; list-style: none; color: #456658; white-space: nowrap; min-width: 0; }
+.population-panel summary::-webkit-details-marker, .admin-fact-panel summary::-webkit-details-marker { display: none; }
+.population-panel summary::after, .admin-fact-panel summary::after { content: '⌄'; margin-left: 5px; color: #6d8178; flex: none; }
+.population-panel[open] summary::after, .admin-fact-panel[open] summary::after { content: '⌃'; }
+.population-panel summary:focus-visible, .admin-fact-panel summary:focus-visible { outline: 3px solid #33816d; outline-offset: 3px; border-radius: 3px; }
+.population-panel summary strong, .admin-fact-panel summary strong { color: #23453d; font-variant-numeric: tabular-nums; }
+.admin-fact-title { flex: none; }
+.admin-fact-summary { margin-left: auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; text-align: right; }
 .population-body { margin-top: 10px; color: #456658; }
 .population-body > p { margin: 0; line-height: 1.65; }
 .population-metrics { margin: 0; display: grid; gap: 5px; }
@@ -91,6 +93,28 @@ h1 { margin: 0; font-size: 28px; font-weight: 650; letter-spacing: 1px; line-hei
 .population-metrics dt { color: #6d8178; }
 .population-metrics dd { margin: 0; font-variant-numeric: tabular-nums; }
 .population-body .population-attribution { margin: 10px 0 0; line-height: 1.65; }
+.admin-fact-body { margin-top: 10px; color: #456658; line-height: 1.65; overflow-wrap: anywhere; }
+.admin-fact-body > p { margin: 7px 0; }
+.admin-fact-body > p:first-child { margin-top: 0; }
+.admin-fact-body .admin-fact-note { color: #849389; font-size: 10px; line-height: 1.6; }
+.admin-fact-metrics { display: grid; gap: 5px; margin: 9px 0; }
+.admin-fact-metrics > div { display: flex; justify-content: space-between; gap: 9px; }
+.admin-fact-metrics dt { color: #6d8178; }
+.admin-fact-metrics dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.admin-fact-source { display: inline-block; margin: 3px 8px 2px 0; color: #2a6d54; font-size: 10px; text-decoration: none; }
+.admin-fact-source:hover { text-decoration: underline; }
+.admin-school-list, .admin-candidate-list { margin: 8px 0; padding-left: 19px; }
+.admin-school-item { margin: 9px 0 12px; }
+.admin-school-heading { display: flex; gap: 7px; align-items: baseline; }
+.admin-school-heading strong { flex: none; color: #315348; }
+.admin-school-item > p { margin: 3px 0; }
+.admin-school-item .admin-school-flags { color: #84653e; font-size: 10px; }
+.admin-party-section { border-top: 1px solid #e6ece7; margin-top: 10px; padding-top: 9px; }
+.admin-party-section h3 { margin: 0 0 5px; font-size: 12px; color: #315348; }
+.admin-party-section p { margin: 5px 0; }
+.admin-party-headline { font-weight: 600; }
+.admin-party-section ul { margin: 5px 0; padding-left: 18px; }
+.admin-candidate-list { font-size: 10px; }
 @media (min-width: 761px) { .location-panel:has(.population-panel) { max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain; } }
 .hover-tooltip { position: absolute; padding: 7px 10px; background: #184c43ed; color: #fff; border-radius: 7px; font-size: 12px; white-space: nowrap; box-shadow: 0 3px 10px #23453d20; }
 .map-label { font-family: inherit; font-size: 12px; color: #234d40; font-weight: 600; white-space: nowrap; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 5px #fff; pointer-events: none; }

@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { attachNational } from './national.mjs';
+import { writeVillageIndexes } from './village-index.mjs';
 import { pointOnFeature, booleanPointInPolygon, area } from '@turf/turf';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -128,10 +129,12 @@ const shelters=JSON.parse(shelterResult.stdout);
 const nationalReport = await attachNational({root, records, campuses:[...largest.values()], shelters, towns, villages, school});
 for(const r of records.values()) r.catchment?.villages.sort((a,b)=>a.code.localeCompare(b.code));
 for(const t of towns) await write(`public/data/school/towns/${t.properties.code}.json`,[...records.values()].filter(r=>r.townCode===t.properties.code).sort((a,b)=>a.name.localeCompare(b.name,'zh-Hant')));
+await writeVillageIndexes([...records.values()], towns.map(t=>t.properties.code), root);
 const report={national:nationalReport,unmatchedSchools,unmatchedVillages,supplementedSchools,skippedLocations,schoolAliases:aliases,villageAliases:{'萬華區 糖?里':'萬華區 糖廍里'}};
 await write('public/data/school/join-report.json',report);
 const counts={schools:records.size,elementary:[...records.values()].filter(r=>r.level==='elementary').length,junior:[...records.values()].filter(r=>r.level==='junior').length,withCatchment:[...records.values()].filter(r=>r.catchment).length};
 const usedSources=new Set([...records.values()].flatMap(r=>[r.positionSource,r.catchment?.sourceId,...(r.catchment?.sourceIds??[])]).filter(Boolean));
 await write('public/data/school/manifest.json',{sources:sources.filter(s=>usedSources.has(s.id)),counts,schoolCounties:counties.map(c=>c.properties.code),catchmentCounties:[...new Set([...records.values()].filter(r=>r.catchment).map(r=>r.countyCode))],coverage:nationalReport.coverage,catchmentYear:115,
+  villageIndex:'villages/{townCode}.json',
   notes:['學區依各縣市公告與官方學校資料收錄，學年度各自標示；未取得或未完整對照的學區會列出收錄狀態。','全臺學校位置主要採教育部地理資訊名錄，並以國土測繪中心校地代表點及官方校園點補足。未收錄的學區不以鄰近學校或距離推估；招生不採固定里界的學校請查看官方原文。','只要部分鄰屬於學區即標示整個里，共同學區亦納入；整里填色不代表全里皆屬於該校學區。'],unmatchedSchools:unmatchedSchools.length+nationalReport.unmatchedSchools.length,unmatchedVillages:unmatchedVillages.length+nationalReport.unmatchedVillages.length});
 console.log(JSON.stringify({counts,unmatchedSchools,unmatchedVillages},null,2));

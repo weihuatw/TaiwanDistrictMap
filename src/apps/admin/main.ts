@@ -7,11 +7,17 @@ import type { Region } from '../../map-core/types';
 import { createMapShell } from '../../ui/map-shell';
 import { PopulationRepository } from '../../data/population';
 import { createPopulationPanel } from './population-panel';
+import { createAdminFactsPanel } from './facts-panel';
+import { IncomeRepository } from '../income/data';
+import { HousingRepository } from '../housing/data';
+import { PoliticsRepository } from '../politics/data';
+import { SchoolRepository } from '../school/data';
 
 /** Compose the administrative explorer from shared map and UI modules. */
 export function startAdminApp(root: HTMLElement, routing?: HashRouter) {
   const boundaries = new BoundaryRepository(`${import.meta.env.BASE_URL}data/`);
-  const population = new PopulationRepository(`${import.meta.env.BASE_URL}data/population/`);
+  const base = import.meta.env.BASE_URL;
+  const population = new PopulationRepository(`${base}data/population/`);
   const getColor = (region: Region) => region.properties.color;
   let layer: ReturnType<typeof createRegionLayer> | undefined;
   let basemap: ReturnType<typeof createMap> | undefined;
@@ -27,13 +33,20 @@ export function startAdminApp(root: HTMLElement, routing?: HashRouter) {
     onPanelChange: () => layer?.scheduleLabels(),
     showSelectionCard: false,
   });
-  const populationPanel = createPopulationPanel(shell.infoExtra, population, () => layer?.scheduleLabels());
+  const populationPanel = createPopulationPanel(shell.infoExtra, population, () => layer?.scheduleLabels(), false);
+  const factsPanel = createAdminFactsPanel(shell.infoExtra, {
+    income: new IncomeRepository(`${base}data/income/2024/`),
+    housing: new HousingRepository(`${base}data/housing/`),
+    school: new SchoolRepository(`${base}data/school/`),
+    politics: new PoliticsRepository(`${base}data/politics/`),
+  }, () => layer?.scheduleLabels());
   const navigator = new RegionNavigator(
     (file) => boundaries.load(file),
     (view, restore = false) => {
       routing?.commit({ theme: 'admin', ids: view.path.map(r => r.properties.code), query: '' });
       shell.render(view);
       populationPanel.render(view);
+      factsPanel.render(view);
       layer?.render(view, navigator.context, restore);
     },
     (loading) => { shell.setBusy(loading); layer?.setBusy(loading); if (!loading) layer?.cancelPreview(); },
@@ -67,7 +80,7 @@ export function startAdminApp(root: HTMLElement, routing?: HashRouter) {
     restoreRoute,
     destroy() {
       if (!alive) return;
-      alive = false; populationPanel.destroy(); navigator.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy();
+      alive = false; populationPanel.destroy(); factsPanel.destroy(); navigator.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy();
     },
   };
 }

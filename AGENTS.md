@@ -64,7 +64,7 @@ npm run dev -- --port 5173 --strictPort
 | `src/map-core/types.ts` | 行政區、View、Camera、Padding 等共用型別 |
 | `src/ui/map-shell.html`、`map-shell.ts`、`style.css` | 清單、搜尋、麵包屑、提示、來源視窗及手機資訊面板；不持有資料載入或導覽歷史 |
 | `src/data/population.ts` | 共用人口資料 manifest、村里／各層彙總與單一年齡分片 repository；不耦合主題或地圖幾何 |
-| `src/apps/*/main.ts` | 引入該主題 CSS，組合核心、介面及主題回呼，處理主題資訊 |
+| `src/apps/*/main.ts` | 引入該主題 CSS，組合核心、介面及主題回呼，處理主題資訊；行政區主題的跨主題資訊卡由 `src/apps/admin/facts-panel.ts` 讀取各主題 repository |
 | `src/apps/school/navigation.ts` | 獨立 `SchoolNavigator`；`polygonView()` 將學校狀態轉成共用 polygon View |
 | `src/apps/school/data.ts`、`markers.ts` | 學校分檔、學區里界載入與學校標記 |
 | `src/apps/housing/` | 房價統計、行政區導覽及選取後載入成交明細 |
@@ -159,6 +159,7 @@ Python 標準函式庫解析官方 HTML，需注意嵌套表格，不能漏掉�
 
 - `src/data/population.ts` 是主題無關的讀取介面，提供村里、鄉鎮、縣市、全臺彙總及單一年齡性別資料。不要把人口欄位寫回共用 GeoJSON，也不要讓只需要總人口的頁面下載年齡分片。
 - 行政區頁透過共用 shell 的 `infoExtra` 插槽，將人口接在原本資訊面板下方；全臺、縣市、行政區及村里均顯示目前範圍的總人口，可展開男女與戶數或收折只留總數。區域切換保留展開狀態；載入失敗可重試，較舊的選取請求不得覆寫新狀態。
+- 行政區頁的資訊卡另整合 2024 所得、住宅成交統計、村里官方學區學校及政黨資料。每張卡各自收折並以單行摘要呈現；學區只在具名村里顯示，逐校列出國小／國中、學年度、部分鄰／共同學區註記與官方來源。房價在村里層級明確標示所屬鄉鎮參考，不當作村里價格。各卡沿用主題 repository、`BASE_URL` 與最新請求序號，不把資料寫入共用 GeoJSON。
 - 11508 基準有 7,781 筆官方村里資料；7,780 個具名界線皆對應，瑪家鄉三和村代碼 `10013280006` 有人口但未混入全國主圖層，206 個未編定範圍沒有村里人口。來源名稱有 23 筆字形差異，依代碼連接並保留報告。
 - 原始檔在忽略提交的 `data/raw/population/`，來源與 SHA-256 在 `data/population/sources.json`，預期例外在 `data/population/expected-exceptions.json`，輸出在 `public/data/population/{西元年月}/`。
 
@@ -214,6 +215,7 @@ npm run school:check
 - `data/raw/school/`、`data/build/school/`、`.venv-school/` 均忽略，不提交。
 - `data/school/` 保存來源、下載紀錄、教育部名錄、別名與 `site-rows.json`／`site-sources.json` 等官方網站補充。
 - `public/data/school/towns/{TOWNCODE}.json`：368 個行政區分檔。
+- `public/data/school/villages/{TOWNCODE}.json`：村里到學校的反向索引；學校可跨鄉鎮設籍，因此村里學區查詢需透過此索引，再讀取學校所在鄉鎮分檔。`school:build` 會一併生成，僅重建索引可用 `node scripts/school/build-village-index.mjs`。
 - `public/data/school/manifest.json`、`join-report.json`：逐縣覆蓋率、年份、來源及未對照項目。
 - `discover-school-sites.py`、`fetch-chiayi-backgrounds.py` 是額外來源探索工具，不在一般 npm fetch 流程中。取得網頁／PDF 不等於已完成學區對照；補充前確認明確官方學區原文，登錄來源後再 build/check。
 - 解析器會快取 `data/build/school/*-tables.json`。換來源或改表格擷取時，檢查對應快取是否需要重建，避免一直讀舊解析結果。
