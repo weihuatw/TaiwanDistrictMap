@@ -1,6 +1,6 @@
 # TaiwanDistrictMap 專案交接
 
-更新日期：2026-10-09。本文件整理既有設計決策與實作經驗；數量與驗證結果是該日快照，更新資料後以公開 manifest、檢查腳本及實際程式為準。
+更新日期：2026-10-08。本文件整理既有設計決策與實作經驗；數量與驗證結果是該日快照，更新資料後以公開 manifest、檢查腳本及實際程式為準。
 
 ## 專案與現況
 
@@ -37,33 +37,21 @@ npm run dev -- --port 5173 --strictPort
 
 底圖 key 使用 `.env.local` 的 `VITE_TOMTOM_API_KEY`。不要輸出檔案內容或 key，不要提交環境檔。沒有 key 時，本機仍可用官方界線與網格背景操作；正式部署工作流程要求 GitHub Actions 同名 Secret。此前 Secret 已設定並成功部署。
 
-## 網址與瀏覽器歷史
-
-2026-10-09 起由根目錄 `index.html` 與 `src/main.ts` 啟動五個主題，採 `#/admin`、`#/income`、`#/school`、`#/housing`、`#/politics` hash 路由。舊 HTML 保留為相容轉址入口。完整設計見 `docs/routing.md`。
-
-- URL 使用行政區代碼與學校 ID，不使用中文名稱；「複製分享」附中文麵包屑標題。
-- `src/routing/hash-router.ts` 管理每層一筆的瀏覽器歷史：下鑽新增、同層切換／篩選替換、跨祖先切換重建分支，直接連結補父層。網站返回、麵包屑與瀏覽器返回遵循相同階層。
-- `RegionNavigator.restorePath()`、`SchoolNavigator.restorePath()` 原子還原深層路由，沿用請求序號、重試與相機還原。房價選取也由 navigator 管理。
-- query 在 hash 內，以路由解析；不要直接寫 `location.search` 或從 panel 呼叫 `history.replaceState()` 破壞路由歷史。
-- 根入口只靜態載入共用 CSS 與路由器，再依 hash 動態載入當前主題程式；各主題 CSS 由自己的 `src/apps/<theme>/main.ts` 引入。Vite 將共同地圖核心抽成共享 chunk，只在進入地圖時載入。不要在 `src/main.ts` 靜態匯入所有主題，亦不要改成先等待 CSS 再匯入主題程式的串行流程。
-- 同主題路由還原沿用已啟動應用；跨主題先清理舊應用，再載入新主題。`src/routing/theme-app-host.ts` 的請求序號會丟棄晚到的舊主題模組載入；載入失敗要能重試。分享在資料載入及錯誤期間停用。
-- 路由回歸見 `tests/routing.test.mjs`。新增主題需同步更新主題路由、啟動器與 shell 連結；舊 HTML 多入口可作相容入口，無須生成各區 HTML。
-
 ## 模組責任
 
 | 位置 | 責任與修改時注意事項 |
 | --- | --- |
-| `src/main.ts`、`src/routing/theme-app-host.ts`、各應用 `entry.ts` | 共用路由啟動器按需載入單一主題；共用 CSS 靜態載入、主題 CSS 隨主題模組載入；舊 HTML 保持為相容轉址入口 |
+| `src/main.ts`、各應用 `entry.ts` | 啟動及共用／主題 CSS；HTML 保持為掛載入口 |
 | `src/map-core/create-map.ts` | TomTom 底圖、無 key 預覽、MapLibre worker、縮放與比例尺控制 |
 | `src/map-core/boundaries.ts` | 按父層分檔載入 GeoJSON；成功結果快取，失敗不快取，請求逾時 20 秒 |
 | `src/map-core/navigation.ts` | 基本與所得頁導覽、歷史視角、灰色鄰區切換、非同步請求序號 |
 | `src/map-core/camera.ts` | 三個頁面共用的取景、預覽動畫、取消及返回視角 |
 | `src/map-core/settled-update.ts` | 最新更新排程：相機停止後下一幀執行，清理時取消 |
-| `src/map-core/region-layer.ts` | GeoJSON 填色／輪廓、灰色背景區域、點擊命中、避讓標籤；MapLibre `style.load` 後即可加入行政區圖層，不等底圖圖磚與字型全部載入；不查詢頁面元素 ID |
+| `src/map-core/region-layer.ts` | GeoJSON 填色／輪廓、灰色背景區域、點擊命中、避讓標籤；不查詢頁面元素 ID |
 | `src/map-core/types.ts` | 行政區、View、Camera、Padding 等共用型別 |
 | `src/ui/map-shell.html`、`map-shell.ts`、`style.css` | 清單、搜尋、麵包屑、提示、來源視窗及手機資訊面板；不持有資料載入或導覽歷史 |
 | `src/data/population.ts` | 共用人口資料 manifest、村里／各層彙總與單一年齡分片 repository；不耦合主題或地圖幾何 |
-| `src/apps/*/main.ts` | 引入該主題 CSS，組合核心、介面及主題回呼，處理主題資訊 |
+| `src/apps/*/main.ts` | 組合核心、介面及主題回呼，處理主題資訊 |
 | `src/apps/school/navigation.ts` | 獨立 `SchoolNavigator`；`polygonView()` 將學校狀態轉成共用 polygon View |
 | `src/apps/school/data.ts`、`markers.ts` | 學校分檔、學區里界載入與學校標記 |
 | `src/apps/housing/` | 房價統計、行政區導覽及選取後載入成交明細 |
@@ -72,7 +60,7 @@ npm run dev -- --port 5173 --strictPort
 
 底圖與主題資料相互獨立。行政區／學區使用 TomTom `standardLight`，所得使用 `monoLight`；語言 `zh-Hant`，不載入交通等選用模組。填色與線段放在底圖 symbol 文字圖層下方。
 
-新增主題應建立 `src/apps/<主題>/`，更新路由、`src/main.ts` 啟動器與 shell 連結；若需相容 HTML 入口，再更新 `vite.config.ts` 的多入口設定。共用圖層透過 `getColor`、回呼及設定取得主題資訊，不直接耦合學校或所得資料。
+新增主題應建立自己的 HTML 與 `src/apps/<主題>/`，並更新 `vite.config.ts` 的多入口設定。共用圖層透過 `getColor`、回呼及設定取得主題資訊，不直接耦合學校或所得資料。
 
 不要修改共用快取中的官方 feature 來儲存主題狀態。呈現用屬性與 `polygonView()` 的學區 focus bounds 都以複本建立。`RegionLayerOptions.contextOpacity` 與 `contextHoverOpacity` 可調整各主題周邊行政區的填色透明度。
 
@@ -261,7 +249,7 @@ npm run build
 git diff --check
 ```
 
-2026-10-09 路由更新後全套為 96 個 Node 測試、12 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
+最近一次全套為 80 個 Node 測試、12 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
 
 | 測試 | 主要涵蓋 |
 | --- | --- |

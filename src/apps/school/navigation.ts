@@ -102,33 +102,6 @@ export class SchoolNavigator {
     if (index === this.history.length - 1 && this.current?.selected) { this.clearSelection(); return; }
     this.history = this.history.slice(0, index + 1); this.onChange(this.current!, true);
   }
-  async restorePath(ids: string[]): Promise<void> {
-    return this.request(async () => {
-      const data = await this.loadRegions('counties.geojson');
-      const previous: SchoolView[] = this.history;
-      const next: SchoolView[] = [{ level: 'county', path: [], data, schools: [], selected: null, catchment: emptyRegions(), camera: previous[0]?.camera ?? null, overviewCamera: null }];
-      for (const [index, code] of ids.entries()) {
-        const parent = next.at(-1)!;
-        if (index === 2) {
-          const school = parent.schools.find(s => s.id === code);
-          if (!school) return () => { this.history = next; this.onChange(this.current!, true); this.onError(new Error('此網址的學校不存在'), () => this.restorePath(ids)); };
-          const catchment = await this.loadCatchment(school);
-          parent.selected = school; parent.catchment = catchment;
-          parent.overviewCamera = parent.camera; parent.camera = null;
-        } else {
-          const region = parent.data.features.find(r => r.properties.code === code);
-          if (!region) return () => { this.history = next; this.onChange(this.current!, true); this.onError(new Error('此網址的行政區不存在'), () => this.restorePath(ids)); };
-          const level = index === 0 ? 'town' : 'school';
-          const regions = level === 'town' ? await this.loadRegions(`towns/${code}.geojson`) : emptyRegions();
-          const schools = level === 'school' ? await this.loadSchools(code) : [];
-          const saved = previous[index + 1];
-          const same = saved?.path.map(r => r.properties.code).join('/') === ids.slice(0, index + 1).join('/');
-          next.push({ level, path: [...parent.path, region], data: regions, schools, selected: null, catchment: emptyRegions(), camera: same ? saved.overviewCamera ?? saved.camera : null, overviewCamera: null });
-        }
-      }
-      return () => { this.history = next; if (this.current?.selected) this.filter[this.current.selected.level] = true; this.onChange(this.current!, true); };
-    }, () => this.restorePath(ids));
-  }
   destroy() { ++this.sequence; this.history = []; }
 }
 

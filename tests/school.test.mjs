@@ -81,30 +81,3 @@ test('Home, back and checkbox changes during initial load preserve the initial r
   f.nav.home();f.nav.back();f.nav.setFilter('elementary',false,camera);
   pending.resolve(data(county));await started;assert.equal(f.nav.current.level,'county');assert.equal(f.nav.filter.elementary,false);assert.equal(f.busy.at(-1),false);
 });
-
-test('School shared links resolve one final render, cross-town catchment and parent return', async () => {
-  const f = fixture(); await f.nav.restorePath([county.id,town.id,elementary.id]);
-  assert.equal(f.events.length, 1); assert.equal(f.nav.current.selected.id, elementary.id);
-  assert.equal(f.nav.current.catchment.features.length, 2);
-  f.nav.back(); assert.equal(f.nav.current.selected, null); assert.equal(f.nav.current.level, 'school');
-});
-test('Invalid school links fall back to the valid district and report the missing ID', async () => {
-  const f = fixture(); await f.nav.restorePath([county.id,town.id,'missing']);
-  assert.equal(f.errors.length, 1); assert.equal(f.nav.current.level, 'school');
-  assert.equal(f.nav.current.selected, null); assert.equal(f.nav.visibleSchools.length, 2);
-});
-test('Teardown discards a pending shared school link and preserves no DOM callbacks', async () => {
-  const wait = deferred(), f = fixture({loadCatchment: () => wait.promise});
-  const pending = f.nav.restorePath([county.id,town.id,elementary.id]);
-  await new Promise(r => setImmediate(r)); f.nav.destroy(); wait.resolve(data(village)); await pending;
-  assert.equal(f.events.length, 0); assert.equal(f.nav.current, undefined);
-});
-
-test('Cancelled shared school requests cannot re-enable a newly disabled filter', async () => {
-  const wait = deferred(), f = fixture({loadCatchment: () => wait.promise});
-  await inTown(f);
-  const pending = f.nav.restorePath([county.id,town.id,elementary.id]);
-  await new Promise(r => setImmediate(r)); f.nav.setFilter('elementary', false, camera);
-  wait.resolve(data(village)); await pending;
-  assert.equal(f.nav.filter.elementary, false); assert.equal(f.nav.current.selected, null);
-});

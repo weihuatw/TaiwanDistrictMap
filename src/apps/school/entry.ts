@@ -1,4 +1,7 @@
-const query = location.hash.includes('?') ? location.hash.split('?')[1] : location.search.slice(1);
-const path = location.hash.startsWith('#/school') ? location.hash : '#/school' + (query ? '?' + query : '');
-location.replace(import.meta.env.BASE_URL + path);
-export {};
+import '../../ui/style.css';
+import './style.css';
+import { startSchoolApp } from './main';
+const root = document.getElementById('app');
+if (!root) throw new Error('Missing application root');
+const app = startSchoolApp(root);
+import.meta.hot?.dispose(() => app.destroy());

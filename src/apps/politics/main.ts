@@ -1,5 +1,3 @@
-import './style.css';
-import type { HashRouter, Route } from '../../routing/hash-router';
 import { BoundaryRepository } from '../../map-core/boundaries';
 import { createMap } from '../../map-core/create-map';
 import { RegionNavigator } from '../../map-core/navigation';
@@ -13,7 +11,7 @@ import { createPoliticsPanel } from './panel';
 import { modeForLevel, recordLabel, recordMissing } from './theme';
 import type { PoliticalManifest, PoliticalMode } from './types';
 
-export function startPoliticsApp(root: HTMLElement, routing?: HashRouter) {
+export function startPoliticsApp(root: HTMLElement) {
   const base = import.meta.env.BASE_URL;
   const boundaries = new BoundaryRepository(`${base}data/`);
   const politics = new PoliticsRepository(`${base}data/politics/`);
@@ -41,7 +39,6 @@ export function startPoliticsApp(root: HTMLElement, routing?: HashRouter) {
   const panel = createPoliticsPanel(shell, politics, selected => {
     const view = navigator.current;
     if (!view || !alive) return;
-    routing?.commit({ theme: 'politics', ids: view.path.map(r => r.properties.code), query: new URLSearchParams({ mode: selected }).toString() });
     mode = selected; preferredMode = selected; modes.set(view.level === 'detail' ? 'village' : view.level, mode);
     shell.hideTooltip(); panel.render(view, mode, manifest); shell.refreshList();
     // Data for all modes was committed with this view; switching preserves the camera.
@@ -61,14 +58,12 @@ export function startPoliticsApp(root: HTMLElement, routing?: HashRouter) {
       const level = view.level === 'detail' ? 'village' : view.level;
       mode = modeForLevel(level, preferredMode, modes.get(level));
       modes.set(level, mode);
-      routing?.commit({ theme: 'politics', ids: view.path.map(r => r.properties.code), query: new URLSearchParams({ mode }).toString() });
       shell.render(view); panel.render(view, mode, manifest); populationPanel.render(view);
       layer?.render(view, navigator.context, restore);
     },
     loading => { shell.setBusy(loading); panel.setBusy(loading); layer?.setBusy(loading); if (!loading) layer?.cancelPreview(); },
     (error, retry) => shell.showError(error, retry), region => layer?.previewRegion(region),
   );
-  function restoreRoute(route: Route) { const value = new URLSearchParams(route.query).get('mode'); if (!navigator.current || !routing?.isHistoryNavigation) preferredMode = value === 'mayor' || value === 'president' || value === 'officials' ? value : null; return navigator.restorePath(route.ids); }
   try {
     basemap = createMap({ container: shell.mapContainer, apiKey: import.meta.env.VITE_TOMTOM_API_KEY, style: 'monoLight', onStatus: shell.setBasemapStatus });
     layer = createRegionLayer(basemap.map, {
@@ -84,12 +79,12 @@ export function startPoliticsApp(root: HTMLElement, routing?: HashRouter) {
         else void navigator.enter(hit.region, layer.camera());
       },
     });
-    if (routing) void restoreRoute(routing.current); else void navigator.start();
+    void navigator.start();
   } catch { shell.showInitializationError(() => location.reload()); }
   void Promise.all([boundaries.manifest(), politics.manifest()]).then(([geometry, stats]) => {
     if (alive) { shell.renderManifest(geometry); panel.showSources(stats); }
   }).catch(() => { if (alive) shell.showManifestError(); });
-  return { restoreRoute, destroy() {
+  return { destroy() {
     if (!alive) return;
     alive = false; navigator.destroy(); populationPanel.destroy(); panel.destroy(); layer?.destroy(); basemap?.destroy();
     root.removeEventListener('politicsresize', onResize); shell.destroy(); root.classList.remove('politics-page');

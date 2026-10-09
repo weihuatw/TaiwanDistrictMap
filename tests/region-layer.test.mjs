@@ -20,8 +20,8 @@ const county = code => ({ type: 'Feature', id: code, geometry: { type: 'Polygon'
   properties: { code, name: code, level: 'county', focusBounds: [121, 24, 122, 25], bounds: [121, 24, 122, 25], label: [121.5, 24.5], color: '#abc' } });
 const view = code => ({ level: 'town', path: [county('parent')], data: { type: 'FeatureCollection', features: [county(code)] }, selected: null, camera: null });
 
-function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
-  let moving = false, nextFrame = 0, layouts = 0, hasStyle = styleAvailable;
+function fixture(duration = 720, renderOptions = {}) {
+  let moving = false, nextFrame = 0, layouts = 0;
   const frames = new Map(), events = new Map(), sources = new Map(), layers = new Map();
   const canvas = { style: {}, addEventListener() {}, removeEventListener() {} };
   const container = { clientWidth: 390, clientHeight: 844 };
@@ -30,7 +30,7 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
   globalThis.document = { createElement: () => ({ dataset: {}, style: {}, setAttribute() {}, get offsetWidth() { layouts++; return 50; } }) };
   const emit = name => { for (const fn of events.get(name) ?? []) fn(); };
   const map = {
-    loaded: () => hasStyle, isMoving: () => moving,
+    loaded: () => true, isMoving: () => moving,
     on(name, fn) { if (!events.has(name)) events.set(name, new Set()); events.get(name).add(fn); },
     off(name, fn) { events.get(name)?.delete(fn); },
     getCenter: () => ({ lng: 120, lat: 23 }), getZoom: () => 7, getBearing: () => 0, getPitch: () => 0,
@@ -43,7 +43,6 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
     getLayer: id => layers.get(id), addLayer: layer => layers.set(layer.id, layer), removeLayer: id => layers.delete(id),
     setPaintProperty(id, name, value) { layers.get(id).paint[name] = value; },
     setFeatureState() {}, removeFeatureState() {}, queryRenderedFeatures: () => [],
-    getStyle: () => hasStyle ? { layers: [] } : undefined,
     project: () => ({ x: 150, y: 300 }),
   };
   const layer = createRegionLayer(map, { duration, deferUntilMoveEnd: true, fadeDuration: 180, ...renderOptions,
@@ -52,30 +51,10 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
     tick() { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(fn => fn()); },
     stop() { moving = false; emit('moveend'); },
     start() { moving = true; emit('movestart'); },
-    loadStyle() { hasStyle = true; emit('style.load'); },
     loadSources() { sources.forEach(source => { source.loaded = true; }); emit('sourcedata'); },
     get listenerCount() { return [...events.values()].reduce((sum, set) => sum + set.size, 0); },
   };
 }
-
-test('Administrative overlays start on style readiness without waiting for basemap tiles', () => {
-  let readyCalls = 0;
-  const f = fixture(0, { onReady: () => readyCalls++ }, false);
-  f.layer.render(view('early'), []);
-  assert.equal(f.layer.ready, false);
-  assert.equal(readyCalls, 0);
-  assert.equal(f.sources.size, 0);
-  f.emit('load');
-  assert.equal(f.sources.size, 0);
-  f.loadStyle();
-  f.tick();
-  assert.equal(f.layer.ready, true);
-  assert.equal(readyCalls, 1);
-  assert.equal(f.sources.get('regions').data.features[0].properties.code, 'early');
-  f.loadStyle();
-  assert.equal(readyCalls, 1);
-  f.layer.destroy();
-});
 
 test('Context fill opacity can be tuned per map theme', () => {
   const f = fixture(0, { contextOpacity: .4, contextHoverOpacity: .5 });

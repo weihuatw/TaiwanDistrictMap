@@ -34,10 +34,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   let afterRender: (() => void) | undefined;
   let displayedView: View | null = null;
   let displayedContext: ContextRegion[] = [];
-  // Style readiness is enough to add our overlays. Waiting for `load` also
-  // waits for the basemap's visible tiles and glyphs, even though the local
-  // administrative GeoJSON is already ready.
-  let styleReady = Boolean(map.getStyle());
+  let mapReady = map.loaded();
   let pendingRestore = false;
   let view: View | null = null;
   let contextRegions: ContextRegion[] = [];
@@ -46,15 +43,14 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   let renderFrame = 0;
   let labels: { marker: Marker; element: HTMLDivElement; region: Region; context: boolean }[] = [];
 
-  const onStyleLoad = () => {
-    if (styleReady) return;
-    styleReady = true;
+  const onLoad = () => {
+    mapReady = true;
     if (view) present(view, pendingRestore);
     options.onReady?.();
   };
   const onResize = () => {
     scheduleLabels();
-    if (view && styleReady && !camera.isPreviewing) camera.fit(view, 0);
+    if (view && mapReady && !camera.isPreviewing) camera.fit(view, 0);
   };
   const onClick = (event: MapMouseEvent) => {
     if (updates.pending || revealing) return;
@@ -74,7 +70,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     options.onHover?.(hit, event.point);
   };
   const hideTooltip = () => options.onHoverEnd?.();
-  map.on('style.load', onStyleLoad);
+  map.on('load', onLoad);
   map.on('move', scheduleLabels);
   map.on('moveend', scheduleLabels);
   map.on('sourcedata', checkReveal);
@@ -83,7 +79,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   map.on('mousemove', onMove);
   map.on('movestart', hideTooltip);
   map.getCanvas().addEventListener('mouseleave', clearHover);
-  if (styleReady) options.onReady?.();
+  if (mapReady) options.onReady?.();
 
   function regionAt(point: { x: number; y: number }): RegionHit | null {
     const layers = ['region-fill', 'context-fill'].filter((id) => map.getLayer(id));
@@ -229,7 +225,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     renderFrame = requestAnimationFrame(() => { renderFrame = 0; layoutLabels(); });
   }
   function layoutLabels() {
-    if (!styleReady || !displayedView || map.isMoving()) return;
+    if (!mapReady || !displayedView || map.isMoving()) return;
     const occupied = options.getLabelObstacles?.() ?? [];
     const ordered = [...labels].sort((a, b) => Number(b.region.id === displayedView!.selected?.id) - Number(a.region.id === displayedView!.selected?.id) || Number(a.context) - Number(b.context) || Number(a.region.properties.unassigned) - Number(b.region.properties.unassigned));
     const candidates = ordered.map(label => ({ ...label, width: label.element.offsetWidth + 12, point: map.project(label.region.properties.label) }));
@@ -247,14 +243,14 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   }
 
   return {
-    get ready() { return styleReady; },
+    get ready() { return mapReady; },
     camera: camera.capture,
     previewRegion: camera.previewRegion,
     previewPoint: camera.previewPoint,
     cancelPreview: camera.cancelPreview,
     render(current: View, surrounding: ContextRegion[], restore = false, onRendered?: () => void) {
       view = current; contextRegions = surrounding; pendingRestore = restore; afterRender = onRendered;
-      if (styleReady) present(current, restore);
+      if (mapReady) present(current, restore);
     },
     setBusy(loading: boolean) {
       busy = loading;
@@ -263,7 +259,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     scheduleLabels,
     destroy() {
       updates.destroy(); reveals.destroy(); revealing = false; afterRender = undefined;
-      map.off('style.load', onStyleLoad); map.off('move', scheduleLabels); map.off('resize', onResize);
+      map.off('load', onLoad); map.off('move', scheduleLabels); map.off('resize', onResize);
       map.off('moveend', scheduleLabels); map.off('sourcedata', checkReveal);
       map.off('click', onClick); map.off('mousemove', onMove); map.off('movestart', hideTooltip);
       map.getCanvas().removeEventListener('mouseleave', clearHover);
@@ -274,7 +270,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
       }
       for (const id of ['regions', 'context']) if (map.getSource(id)) map.removeSource(id);
       if (options.isMissing && map.hasImage('region-missing-hatch')) map.removeImage('region-missing-hatch');
-      view = null; styleReady = false;
+      view = null; mapReady = false;
     },
   };
 }
