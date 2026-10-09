@@ -59,7 +59,7 @@ npm run dev -- --port 5173 --strictPort
 | `src/map-core/navigation.ts` | 基本與所得頁導覽、歷史視角、灰色鄰區切換、非同步請求序號 |
 | `src/map-core/camera.ts` | 三個頁面共用的取景、預覽動畫、取消及返回視角 |
 | `src/map-core/settled-update.ts` | 最新更新排程：相機停止後下一幀執行，清理時取消 |
-| `src/map-core/region-layer.ts` | GeoJSON 填色／輪廓、灰色背景區域、點擊命中、避讓標籤；不查詢頁面元素 ID |
+| `src/map-core/region-layer.ts` | GeoJSON 填色／輪廓、灰色背景區域、點擊命中、避讓標籤；MapLibre `style.load` 後即可加入行政區圖層，不等底圖圖磚與字型全部載入；不查詢頁面元素 ID |
 | `src/map-core/types.ts` | 行政區、View、Camera、Padding 等共用型別 |
 | `src/ui/map-shell.html`、`map-shell.ts`、`style.css` | 清單、搜尋、麵包屑、提示、來源視窗及手機資訊面板；不持有資料載入或導覽歷史 |
 | `src/data/population.ts` | 共用人口資料 manifest、村里／各層彙總與單一年齡分片 repository；不耦合主題或地圖幾何 |
