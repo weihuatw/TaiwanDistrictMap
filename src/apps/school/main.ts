@@ -1,3 +1,4 @@
+import './style.css';
 import type { HashRouter, Route } from '../../routing/hash-router';
 import { BoundaryRepository } from '../../map-core/boundaries';
 import { createMap } from '../../map-core/create-map';

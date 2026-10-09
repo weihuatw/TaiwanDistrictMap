@@ -45,15 +45,15 @@ npm run dev -- --port 5173 --strictPort
 - `src/routing/hash-router.ts` 管理每層一筆的瀏覽器歷史：下鑽新增、同層切換／篩選替換、跨祖先切換重建分支，直接連結補父層。網站返回、麵包屑與瀏覽器返回遵循相同階層。
 - `RegionNavigator.restorePath()`、`SchoolNavigator.restorePath()` 原子還原深層路由，沿用請求序號、重試與相機還原。房價選取也由 navigator 管理。
 - query 在 hash 內，以路由解析；不要直接寫 `location.search` 或從 panel 呼叫 `history.replaceState()` 破壞路由歷史。
-- 入口靜態 import 五個主題程式與 CSS，讓 Vite 從 HTML 同時預載共用 SDK；僅啟動當前主題，資料仍按需下載。不要先 await 主題 CSS 再 dynamic import 程式，這曾讓首次載入增加兩輪資源探索等待。
-- 切換主題先 `destroy()` 舊應用，晚到資料不得操作舊 DOM；分享在載入及錯誤期間停用。
+- 根入口只靜態載入共用 CSS 與路由器，再依 hash 動態載入當前主題程式；各主題 CSS 由自己的 `src/apps/<theme>/main.ts` 引入。Vite 將共同地圖核心抽成共享 chunk，只在進入地圖時載入。不要在 `src/main.ts` 靜態匯入所有主題，亦不要改成先等待 CSS 再匯入主題程式的串行流程。
+- 同主題路由還原沿用已啟動應用；跨主題先清理舊應用，再載入新主題。`src/routing/theme-app-host.ts` 的請求序號會丟棄晚到的舊主題模組載入；載入失敗要能重試。分享在資料載入及錯誤期間停用。
 - 路由回歸見 `tests/routing.test.mjs`。新增主題需同步更新主題路由、啟動器與 shell 連結；舊 HTML 多入口可作相容入口，無須生成各區 HTML。
 
 ## 模組責任
 
 | 位置 | 責任與修改時注意事項 |
 | --- | --- |
-| `src/main.ts`、各應用 `entry.ts` | 啟動及共用／主題 CSS；HTML 保持為掛載入口 |
+| `src/main.ts`、`src/routing/theme-app-host.ts`、各應用 `entry.ts` | 共用路由啟動器按需載入單一主題；共用 CSS 靜態載入、主題 CSS 隨主題模組載入；舊 HTML 保持為相容轉址入口 |
 | `src/map-core/create-map.ts` | TomTom 底圖、無 key 預覽、MapLibre worker、縮放與比例尺控制 |
 | `src/map-core/boundaries.ts` | 按父層分檔載入 GeoJSON；成功結果快取，失敗不快取，請求逾時 20 秒 |
 | `src/map-core/navigation.ts` | 基本與所得頁導覽、歷史視角、灰色鄰區切換、非同步請求序號 |
@@ -63,7 +63,7 @@ npm run dev -- --port 5173 --strictPort
 | `src/map-core/types.ts` | 行政區、View、Camera、Padding 等共用型別 |
 | `src/ui/map-shell.html`、`map-shell.ts`、`style.css` | 清單、搜尋、麵包屑、提示、來源視窗及手機資訊面板；不持有資料載入或導覽歷史 |
 | `src/data/population.ts` | 共用人口資料 manifest、村里／各層彙總與單一年齡分片 repository；不耦合主題或地圖幾何 |
-| `src/apps/*/main.ts` | 組合核心、介面及主題回呼，處理主題資訊 |
+| `src/apps/*/main.ts` | 引入該主題 CSS，組合核心、介面及主題回呼，處理主題資訊 |
 | `src/apps/school/navigation.ts` | 獨立 `SchoolNavigator`；`polygonView()` 將學校狀態轉成共用 polygon View |
 | `src/apps/school/data.ts`、`markers.ts` | 學校分檔、學區里界載入與學校標記 |
 | `src/apps/housing/` | 房價統計、行政區導覽及選取後載入成交明細 |

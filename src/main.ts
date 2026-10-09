@@ -1,35 +1,31 @@
 import './ui/style.css';
-import './apps/income/style.css';
-import './apps/school/style.css';
-import './apps/housing/style.css';
-import './apps/politics/style.css';
-import { startAdminApp } from './apps/admin/main';
-import { startIncomeApp } from './apps/income/main';
-import { startSchoolApp } from './apps/school/main';
-import { startHousingApp } from './apps/housing/main';
-import { startPoliticsApp } from './apps/politics/main';
 import { HashRouter, type Theme } from './routing/hash-router';
+import { createThemeAppHost, type ThemeAppLoader } from './routing/theme-app-host';
 
-const root = document.getElementById('app');
-if (!root) throw new Error('Missing application root');
+const rootElement = document.getElementById('app');
+if (!rootElement) throw new Error('Missing application root');
+const root = rootElement;
 if (location.pathname.endsWith('/index.html')) history.replaceState(history.state, '', import.meta.env.BASE_URL + location.search + location.hash);
 const routing = new HashRouter(window);
-const starters = {
-  admin: startAdminApp,
-  income: startIncomeApp,
-  school: startSchoolApp,
-  housing: startHousingApp,
-  politics: startPoliticsApp,
+const loaders: Record<Theme, ThemeAppLoader> = {
+  admin: () => import('./apps/admin/main').then(({ startAdminApp }) => () => startAdminApp(root, routing)),
+  income: () => import('./apps/income/main').then(({ startIncomeApp }) => () => startIncomeApp(root, routing)),
+  school: () => import('./apps/school/main').then(({ startSchoolApp }) => () => startSchoolApp(root, routing)),
+  housing: () => import('./apps/housing/main').then(({ startHousingApp }) => () => startHousingApp(root, routing)),
+  politics: () => import('./apps/politics/main').then(({ startPoliticsApp }) => () => startPoliticsApp(root, routing)),
 };
-let app: ReturnType<typeof startAdminApp> | undefined;
-let theme: Theme | undefined;
 
-// Keep the startup graph static: Vite can preload SDK, theme code and CSS from HTML.
-// Async CSS followed by a dynamic import adds two discovery rounds before the shell.
-routing.subscribe(route => {
-  if (app && theme === route.theme) { void app.restoreRoute(route); return; }
-  app?.destroy(); theme = route.theme;
+function showLoading() {
   root.className = '';
-  app = starters[route.theme](root, routing);
-});
-import.meta.hot?.dispose(() => { app?.destroy(); routing.destroy(); });
+  root.innerHTML = '<div class="loading-pill" role="status"><span class="spinner" aria-hidden="true"></span><span>載入地圖…</span></div>';
+}
+
+function showLoadError(retry: () => void) {
+  root.className = '';
+  root.innerHTML = '<div class="error-banner" role="alert"><span>地圖程式載入失敗，請重試。</span><button type="button">重試</button></div>';
+  root.querySelector('button')?.addEventListener('click', retry, { once: true });
+}
+
+const appHost = createThemeAppHost(routing, loaders, showLoading, showLoadError);
+routing.subscribe(route => appHost.activate(route));
+import.meta.hot?.dispose(() => { appHost.destroy(); routing.destroy(); });
