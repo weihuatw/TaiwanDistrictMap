@@ -39,14 +39,15 @@ npm run dev -- --port 5173 --strictPort
 
 ## 網址與瀏覽器歷史
 
-2026-10-09 起由根目錄 `index.html` 與 `src/main.ts` 按需啟動五個主題，採 `#/admin`、`#/income`、`#/school`、`#/housing`、`#/politics` hash 路由。舊 HTML 保留為相容轉址入口。完整設計見 `docs/routing.md`。
+2026-10-09 起由根目錄 `index.html` 與 `src/main.ts` 啟動五個主題，採 `#/admin`、`#/income`、`#/school`、`#/housing`、`#/politics` hash 路由。舊 HTML 保留為相容轉址入口。完整設計見 `docs/routing.md`。
 
 - URL 使用行政區代碼與學校 ID，不使用中文名稱；「複製分享」附中文麵包屑標題。
 - `src/routing/hash-router.ts` 管理每層一筆的瀏覽器歷史：下鑽新增、同層切換／篩選替換、跨祖先切換重建分支，直接連結補父層。網站返回、麵包屑與瀏覽器返回遵循相同階層。
 - `RegionNavigator.restorePath()`、`SchoolNavigator.restorePath()` 原子還原深層路由，沿用請求序號、重試與相機還原。房價選取也由 navigator 管理。
 - query 在 hash 內，以路由解析；不要直接寫 `location.search` 或從 panel 呼叫 `history.replaceState()` 破壞路由歷史。
+- 入口靜態 import 五個主題程式與 CSS，讓 Vite 從 HTML 同時預載共用 SDK；僅啟動當前主題，資料仍按需下載。不要先 await 主題 CSS 再 dynamic import 程式，這曾讓首次載入增加兩輪資源探索等待。
 - 切換主題先 `destroy()` 舊應用，晚到資料不得操作舊 DOM；分享在載入及錯誤期間停用。
-- 路由回歸見 `tests/routing.test.mjs`。新增主題需同步更新主題路由、載入器與 shell 連結；舊 HTML 多入口可作相容入口，無須生成各區 HTML。
+- 路由回歸見 `tests/routing.test.mjs`。新增主題需同步更新主題路由、啟動器與 shell 連結；舊 HTML 多入口可作相容入口，無須生成各區 HTML。
 
 ## 模組責任
 
@@ -71,7 +72,7 @@ npm run dev -- --port 5173 --strictPort
 
 底圖與主題資料相互獨立。行政區／學區使用 TomTom `standardLight`，所得使用 `monoLight`；語言 `zh-Hant`，不載入交通等選用模組。填色與線段放在底圖 symbol 文字圖層下方。
 
-新增主題應建立 `src/apps/<主題>/`，更新路由、`src/main.ts` 載入器與 shell 連結；若需相容 HTML 入口，再更新 `vite.config.ts` 的多入口設定。共用圖層透過 `getColor`、回呼及設定取得主題資訊，不直接耦合學校或所得資料。
+新增主題應建立 `src/apps/<主題>/`，更新路由、`src/main.ts` 啟動器與 shell 連結；若需相容 HTML 入口，再更新 `vite.config.ts` 的多入口設定。共用圖層透過 `getColor`、回呼及設定取得主題資訊，不直接耦合學校或所得資料。
 
 不要修改共用快取中的官方 feature 來儲存主題狀態。呈現用屬性與 `polygonView()` 的學區 focus bounds 都以複本建立。`RegionLayerOptions.contextOpacity` 與 `contextHoverOpacity` 可調整各主題周邊行政區的填色透明度。
 
