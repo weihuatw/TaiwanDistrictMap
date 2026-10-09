@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "records": {
+    "10002": {
+      "name": "林茂盛",
+      "role": "代理縣長",
+      "party": null,
+      "status": "acting",
+      "sourceUrl": "https://www.e-land.gov.tw/cp.aspx?n=2700",
+      "verifiedAt": "2026-10-08",
+      "note": "縣府現任名錄確認代理職務；來源未載黨籍，留待查證，不沿用林姿妙黨籍。"
+    },
+    "10018": {
+      "name": "高虹安",
+      "role": "市長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.cna.com.tw/news/aipl/202407260148.aspx",
+      "officeSourceUrl": "https://www.hccg.gov.tw/hccg/app/data/view?id=30210&module=isfocusnews&serno=95445fe6-70be-4090-9e13-df8fdb639404",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄仍載民眾黨；本人退黨聲明由中央社報導，2026市府公告確認市長職務。"
+    },
+    "09020": {
+      "name": "陳福海",
+      "role": "縣長",
+      "party": "台灣民眾黨",
+      "status": "in-office",
+      "sourceUrl": "https://www.cna.com.tw/news/aipl/202304190402.aspx",
+      "officeSourceUrl": "https://www.kinmen.gov.tw/cp.aspx?n=ADFC186F490AC26E",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部名錄載無黨籍；民眾黨及本人幕僚向中央社確認入黨，參選推薦欄位仍依2022中選會資料。"
+    },
+    "10005": {
+      "name": "鍾東錦",
+      "role": "縣長",
+      "party": "中國國民黨",
+      "status": "in-office",
+      "sourceUrl": "https://www.cna.com.tw/news/aipl/202512080125.aspx",
+      "officeSourceUrl": "https://www.miaoli.gov.tw/cp.aspx?n=265",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄載無黨籍；中央社報導2025-09-14恢復黨籍，2022參選推薦仍依中選會。"
+    },
+    "10009020001": {
+      "name": "凃維志",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020005": {
+      "name": "沈政勳",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020002": {
+      "name": "張順從",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020023": {
+      "name": "沈村男",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020003": {
+      "name": "沈銘偉",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020004": {
+      "name": "徐見銘",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020024": {
+      "name": "沈春蜜",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020006": {
+      "name": "葉永萌",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020007": {
+      "name": "黃順助",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020018": {
+      "name": "詹勝富",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020008": {
+      "name": "吳村田",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020022": {
+      "name": "高永建",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020009": {
+      "name": "宋道周",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020010": {
+      "name": "宋國源",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020011": {
+      "name": "曾明瑞",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020012": {
+      "name": "陳坤助",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020013": {
+      "name": "楊進原",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020014": {
+      "name": "吳秋蓮",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020015": {
+      "name": "李妙女",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020016": {
+      "name": "蔡淑惠",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020017": {
+      "name": "沈永靖",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020019": {
+      "name": "沈憲卿",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020020": {
+      "name": "沈合成",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    },
+    "10009020021": {
+      "name": "呂登華",
+      "role": "里長",
+      "party": "無黨籍",
+      "status": "in-office",
+      "sourceUrl": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "officeSourceUrl": "https://dounan.yunlin.gov.tw/cp.aspx?n=5647",
+      "verifiedAt": "2026-10-08",
+      "note": "內政部本屆名錄漏列村里名稱；依斗南鎮公所各里辦公室逐筆確認里名與現職姓名，黨籍沿用同人本屆名錄。"
+    }
+  }
+}

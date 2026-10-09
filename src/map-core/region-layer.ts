@@ -13,6 +13,8 @@ export interface RegionLayerOptions {
   fillOpacity?: number;
   hoverOpacity?: number;
   selectedOpacity?: number;
+  contextOpacity?: number;
+  contextHoverOpacity?: number;
   outlineColor?: string;
   emphasisColor?: string;
   isMissing?: (region: Region) => boolean;
@@ -151,7 +153,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
       map.addSource('context', { type: 'geojson', data: surrounding, promoteId: 'code' });
       map.addLayer({ id: 'context-fill', type: 'fill', source: 'context', paint: {
         'fill-color': '#aeb8b4',
-        'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.38, 0.24],
+        'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], options.contextHoverOpacity ?? 0.38, options.contextOpacity ?? 0.24],
       } }, beforeLabel);
       map.addLayer({ id: 'context-line', type: 'line', source: 'context', paint: {
         'line-color': '#87938e', 'line-opacity': 0.65,

@@ -20,7 +20,7 @@ const county = code => ({ type: 'Feature', id: code, geometry: { type: 'Polygon'
   properties: { code, name: code, level: 'county', focusBounds: [121, 24, 122, 25], bounds: [121, 24, 122, 25], label: [121.5, 24.5], color: '#abc' } });
 const view = code => ({ level: 'town', path: [county('parent')], data: { type: 'FeatureCollection', features: [county(code)] }, selected: null, camera: null });
 
-function fixture(duration = 720) {
+function fixture(duration = 720, renderOptions = {}) {
   let moving = false, nextFrame = 0, layouts = 0;
   const frames = new Map(), events = new Map(), sources = new Map(), layers = new Map();
   const canvas = { style: {}, addEventListener() {}, removeEventListener() {} };
@@ -45,7 +45,7 @@ function fixture(duration = 720) {
     setFeatureState() {}, removeFeatureState() {}, queryRenderedFeatures: () => [],
     project: () => ({ x: 150, y: 300 }),
   };
-  const layer = createRegionLayer(map, { duration, deferUntilMoveEnd: true, fadeDuration: 180,
+  const layer = createRegionLayer(map, { duration, deferUntilMoveEnd: true, fadeDuration: 180, ...renderOptions,
     getPadding: () => ({ top: 0, right: 0, bottom: 0, left: 0 }), onSelect() {} });
   return { layer, map, sources, layers, emit, get layouts() { return layouts; },
     tick() { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(fn => fn()); },
@@ -55,6 +55,13 @@ function fixture(duration = 720) {
     get listenerCount() { return [...events.values()].reduce((sum, set) => sum + set.size, 0); },
   };
 }
+
+test('Context fill opacity can be tuned per map theme', () => {
+  const f = fixture(0, { contextOpacity: .32, contextHoverOpacity: .42 });
+  f.layer.render(view('selected'), [{ region: county('neighbor'), parentIndex: 0 }]); f.tick();
+  assert.deepEqual(f.layers.get('context-fill').paint['fill-opacity'], ['case', ['boolean', ['feature-state', 'hover'], false], .42, .32]);
+  f.layer.destroy();
+});
 
 test('Fast and cached data wait for the preview to stop; final fit keeps its animation', () => {
   const f = fixture(); let markers = 0;

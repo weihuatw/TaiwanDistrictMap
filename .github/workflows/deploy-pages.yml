@@ -31,6 +31,7 @@ jobs:
       - run: npm run school:check
       - run: npm run housing:check
       - run: npm run population:check
+      - run: npm run politics:check
       - name: Check basemap key
         env:
           VITE_TOMTOM_API_KEY: ${{ secrets.VITE_TOMTOM_API_KEY }}

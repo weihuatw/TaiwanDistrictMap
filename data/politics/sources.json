@@ -1,0 +1,1552 @@
+{
+  "schemaVersion": 1,
+  "retrievedAt": "2026-10-08T15:34:16.609270+00:00",
+  "snapshot": "2026-10-08",
+  "license": "https://data.gov.tw/license",
+  "elections": [
+    {
+      "id": "president-2024",
+      "subject": "P0",
+      "theme": "4d83db17c1707e3defae5dc4d4e9c800",
+      "date": "2024-01-13"
+    },
+    {
+      "id": "municipal-2022",
+      "subject": "C1",
+      "theme": "05cc7b904c7a30cc7c88d5b10898c98e",
+      "date": "2022-11-26"
+    },
+    {
+      "id": "county-2022",
+      "subject": "C2",
+      "theme": "63615098f5afa8ec53159c4a86fc01d3",
+      "date": "2022-11-26"
+    },
+    {
+      "id": "chiayi-2022",
+      "subject": "C2",
+      "theme": "1275d73551f2c0caf202e803b1766057",
+      "date": "2022-12-18"
+    }
+  ],
+  "catalogs": [
+    "https://data.gov.tw/dataset/13119",
+    "https://data.gov.tw/dataset/7057",
+    "https://data.gov.tw/dataset/7058",
+    "https://data.gov.tw/dataset/7061"
+  ],
+  "downloads": [
+    {
+      "file": "president-2024/tickets-C.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/C/00_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "8ca796ce664093d3b32a4aab34e8f6a39babbe517c3104ac2ab4de9e42254f01",
+      "bytes": 67384
+    },
+    {
+      "file": "president-2024/profiles-C.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/C/00_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "fadab86e5b54d4191478b7ba38ff6b544ed84c94b11934f1e7c76542c28bba39",
+      "bytes": 12396
+    },
+    {
+      "file": "president-2024/tickets-D-09_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/09_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "f8e55e8175f43b23ed2cf9ecc65c4973e848cae1d970d4a40c61fa680ebd6521",
+      "bytes": 12210
+    },
+    {
+      "file": "president-2024/tickets-L-09_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/09_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "44b9ed8487b1c32f5bc18fdaab1f9775b0e984401b8f9aab37dc50fb2dbf2cf3",
+      "bytes": 28436
+    },
+    {
+      "file": "president-2024/profiles-D-09_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/09_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "f16c36aebcba02aa916ad3446e6b9cca147ad3ebc1568d08b1b271eab6605a98",
+      "bytes": 2225
+    },
+    {
+      "file": "president-2024/profiles-L-09_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/09_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "89cfba5a3ba256bfbb64b4e6fa3a83d9103c27e962f7ae2a01723f5c0d679e63",
+      "bytes": 5147
+    },
+    {
+      "file": "president-2024/tickets-D-09_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/09_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "4b8e7224938f0eba0479e1a3d552d06533044312eddce47d86aa96528f700be2",
+      "bytes": 18326
+    },
+    {
+      "file": "president-2024/tickets-L-09_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/09_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "92b1d5a7596ec0b4003870414e1f879625fae64527cc70eb77785c86f728f9bc",
+      "bytes": 112802
+    },
+    {
+      "file": "president-2024/profiles-D-09_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/09_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "9f3124f32e25158943cea800523b2ff41c9dc4300656a5bb9431c091e60f2ec6",
+      "bytes": 3347
+    },
+    {
+      "file": "president-2024/profiles-L-09_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/09_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "01fc66d46bb85fecbd2c48ef561f9368c6e123a902b03a4908f86a94bd81c938",
+      "bytes": 20315
+    },
+    {
+      "file": "president-2024/tickets-D-10_002.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_002_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "2a3ed1874485b510726748945cad7825fa5634eb122c25a9f0e9d7ba2f05ed95",
+      "bytes": 36670
+    },
+    {
+      "file": "president-2024/tickets-L-10_002.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_002_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "26fc69a2394bb865dc9356dfc9537543b92140ce3a2c13d9785a806061b548c9",
+      "bytes": 710216
+    },
+    {
+      "file": "president-2024/profiles-D-10_002.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_002_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "8b170a3511d1232b8ffc9cadc6ce95f9ad9c1a5f4d578bc05263d0f40a96cd85",
+      "bytes": 6696
+    },
+    {
+      "file": "president-2024/profiles-L-10_002.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_002_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "56e58faa3d137ac4266a77872611c048c74a21b7e613843215c13401da5d7164",
+      "bytes": 127236
+    },
+    {
+      "file": "president-2024/tickets-D-10_004.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_004_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "594794ba9c1d08a45eb7dee342725fb1f8a82c2ccd43d5dfa09b5ab5daaea2e7",
+      "bytes": 39732
+    },
+    {
+      "file": "president-2024/tickets-L-10_004.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_004_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "2e1ab17bf64324afba92d81bd660883d6525c657fc5cc1abc8f6a7d951180baa",
+      "bytes": 585508
+    },
+    {
+      "file": "president-2024/profiles-D-10_004.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_004_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "2c196f7e97f0589fea10d8028fbdd9038b8ca20452e8c73fdb254778189de0dd",
+      "bytes": 7241
+    },
+    {
+      "file": "president-2024/profiles-L-10_004.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_004_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "9e14e6e82718e2117cbf97d982913aa02eb0b31b920bf33249c1c3b9558df41d",
+      "bytes": 104967
+    },
+    {
+      "file": "president-2024/tickets-D-10_005.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_005_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "a16d39698929d25af10d256f17a40d6b01c61c3e1d7348d6491c4ca3e7bcb04c",
+      "bytes": 54984
+    },
+    {
+      "file": "president-2024/tickets-L-10_005.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_005_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "6cd504418b44d349fde2160ac3bca3dc143b73db5a05816c8fa1c609e42528b4",
+      "bytes": 838350
+    },
+    {
+      "file": "president-2024/profiles-D-10_005.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_005_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "5b8174df44a04d324e87dcca7c56833ccca5a338c4b2b0d9b6ca54204e11bdc8",
+      "bytes": 10003
+    },
+    {
+      "file": "president-2024/profiles-L-10_005.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_005_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "e11167731e1c942d1fb3fc0f76583d9f143446ef61f23ec4c18834724580e17e",
+      "bytes": 150221
+    },
+    {
+      "file": "president-2024/tickets-D-10_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "e42a69f2b67196ab9b07a0fe6ca740aafa3fd89d5c4814a44707f3c502526d02",
+      "bytes": 79446
+    },
+    {
+      "file": "president-2024/tickets-L-10_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "c3191b469763806cc8c0036e814655e3d002995a5cc0c6879eb790aa593dc127",
+      "bytes": 1801720
+    },
+    {
+      "file": "president-2024/profiles-D-10_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "2cdc2e358a1ca87ac8784c512ab9b85bb16a909539c539b064521fc729c2c376",
+      "bytes": 14494
+    },
+    {
+      "file": "president-2024/profiles-L-10_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "af4c33743ee08400934eb825d88f936bbe2cff877c84c8212899ae97305226e2",
+      "bytes": 322777
+    },
+    {
+      "file": "president-2024/tickets-D-10_008.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_008_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "feade15910353252695d32b2fd1087d2d1afddbf3092e0e472940958d91d8eaa",
+      "bytes": 39736
+    },
+    {
+      "file": "president-2024/tickets-L-10_008.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_008_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "26ccc830021c9021b45494f151847e21456c63b159a527c069437b1d6595a3fa",
+      "bytes": 804818
+    },
+    {
+      "file": "president-2024/profiles-D-10_008.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_008_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "86cbb47fec8adf2301e7ec1660d0fd95e465575d6459469bc669217f0762652b",
+      "bytes": 7237
+    },
+    {
+      "file": "president-2024/profiles-L-10_008.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_008_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "33d9d32c9a58313a5cbdc4e715ec6f980627812a379d314bdfa8513c63b5f001",
+      "bytes": 144065
+    },
+    {
+      "file": "president-2024/tickets-D-10_009.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_009_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "b1de77bfab08d2a9f62cca935aad6c7c687fac8cae9439adf2d7b56299f9502c",
+      "bytes": 61104
+    },
+    {
+      "file": "president-2024/tickets-L-10_009.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_009_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "8b43406e64452acb2235c7ca3cb5658e57c440f3cd858ec1c68ec08ea6116591",
+      "bytes": 1194876
+    },
+    {
+      "file": "president-2024/profiles-D-10_009.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_009_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "0af99c90c608008798109298e728f71e63824c343b1110e6869181b252229b94",
+      "bytes": 11153
+    },
+    {
+      "file": "president-2024/profiles-L-10_009.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_009_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "0a447e06ee64937e768c20a98c4de33fdd5e68935bf47970c7f524cd6d38805a",
+      "bytes": 213925
+    },
+    {
+      "file": "president-2024/tickets-D-10_010.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_010_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "24487f7da04117489e2e4b5dec00cfb253783b00ef5003d83315482985e1d17a",
+      "bytes": 55008
+    },
+    {
+      "file": "president-2024/tickets-L-10_010.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_010_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "af6e7dace650ba67f33ad6955713e4ac577475889cca6e1cdb816089622be919",
+      "bytes": 1087980
+    },
+    {
+      "file": "president-2024/profiles-D-10_010.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_010_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "ba55f9e2039cabb96821fe040f2b20ff0a30b996cff7b6b5a86c0c8e80209573",
+      "bytes": 10028
+    },
+    {
+      "file": "president-2024/profiles-L-10_010.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_010_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "2b9dde0d8c529105666f3aae26468150982e6f181e0c83ab9e44ee0d8af5b37f",
+      "bytes": 194663
+    },
+    {
+      "file": "president-2024/tickets-D-10_013.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_013_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "55b1642587bd14a3ca58961401fe49c078dc652d5f436f95651a8d9ecadc34c7",
+      "bytes": 100794
+    },
+    {
+      "file": "president-2024/tickets-L-10_013.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_013_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "58a1a7b6d0095fd9677194569acde34f441d808b2d8e6a6ace57b6279512cbcf",
+      "bytes": 1350604
+    },
+    {
+      "file": "president-2024/profiles-D-10_013.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_013_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "7816cd362fed618ee419f2186c8d59b7fa2df7798cada41e1441a9fc6966f5a8",
+      "bytes": 18324
+    },
+    {
+      "file": "president-2024/profiles-L-10_013.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_013_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "ca9d6f6808669afac227dd79292d2e357ace988a3886e4fcd734465d3b00e1f9",
+      "bytes": 242074
+    },
+    {
+      "file": "president-2024/tickets-D-10_014.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_014_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "be9a100a18f8ae822ad38df3d5d114a9ec6cfedbded5596e0af63d3334b5fc6f",
+      "bytes": 48844
+    },
+    {
+      "file": "president-2024/tickets-L-10_014.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_014_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "566adb847165e481b0eeda6bfe0e49a922acbf1bbacf0d5e37c2424d2348b773",
+      "bytes": 423736
+    },
+    {
+      "file": "president-2024/profiles-D-10_014.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_014_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "15ba296069070a1eb7eec3f88728c6bdcba6ce399c0af68e97d010f4c1a4953d",
+      "bytes": 8864
+    },
+    {
+      "file": "president-2024/profiles-L-10_014.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_014_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "83214f04ea76bedaaaa6d89dddb8d14f848a939149ce23e9189a632c763af58b",
+      "bytes": 76044
+    },
+    {
+      "file": "president-2024/tickets-D-10_015.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_015_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "f57f53488f8a6f6261db92d12cfe68ef109ebfaa90a5a83ed6ec4eb5ea4b5f0d",
+      "bytes": 39712
+    },
+    {
+      "file": "president-2024/tickets-L-10_015.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_015_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "ad741dcf1135728ab5c45218b6f76ab69958e5236016f82cae77a86a0a92b93c",
+      "bytes": 539454
+    },
+    {
+      "file": "president-2024/profiles-D-10_015.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_015_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "51eab136a9747f76aa82b49436633c9c8c6ea709c3961bfd9ddcc5e595d785de",
+      "bytes": 7224
+    },
+    {
+      "file": "president-2024/profiles-L-10_015.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_015_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "9a00168b1054b736e4bed9f0cd2bbc334853faa612a13c6161cd2c716cde3698",
+      "bytes": 96671
+    },
+    {
+      "file": "president-2024/tickets-D-10_016.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_016_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "fdc9c79f76eb563dd8f945dbd79f0d5b38d4b23a3d4e0dd60053bb9e380df3ab",
+      "bytes": 18334
+    },
+    {
+      "file": "president-2024/tickets-L-10_016.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_016_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "54f1ecf3e171c147aac872dc17e7dba3f01ab2ba8822c76aae3d3a088f88a128",
+      "bytes": 292390
+    },
+    {
+      "file": "president-2024/profiles-D-10_016.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_016_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "5c69cc2d91f2372557ce2a96d07fc8e819ab14a38d1b7dd4ed40516da09cb059",
+      "bytes": 3343
+    },
+    {
+      "file": "president-2024/profiles-L-10_016.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_016_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "d05aebbed16e00ee95ab7dcb590cf9f3a584a72f920acf4e673c4417a12c6ce2",
+      "bytes": 52300
+    },
+    {
+      "file": "president-2024/tickets-D-10_017.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_017_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "e18c4e76f913bc5d598bf4d2d91a1c97f059b961ad76e224a8798f9d02ffe27b",
+      "bytes": 21420
+    },
+    {
+      "file": "president-2024/tickets-L-10_017.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_017_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "d5a96a74fbf6ecf6c09586d5e199e07b97519ad2db4db533fb651c440dc53302",
+      "bytes": 478684
+    },
+    {
+      "file": "president-2024/profiles-D-10_017.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_017_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "1c5f553d9f90af1aa0e34726e6828cd9a13c4d0fae9cb642744665bd78a8420b",
+      "bytes": 3923
+    },
+    {
+      "file": "president-2024/profiles-L-10_017.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_017_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "615931ff4af44a93a61a8de8d9a4120bd4393309931a2a99d5a8cfcff165e8d9",
+      "bytes": 85717
+    },
+    {
+      "file": "president-2024/tickets-D-10_018.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_018_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "ae29b00d7d4952165524455e4e6c71be68ac83678cb1edd54124afd254b75a0d",
+      "bytes": 9166
+    },
+    {
+      "file": "president-2024/tickets-L-10_018.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_018_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "513989e8c23de1ad95df950dc6000ce7c0a977f9b943b003ace5a05098e46e01",
+      "bytes": 372054
+    },
+    {
+      "file": "president-2024/profiles-D-10_018.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_018_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "835ecb5005f04f99a40ab8a085879d91c81ddbe7b349b0dc5f715124baa331f5",
+      "bytes": 1695
+    },
+    {
+      "file": "president-2024/profiles-L-10_018.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_018_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "21f6e0f4f1099d818191bd88ea5926c921e031807e019aaf21d8103679518fed",
+      "bytes": 66651
+    },
+    {
+      "file": "president-2024/tickets-D-10_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "d8c82fc7ef3778e6a9e0db76490ffc866e7a53846c4d597b65745bef3b94b84e",
+      "bytes": 6108
+    },
+    {
+      "file": "president-2024/tickets-L-10_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "8fccfb9e8a1553340331937f6fd3b06812d27d27a28582168833d659694eb7ba",
+      "bytes": 262442
+    },
+    {
+      "file": "president-2024/profiles-D-10_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/10_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "e3c62c35faea813b78909b9c9c7f57136394250faf152c73a10892fab64518ff",
+      "bytes": 1135
+    },
+    {
+      "file": "president-2024/profiles-L-10_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/10_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "c5056a344bf96d9bd5168c9c0d0e0d337b3a7f2cb861f0bf987acf99623ebacb",
+      "bytes": 47062
+    },
+    {
+      "file": "president-2024/tickets-D-63_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/63_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "6891d0a696ff7cf0ba3ee1667e6475c953513d80cb7e9f81cf53d8e6cb6f8396",
+      "bytes": 36738
+    },
+    {
+      "file": "president-2024/tickets-L-63_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/63_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "fb12c8ea52ae9307574859978d5da8dcd9345a9d11aa799f34a4ad030d7707fe",
+      "bytes": 1391428
+    },
+    {
+      "file": "president-2024/profiles-D-63_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/63_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "dcc80aab4bb79f13ee424e70f44b5447da4590a2fdc67ba4dadf19ca6d297037",
+      "bytes": 6752
+    },
+    {
+      "file": "president-2024/profiles-L-63_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/63_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "c563bcf8fc955009d4e40cedab542c9df3086aa9b7002a87b2b08e46332d3abd",
+      "bytes": 249610
+    },
+    {
+      "file": "president-2024/tickets-D-64_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/64_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "7b017bbf30b266b4a20964b47e1c641e1663ad55e9b69ece293d8383946d69c6",
+      "bytes": 116138
+    },
+    {
+      "file": "president-2024/tickets-L-64_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/64_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "b0f694d6371892a3ca899cadaac70f92a62e1895a2b28c3023b3eba2b1c49d50",
+      "bytes": 2713614
+    },
+    {
+      "file": "president-2024/profiles-D-64_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/64_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "0651ceca7d0f049ff7aae0ffb17d0d7ada449f72b42691abbb26f70dc95d5ea6",
+      "bytes": 21175
+    },
+    {
+      "file": "president-2024/profiles-L-64_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/64_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "ee85691ba252aa0b22bf0527cc9038bce3da578a94fa183f98106d2452da4c7e",
+      "bytes": 486430
+    },
+    {
+      "file": "president-2024/tickets-D-65_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/65_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "87c9a42379ab65e4ef8bd0ef32906b6542bde494782d9df4d8206586cdc5c555",
+      "bytes": 88678
+    },
+    {
+      "file": "president-2024/tickets-L-65_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/65_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "028de96e85565e67054e40e1a10de148542e224e5acbd8dbe8dff9ac9e0ee284",
+      "bytes": 3147008
+    },
+    {
+      "file": "president-2024/profiles-D-65_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/65_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "240923c312db30ed689d51a0aa058b11c44e28918cb4bbd5383298917dce68a8",
+      "bytes": 16189
+    },
+    {
+      "file": "president-2024/profiles-L-65_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/65_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "773bcc3f3c3503be1a1c299961d6cd3dbe927fadab9338be24c457e0dcf7bf06",
+      "bytes": 564274
+    },
+    {
+      "file": "president-2024/tickets-D-66_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/66_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "2ff906d1d0d6f27152cbb7c77422dd65d31c2290e13ef6f0605db6359106caf8",
+      "bytes": 88630
+    },
+    {
+      "file": "president-2024/tickets-L-66_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/66_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "7997ece50b057b2f91fc5b48836af541ec3aff0cf8dca98cc5482c1c6b87d432",
+      "bytes": 1906674
+    },
+    {
+      "file": "president-2024/profiles-D-66_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/66_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "868b2cb7dfd957d14151eec2b74835b3ef09c84d8da3b29760c9b6011f0a9ec3",
+      "bytes": 16175
+    },
+    {
+      "file": "president-2024/profiles-L-66_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/66_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "58a7422b4b1bfa9ec01dcc15a5d46b85554c7158fcee0ceb75c9d57bd4ea8505",
+      "bytes": 342122
+    },
+    {
+      "file": "president-2024/tickets-D-67_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/67_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "afe1093343454fd590d7b38b2cd6c2b8f78b963f05353d1841ac91ae325d8fae",
+      "bytes": 112986
+    },
+    {
+      "file": "president-2024/tickets-L-67_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/67_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "0cf10a4e69a9bd338e89c8cc9b183e6b7f153d842fb37b184038e917580c4a82",
+      "bytes": 1979156
+    },
+    {
+      "file": "president-2024/profiles-D-67_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/67_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "468e4f370a6a3ed8af8583e67ad2bd8b029cdec2df8aa7e3f4f1148e929befe9",
+      "bytes": 20592
+    },
+    {
+      "file": "president-2024/profiles-L-67_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/67_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "e0f5c10bad814bed66c96ab1cc484760f7f0865b4bbbb6bbebd58155eea8d4ca",
+      "bytes": 355022
+    },
+    {
+      "file": "president-2024/tickets-D-68_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/68_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "44465c3a1fecba0be95b655c02f90d2a751b06db5112e3d69143b6aa72d3b7f2",
+      "bytes": 39786
+    },
+    {
+      "file": "president-2024/tickets-L-68_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/68_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "df883eb2dc2e0a6c9954aefeb083474416d98031afadb95fd2d7ffe9d8554545",
+      "bytes": 1573876
+    },
+    {
+      "file": "president-2024/profiles-D-68_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/D/68_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "d25661fdf06a83acd47d4a1e4c8da0d7164cc80607d6c383da502e49a4c440ae",
+      "bytes": 7291
+    },
+    {
+      "file": "president-2024/profiles-L-68_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/L/68_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "19a5a4e76eb17af73f5106b9eb492a3440896e43b5c3ae6070dc9043ab66f16e",
+      "bytes": 282277
+    },
+    {
+      "file": "municipal-2022/tickets-C.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/C/00_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "18fadc2e438ba3399e7707970a01aaf441f3d945cd9545b282ac0822c60c6e68",
+      "bytes": 15513
+    },
+    {
+      "file": "municipal-2022/profiles-C.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/C/00_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "745f1349b12d7cb050d02181ff93a57229453ced33a13d59482917023889b59c",
+      "bytes": 3417
+    },
+    {
+      "file": "municipal-2022/tickets-D-63_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/63_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "1f9b5e11d48ee6e75dbb042f57dd4f5dacf754a20b9679244eb4e585d02f9d68",
+      "bytes": 74231
+    },
+    {
+      "file": "municipal-2022/tickets-L-63_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/63_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "8c72f8961d0f1ec84e8693c998a27a593e5aa1606f941b1d2deb89d362a00301",
+      "bytes": 2811292
+    },
+    {
+      "file": "municipal-2022/profiles-D-63_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/63_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "457fca5a8b2e7d6c9d212a358e44c52db47ac9073c47149c48644d8507eac8ba",
+      "bytes": 6751
+    },
+    {
+      "file": "municipal-2022/profiles-L-63_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/63_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "a42a86051c9bb25fcd1427b88f44bba5ea742c2dfeddfb8c5d1557d3ecc45007",
+      "bytes": 249636
+    },
+    {
+      "file": "municipal-2022/tickets-D-64_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/64_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "70d5af81195ab30c176ceee56edc2ce4588301865c7cd373b08618903a023750",
+      "bytes": 78432
+    },
+    {
+      "file": "municipal-2022/tickets-L-64_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/64_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "d908ee8c7662443170c7a9ba5841e3e426022ab84a3a647b5ba57c63f3c653fd",
+      "bytes": 1832594
+    },
+    {
+      "file": "municipal-2022/profiles-D-64_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/64_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "e51da662788b0c71707af315d7c4442103e72e3cd358c7e28870911486a9b50d",
+      "bytes": 21139
+    },
+    {
+      "file": "municipal-2022/profiles-L-64_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/64_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "4a3ed57d9d4460561e92ad86e31b1a03ccfd1d9e47199fed3c73ce84d9d18b70",
+      "bytes": 485711
+    },
+    {
+      "file": "municipal-2022/tickets-D-65_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/65_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "605f824279020e37256ae5e5d2ae7a311747f8f00c1b9f56cae1de67b4eba8ad",
+      "bytes": 29551
+    },
+    {
+      "file": "municipal-2022/tickets-L-65_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/65_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "c0a038e587b1e46f1bd73a3d54ba59bea9dd5f05f7476c88fdcf4b0bfdfa62ba",
+      "bytes": 1048648
+    },
+    {
+      "file": "municipal-2022/profiles-D-65_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/65_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "4e525dc75d619c4e2a020485d2e95e12983ab29f4c7729d99928d9643982bce6",
+      "bytes": 16162
+    },
+    {
+      "file": "municipal-2022/profiles-L-65_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/65_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "1ec34e99bf8bb6f2195fe5e49bfbbcbbfb710dee925e9689a916e0c7fd0f266f",
+      "bytes": 563302
+    },
+    {
+      "file": "municipal-2022/tickets-D-66_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/66_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "f62c319edb1460434bda2e02c460d64e81c68be9721b8a7426880e76b8ed955b",
+      "bytes": 44834
+    },
+    {
+      "file": "municipal-2022/tickets-L-66_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/66_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "e75bf48dbdbf576322e553af08e891bdd9540eabe61f01692e777eaff4a42c47",
+      "bytes": 964764
+    },
+    {
+      "file": "municipal-2022/profiles-D-66_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/66_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "85b93557f126031dc9c30ea35dda48947148319be1f78ba0d141a5e3f666ac7c",
+      "bytes": 16178
+    },
+    {
+      "file": "municipal-2022/profiles-L-66_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/66_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "11c2552a0d6e5c94ee9b67e2ab39c9850bafcd7a85d08b4f7a47b2d28bda37ba",
+      "bytes": 342155
+    },
+    {
+      "file": "municipal-2022/tickets-D-67_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/67_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "9d3ef488003a9594a462d46ed3f75c3e17d9349a6ad4d021c3c5e40582b578d5",
+      "bytes": 95657
+    },
+    {
+      "file": "municipal-2022/tickets-L-67_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/67_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "1a8b8ae11d95ebc09714ccd31a3c8de0afc0cfc7e52e4ae3921ca10dce0355a4",
+      "bytes": 1675479
+    },
+    {
+      "file": "municipal-2022/profiles-D-67_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/67_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "d202c45777567cb0b72258754867333ef2f8bee1a07bf26a2edeb923ad1266f2",
+      "bytes": 20567
+    },
+    {
+      "file": "municipal-2022/profiles-L-67_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/67_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "80f8995b487bc4df0885c492a954c09568519729581032e29c1645727ec93a9b",
+      "bytes": 354518
+    },
+    {
+      "file": "municipal-2022/tickets-D-68_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/68_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "4fa47058706a260160a5227dd691cb5b188bc6b69d9c4f231426b286b8b0eb82",
+      "bytes": 26689
+    },
+    {
+      "file": "municipal-2022/tickets-L-68_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/68_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "79e38bad0f57963f76f8b10bb2c551c2a8d6a60137191661c60dd1e06d8302ea",
+      "bytes": 1055560
+    },
+    {
+      "file": "municipal-2022/profiles-D-68_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/D/68_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "324488a96fb88d92cd70e9d1782e2c50ac516727480645c93ee075e686ac2868",
+      "bytes": 7277
+    },
+    {
+      "file": "municipal-2022/profiles-L-68_000.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C1/00/05cc7b904c7a30cc7c88d5b10898c98e/L/68_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "c9afd1eb3fa3eab79483436ca0b3bbaff9148e04f2f46198a26ece867a8969a2",
+      "bytes": 281797
+    },
+    {
+      "file": "county-2022/tickets-C.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/C/00_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "7455b1b37ad15f146d776c9ade05f32a32297bb3cb1abb57725bf551b0b86663",
+      "bytes": 30451
+    },
+    {
+      "file": "county-2022/profiles-C.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/C/00_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "0a68fed06635a29d08f3aaba3c9439b7d9eab7bad50ac0b5030c947325b78632",
+      "bytes": 8438
+    },
+    {
+      "file": "county-2022/tickets-D-09_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/09_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "c2784cc98a723c835afac94000d0a0fdb34cd61f88a4fca7462c9972aa5f92d0",
+      "bytes": 6098
+    },
+    {
+      "file": "county-2022/tickets-L-09_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/09_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "386067e0367d5ff4553cd47071610f2e26e4d85db3995b768d167a01be8cc98b",
+      "bytes": 14217
+    },
+    {
+      "file": "county-2022/profiles-D-09_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/09_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "019c0e808c1e62a5386365345b6a7a0e43411d7900488166a6590ab0fc4513a5",
+      "bytes": 2226
+    },
+    {
+      "file": "county-2022/profiles-L-09_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/09_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "2e6d7dea25db25ac7dc63ab9289e316f48874844071426401acafe741ae5b898",
+      "bytes": 5163
+    },
+    {
+      "file": "county-2022/tickets-D-09_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/09_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "6fc45356536724a87fb5d1e6d55b82fe3b2cf09eb6391c0a6f16766cf9b8852a",
+      "bytes": 18606
+    },
+    {
+      "file": "county-2022/tickets-L-09_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/09_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "34cd5d56b6701405f1aa9cd762ea1069f08581c25cdd09820da9da3e4d62af81",
+      "bytes": 114583
+    },
+    {
+      "file": "county-2022/profiles-D-09_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/09_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "d1f76c085d3a42d619387eef577d3e6d03b5ab9468fa1d8ccd30b0b3d41dccec",
+      "bytes": 3351
+    },
+    {
+      "file": "county-2022/profiles-L-09_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/09_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "c6b58a20ca183e667a54ddff634405ca4fcd8e38bf696b2386c2e0ff6dab87b3",
+      "bytes": 20333
+    },
+    {
+      "file": "county-2022/tickets-D-10_002.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_002_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "0fd76d234635767d4328fa74b3760119f7de07848a0d047d332f6ee68a459114",
+      "bytes": 36981
+    },
+    {
+      "file": "county-2022/tickets-L-10_002.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_002_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "8af66c1889e2c5d6d82a8638758c5435a1026fbc306f05c6ca5ca5c8edbe2688",
+      "bytes": 716184
+    },
+    {
+      "file": "county-2022/profiles-D-10_002.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_002_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "33d8991c67640e823c5fa9e7cd04d2a2ed0fc0f074aadaa69295385766271213",
+      "bytes": 6699
+    },
+    {
+      "file": "county-2022/profiles-L-10_002.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_002_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "6ba34fbe267a267729b0fc76c63b4d3abccdb9248f0508f8be5cf356d68ff82e",
+      "bytes": 127336
+    },
+    {
+      "file": "county-2022/tickets-D-10_004.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_004_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "73622078e023cd6fceaf1ce701d785f3d7fe0ec2940f138555699523aa96798b",
+      "bytes": 33693
+    },
+    {
+      "file": "county-2022/tickets-L-10_004.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_004_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "bc3b7bfa7ff7d32298d847dfd60a3d3e8948333c4f8c6307914b7b3b98a3e52b",
+      "bytes": 496536
+    },
+    {
+      "file": "county-2022/profiles-D-10_004.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_004_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "44e0325d613554f031f77454b1c3de47349ea8a41aadc84591c2ef6c90c4de45",
+      "bytes": 7232
+    },
+    {
+      "file": "county-2022/profiles-L-10_004.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_004_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "311cc260e8dbf247d9ed07972ade1b815b5d19fba37e8341a6bc95505fddfed7",
+      "bytes": 104852
+    },
+    {
+      "file": "county-2022/tickets-D-10_005.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_005_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "8a1ea8a8dad6675e3078a642bd690ed4f19eda3ad7f0173cac8a3b5aa59b94bd",
+      "bytes": 46268
+    },
+    {
+      "file": "county-2022/tickets-L-10_005.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_005_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "1220a5dbf8c41623ced07d7e5566be872f43e943454bb901b84dac63cbdc346b",
+      "bytes": 705552
+    },
+    {
+      "file": "county-2022/profiles-D-10_005.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_005_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "798c3d9db0ebd661f0c49eadc97d6b967fefa2485d9c0840fc918451805d58a0",
+      "bytes": 9998
+    },
+    {
+      "file": "county-2022/profiles-L-10_005.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_005_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "bf2ef118017e989ac44ae90b77274aa8dc8e622e09d52a010bcd820059417bb8",
+      "bytes": 150088
+    },
+    {
+      "file": "county-2022/tickets-D-10_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "d8843f9ca78c9b5f24d119f39904b76ec320a9e38d8bc97008d83cbb39864735",
+      "bytes": 40365
+    },
+    {
+      "file": "county-2022/tickets-L-10_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "b46c318d44bcbcb456aaf64247601420471a71fe1a17658589632c1de74e76a4",
+      "bytes": 915238
+    },
+    {
+      "file": "county-2022/profiles-D-10_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "afd2bcbee3bb65c2a682859a8daa1fb98e73056e1dceb0983ed51559fc9629c5",
+      "bytes": 14500
+    },
+    {
+      "file": "county-2022/profiles-L-10_007.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_007_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "c2aeddaf514468fb3b001b9514ed8a5bf608f4778106d9ed30c77c2d7e2d617c",
+      "bytes": 322995
+    },
+    {
+      "file": "county-2022/tickets-D-10_008.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_008_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "dab8a2414d60a3380e484505251e6f1a8f1de878fb02871d9f175580d844b76f",
+      "bytes": 20112
+    },
+    {
+      "file": "county-2022/tickets-L-10_008.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_008_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "527a99342e4b42362b3762bd565a55a990b880fc60d8182164c1750aa737cfa3",
+      "bytes": 405697
+    },
+    {
+      "file": "county-2022/profiles-D-10_008.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_008_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "8ffaf06d199de6c7a28921d9b5a19b7f6585917fa5d66d09991e4e65fef618b6",
+      "bytes": 7252
+    },
+    {
+      "file": "county-2022/profiles-L-10_008.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_008_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "a488575ff9543e94d1dc3df88954da4117e8a3735ef8495bb691bd19b39d7074",
+      "bytes": 143598
+    },
+    {
+      "file": "county-2022/tickets-D-10_009.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_009_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "a5f07f4824ab8beb6335018dce92838a2604dab0af5801a6f75e380571016cd3",
+      "bytes": 30829
+    },
+    {
+      "file": "county-2022/tickets-L-10_009.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_009_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "995d2f94972f1209feff68cbd728f75f10188db633eb10191c90ec6406a6f33d",
+      "bytes": 602779
+    },
+    {
+      "file": "county-2022/profiles-D-10_009.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_009_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "bc0a5c7fbb5cfa68841ae7bb6eae1035a44a7085c31c2b106cb17536bdaec428",
+      "bytes": 11154
+    },
+    {
+      "file": "county-2022/profiles-L-10_009.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_009_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "88bc139129445d9636bb39c409251ec7b0f051271aeaaa997d876619047fb936",
+      "bytes": 214149
+    },
+    {
+      "file": "county-2022/tickets-D-10_010.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_010_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "43603faa697e416badcb4abc843df55d79696ee7b05cb71c8b538dc1632d00ef",
+      "bytes": 18336
+    },
+    {
+      "file": "county-2022/tickets-L-10_010.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_010_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "fc10a488b303a17d112c6d5d7b115a1eea2c7610e276f7bb0934806432498220",
+      "bytes": 362716
+    },
+    {
+      "file": "county-2022/profiles-D-10_010.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_010_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "dddfe2d4d4348a294cf3894ee6e78f8c30fce21dc5318c9faf40b408bf12aa4a",
+      "bytes": 10017
+    },
+    {
+      "file": "county-2022/profiles-L-10_010.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_010_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "d4fc5f1181de80a63c015be8eb9f2961e6867e56c1b77f7e2c251f0e3c230e57",
+      "bytes": 194531
+    },
+    {
+      "file": "county-2022/tickets-D-10_013.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_013_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "b4c488f029b318c57ef8ae827ae551679c066e57353fd0966a81fd13b448d8d7",
+      "bytes": 50258
+    },
+    {
+      "file": "county-2022/tickets-L-10_013.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_013_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "9ab6a852e21616ebb9f89709275b2f6ee8ceeefead9103448815eab1ba5553ea",
+      "bytes": 673634
+    },
+    {
+      "file": "county-2022/profiles-D-10_013.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_013_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "692fea8416ec397cb16652709b369d256ab7251c96c579062506eff7c13b3528",
+      "bytes": 18344
+    },
+    {
+      "file": "county-2022/profiles-L-10_013.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_013_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "b929f31237bdb902f74e43afc88377ee0f63992738a1c3b33424866c6659ed3d",
+      "bytes": 242359
+    },
+    {
+      "file": "county-2022/tickets-D-10_014.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_014_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "863a150fd13c638a6f9812d71c4cfef24d93de5fa3393248c4a648cf947533ce",
+      "bytes": 24654
+    },
+    {
+      "file": "county-2022/tickets-L-10_014.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_014_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "b0f00834429ae5d723ed03e128f12de49a0ab0b1c7877fb4e7564c2443341f32",
+      "bytes": 213927
+    },
+    {
+      "file": "county-2022/profiles-D-10_014.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_014_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "c1f6b6441ab5ebe0f598a41d76420b6f215cfa4732d470a844f0308c171fb9d1",
+      "bytes": 8876
+    },
+    {
+      "file": "county-2022/profiles-L-10_014.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_014_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "ac2fd240e45156107a3e5b9d92a9cc8ac0aa510e5ffafaf3ae9f0e008cdccac5",
+      "bytes": 76127
+    },
+    {
+      "file": "county-2022/tickets-D-10_015.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_015_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "a6a13e6faadcf60fa61ab4c48a2900724971b1a013c3321432c72462d93da09a",
+      "bytes": 20366
+    },
+    {
+      "file": "county-2022/tickets-L-10_015.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_015_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "a937a6337d9bef681199474f12d9583423a7d78476ddb03958917f69be4fc14a",
+      "bytes": 276670
+    },
+    {
+      "file": "county-2022/profiles-D-10_015.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_015_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "065cb2a944d1a69ee3dbacbfcf5d54910cf168ab590b6d2f73a0648dac1335b3",
+      "bytes": 7231
+    },
+    {
+      "file": "county-2022/profiles-L-10_015.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_015_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "99f64da5f7f3e6eb6f3cb2a0971ec0afe6232e41ecc1722f075121ded2090930",
+      "bytes": 96728
+    },
+    {
+      "file": "county-2022/tickets-D-10_016.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_016_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "6cafde6c04b2b7a28e0f7fde2c14d969ba71eb1fe16aeaec4d135718d3aca9d7",
+      "bytes": 9299
+    },
+    {
+      "file": "county-2022/tickets-L-10_016.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_016_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "aea6da0433301f7c8bf68a74e5da91fc202e23c1d2b7465b8589cf010ea5978d",
+      "bytes": 148204
+    },
+    {
+      "file": "county-2022/profiles-D-10_016.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_016_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "2ec132f0ec33b3f0277934113f28ff6ff5e53cf03a18a0ebaf248f5df11f53e9",
+      "bytes": 3346
+    },
+    {
+      "file": "county-2022/profiles-L-10_016.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_016_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "860e8c751bbb2a2547d5f8ab9f7f354428fe3f651a99af74246440ce4fdbd843",
+      "bytes": 52355
+    },
+    {
+      "file": "county-2022/tickets-D-10_017.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_017_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "27c54fb4aa85869aa237fc43c2eb007c32066b0c130b8659705179e2bc8d81da",
+      "bytes": 18005
+    },
+    {
+      "file": "county-2022/tickets-L-10_017.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_017_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "fbef2b28079fb59d1af5971496563074f979f11644ec3f955dd19d1d29fad848",
+      "bytes": 402330
+    },
+    {
+      "file": "county-2022/profiles-D-10_017.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_017_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "016301cb1627cd8492131eba2cb93a517c2883f2b926eef363cf2b329564ad52",
+      "bytes": 3913
+    },
+    {
+      "file": "county-2022/profiles-L-10_017.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_017_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "ddd699d6c5a6f882ca57acebfa12d2765e2ef99fe7a8d786fe4a6dd70345cadb",
+      "bytes": 85586
+    },
+    {
+      "file": "county-2022/tickets-D-10_018.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_018_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "e9a4b801bf8819e7e12720574fd86c8d4abfc2dfd89758cad2a95e307609cb98",
+      "bytes": 9315
+    },
+    {
+      "file": "county-2022/tickets-L-10_018.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_018_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "5cb408369140b361f22c68ed97bad588a38a23d3a47b418cac7d0fa2851cca63",
+      "bytes": 378066
+    },
+    {
+      "file": "county-2022/profiles-D-10_018.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/D/10_018_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "e837bd14860b68fdfde85a366ecbb9ca12fc39a4db2ae9191b9273eba8a309f9",
+      "bytes": 1696
+    },
+    {
+      "file": "county-2022/profiles-L-10_018.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/63615098f5afa8ec53159c4a86fc01d3/L/10_018_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "3d34c0d02a933fa22caeb81dc3c40bdc2042e62ab4df91614cbf30911dc8a234",
+      "bytes": 66661
+    },
+    {
+      "file": "chiayi-2022/tickets-C.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/1275d73551f2c0caf202e803b1766057/C/00_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "c3c4b481f15e34e2eed69abfbb3a2bc2453e455d866f2497a98527e74d2e6e52",
+      "bytes": 2648
+    },
+    {
+      "file": "chiayi-2022/profiles-C.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/1275d73551f2c0caf202e803b1766057/C/00_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "2e903aac414129d687242d8d24003d0c2b0fbc16be3a46ebcc6ff0dfdbc40e86",
+      "bytes": 582
+    },
+    {
+      "file": "chiayi-2022/tickets-D-10_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/1275d73551f2c0caf202e803b1766057/D/10_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "31e3cc973680adc488d20acdc31f124541b42e9ffbcb9c820c834cfba48969df",
+      "bytes": 5240
+    },
+    {
+      "file": "chiayi-2022/tickets-L-10_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/C2/00/1275d73551f2c0caf202e803b1766057/L/10_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "ae9cade43555e73201fa637844fd9f881594f18e900212314694edefae58a01d",
+      "bytes": 219619
+    },
+    {
+      "file": "chiayi-2022/profiles-D-10_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/1275d73551f2c0caf202e803b1766057/D/10_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "abdf6bb71adbda2d646d1bb020f6f4c6f2c2ed041702575bf0619295d17410ae",
+      "bytes": 1133
+    },
+    {
+      "file": "chiayi-2022/profiles-L-10_020.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/profiles/ELC/C2/00/1275d73551f2c0caf202e803b1766057/L/10_020_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "dd79429bdb38013115819c85d3b2c27ac148ddbdeecfa70809c82aba2983814c",
+      "bytes": 45724
+    },
+    {
+      "file": "president-2024/tickets-N.json",
+      "url": "https://db.cec.gov.tw/static/elections/data/tickets/ELC/P0/00/4d83db17c1707e3defae5dc4d4e9c800/N/00_000_00_000_0000.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "53e33cad80e9276cab86987691174071aa46e6c082c43cf31485139f8b3a386b",
+      "bytes": 3078
+    },
+    {
+      "file": "party-colors.json",
+      "url": "https://db.cec.gov.tw/static/webs/configs/party_colors.json",
+      "method": "GET",
+      "form": null,
+      "sha256": "3d8a641dd63f90a729354174b8ac303645e366573a741d08f518064b3eaa45c1",
+      "bytes": 10953
+    },
+    {
+      "file": "officials/villages.xls",
+      "url": "https://www.moi.gov.tw/LocalOfficial.aspx?n=577&TYP=KND0007",
+      "method": "POST",
+      "form": "JLocalOfficial_ExportOds=轉出Ods",
+      "sha256": "ea5b73a6dade5c6e88af5899526b71442eba194db43365788b8205a4b3b8dd06",
+      "bytes": 10360320
+    },
+    {
+      "file": "officials/municipal.xls",
+      "url": "https://www.moi.gov.tw/LocalOfficial.aspx?n=578&TYP=KND0004",
+      "method": "POST",
+      "form": "JLocalOfficial_ExportOds=轉出Ods",
+      "sha256": "5236523e2e40f84f8fb0dc8d4c6760f6d786609a011b8034cc1f367b1c4c9f81",
+      "bytes": 17920
+    },
+    {
+      "file": "officials/county.xls",
+      "url": "https://www.moi.gov.tw/LocalOfficial.aspx?n=579&TYP=KND0005",
+      "method": "POST",
+      "form": "JLocalOfficial_ExportOds=轉出Ods",
+      "sha256": "d7b795b563b8cb2c465e4236d4d36b2c4b68afbcb2c497b664f92d6119a8381c",
+      "bytes": 37376
+    }
+  ]
+}

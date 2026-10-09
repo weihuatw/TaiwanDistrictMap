@@ -1,0 +1,27 @@
+.politics-page .location-panel { max-height: calc(100dvh - 48px); overflow-y: auto; }
+.politics-control { display: grid; gap: 7px; font-size: 12px; font-weight: 600; margin-top: 14px; }
+.politics-control select { width: 100%; background: #faf9fd; color: #3b3654; border: 1px solid #ddd9e6; border-radius: 8px; padding: 9px; font: inherit; font-size: 13px; }
+.politics-version, .politics-note { font-size: 11px; color: #747385; line-height: 1.6; }
+.politics-version { margin: 8px 0; }
+.politics-legend { display: flex; flex-wrap: wrap; gap: 7px 12px; font-size: 10px; line-height: 1.4; }
+.politics-legend > span { display: inline-flex; align-items: center; gap: 5px; }
+.politics-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.politics-missing { background-image: repeating-linear-gradient(135deg, transparent 0 3px, #787b89 3px 4px); }
+.politics-details { border-top: 1px solid #e5e2ec; margin-top: 12px; padding-top: 12px; }
+.politics-details summary { cursor: pointer; font-size: 13px; font-weight: 600; color: #4e4569; }
+.politics-body { font-size: 12px; line-height: 1.65; overflow-wrap: anywhere; }
+.politics-body p { margin: 8px 0; }
+.politics-headline { font-weight: 600; color: #3e3659; }
+.politics-body > a { display: inline-block; font-size: 11px; margin: 4px 9px 0 0; color: #65558a; }
+.politics-votes { width: 100%; border-collapse: collapse; font-size: 11px; margin: 10px 0; }
+.politics-votes caption { text-align: left; font-size: 10px; color: #747385; margin-bottom: 5px; }
+.politics-votes th, .politics-votes td { padding: 5px 2px; border-bottom: 1px solid #eeeaf3; text-align: right; vertical-align: top; }
+.politics-votes th:first-child { text-align: left; width: 57%; font-weight: 500; }
+.politics-votes small { display: block; font-size: 9px; font-weight: normal; color: #747385; }
+.politics-votes td { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.politics-votes .is-leading { background: #f4f1fa; }
+.politics-page .region-option-meta { max-width: 116px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 760px) {
+  .politics-page .location-panel { max-height: none; overflow: visible; }
+  .politics-control { margin-top: 10px; }
+}

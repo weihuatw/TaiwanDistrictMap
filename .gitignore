@@ -9,3 +9,4 @@ data/build/
 *.log
 __pycache__/
 .venv-school/
+.venv-politics/

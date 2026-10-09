@@ -4,7 +4,7 @@
 
 ## 專案與現況
 
-這是 Vite + TypeScript 的純靜態地圖網站，沒有後端。四個 HTML 入口共用地圖核心與介面：
+這是 Vite + TypeScript 的純靜態地圖網站，沒有後端。五個 HTML 入口共用地圖核心與介面：
 
 | 入口 | 用途 | 應用目錄 |
 | --- | --- | --- |
@@ -12,10 +12,11 @@
 | `income.html` | 2024 年平均年綜合所得地圖 | `src/apps/income/` |
 | `school.html` | 國小、國中位置與官方學區地圖 | `src/apps/school/` |
 | `housing.html` | 實價登錄住宅成交統計與案件明細 | `src/apps/housing/` |
+| `politics.html` | 首長／村里長黨籍與縣市長／總統得票 | `src/apps/politics/` |
 
 - Repository：<https://github.com/weihuatw/TaiwanDistrictMap>，發布分支為 `main`。
-- GitHub Pages：<https://weihuatw.github.io/TaiwanDistrictMap/>；另有 `income.html`、`school.html`。
-- 四個頁面均已部署。最近一次功能修正為 `a866f8a`，修正學校縮放反轉及區域取景，部署成功並經線上手機版驗證。
+- GitHub Pages：<https://weihuatw.github.io/TaiwanDistrictMap/>；另有 `income.html`、`school.html`、`housing.html`、`politics.html`。
+- 五個頁面均已部署；最近功能為政治地圖全臺選舉模式與模式跨層級保留。
 - `f7c058a` 加入手機底部資訊面板與載入前動畫；`eff2c81` 擴充全臺學校、學區資料並修正新北正規化；`6464a53` 是臺北學區頁的初版。
 - `docs/verification.md` 與 `docs/income.md` 仍有早期「尚未部署／等待 Secret」的文字，屬歷史狀態，不能當作目前阻礙。
 - 網站、文件及與使用者溝通以繁體中文為主。
@@ -61,7 +62,7 @@ npm run dev -- --port 5173 --strictPort
 
 新增主題應建立自己的 HTML 與 `src/apps/<主題>/`，並更新 `vite.config.ts` 的多入口設定。共用圖層透過 `getColor`、回呼及設定取得主題資訊，不直接耦合學校或所得資料。
 
-不要修改共用快取中的官方 feature 來儲存主題狀態。呈現用屬性與 `polygonView()` 的學區 focus bounds 都以複本建立。
+不要修改共用快取中的官方 feature 來儲存主題狀態。呈現用屬性與 `polygonView()` 的學區 focus bounds 都以複本建立。`RegionLayerOptions.contextOpacity` 與 `contextHoverOpacity` 可調整各主題周邊行政區的填色透明度。
 
 ## 必須保留的導覽與手機體驗
 
@@ -214,6 +215,24 @@ npm run school:check
 - `public/data/housing/` 是部署用摘要、案件分片及報告；選取行政區後才載入該區明細。
 - 重建命令：`npm run housing:fetch`、`npm run housing:build`、`npm run housing:check`。發布 workflow 必須保留 `housing:check`。
 
+## 政治資料
+
+`politics.html` 已發布；詳見 `docs/politics.md`。
+
+- 官方首長／村里長名錄與歷史參選推薦政黨獨立，不能以中選會歷史 `is_current` 當現任。內政部 ODS 匯出實際是 XLS，而且含歷屆；只選本屆、衝突留白，公開資料不含聯絡資訊。
+- 全臺下拉選單為「各縣市首長黨籍」、「2022 縣市長得票」、「2024 總統得票」；選取的模式跨層級及返回時維持，只在該層無此模式時採該層預設。全臺選舉模式依各縣市自己的選舉結果著色並列出領先政黨分布，不彙成全臺單一勝選黨。縣市內顯示鄉鎮原始候選人得票最多者政黨；村里可切換本屆村里長與兩種得票。無黨籍逐人比較，不能相加為單一政黨；並列、未知與鄰區各有圖例。
+- 2022 嘉義市使用 12-18 重行選舉。2024 總統／副總統兩列共用一張票，只計一次。投票率分母為中選會選舉人，不是戶籍人口。
+- 22 首長與兩種選舉的 368 鄉鎮皆有紀錄；具名村里 7,780 中，本屆名錄唯一對照 7,649、兩種選舉各 7,713。2024 中另 86 里有部分合併票，保留明細但顯示斜紋、不判定全里最高票；歷史拆併、連江合併列示不分攤。
+- `scripts/politics/{fetch,build,check}.py`；來源、字形別名、配色、逐筆補充及預期例外在 `data/politics/`。原始檔及 `.venv-politics/` 忽略。build 用 xlrd，check 僅用 Python 標準函式庫與公開分片。
+- `official-overrides.json` 記錄代理／黨籍變更與斗南漏里名補充；更新月份／取得日之前重新查核。不得自動更新例外清單掩蓋覆蓋率退步。
+- `PoliticsRepository` 獨立於 GeoJSON、模式資料分開快取與驗證；成功資料按行政區分檔。清理、導航、舊請求及模式相機行為沿用共用核心，人口重用 `PopulationRepository`，資訊在同一可收折面板。
+
+```sh
+npm run politics:fetch
+POLITICS_PYTHON=.venv-politics/bin/python npm run politics:build
+npm run politics:check
+```
+
 ## 驗證方式
 
 對程式／資料修改執行適當回歸，完整發布檢查如下：
@@ -224,11 +243,13 @@ npm run data:check
 npm run income:check
 npm run school:check
 npm run housing:check
+npm run population:check
+npm run politics:check
 npm run build
 git diff --check
 ```
 
-最近一次全套為 71 個 Node 測試、8 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
+最近一次全套為 80 個 Node 測試、12 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
 
 | 測試 | 主要涵蓋 |
 | --- | --- |
@@ -237,6 +258,7 @@ git diff --check
 | `tests/school.test.mjs`、`school-data.test.mjs` | 第三層學校模式、filter、跨區學區、解析與里名語境 |
 | `tests/income.test.mjs`、`income_parser_test.py` | 指標、路徑、級距、缺漏及嵌套 HTML |
 | `tests/population.test.mjs`、`scripts/population/check.py` | 人口分片快取／重試、年月、村里代碼、年齡與行政區加總 |
+| `tests/politics.test.mjs`、`politics_parser_test.py`、`scripts/politics/check.py` | 模式／路徑、最高票與並列、缺漏／部分票數、快取重試、正副總統不重複計票及逐層加總 |
 
 瀏覽器驗證至少包含改動相關頁面、桌面及 390×844 手機、逐層進入與返回、連續選取、清單搜尋及灰色鄰區切換。改共用核心／介面時要回歸三個頁面。資料載入轉場可使用可控的延遲 server 驗證，避免只測快取命中。
 
@@ -248,7 +270,7 @@ git diff --check
 
 使用者要求發布時，完成修改、相關測試及提交後推送 `main`；不能只說已觸發部署就宣告上線。
 
-`.github/workflows/deploy-pages.yml` 在 main push 或手動觸發時：Node 24／Python 3.13 → `npm ci` → 測試與四種資料檢查 → 確認 key Secret → 使用 `/TaiwanDistrictMap/` base 建置 → 上傳 `dist/` → 部署。Pages Source 為 GitHub Actions。
+`.github/workflows/deploy-pages.yml` 在 main push 或手動觸發時：Node 24／Python 3.13 → `npm ci` → 測試與六種資料檢查 → 確認 key Secret → 使用 `/TaiwanDistrictMap/` base 建置 → 上傳 `dist/` → 部署。Pages Source 為 GitHub Actions。
 
 ```sh
 npm run build -- --base /TaiwanDistrictMap/
