@@ -5,11 +5,9 @@ import { createMap } from '../../map-core/create-map';
 import { RegionNavigator } from '../../map-core/navigation';
 import { createRegionLayer } from '../../map-core/region-layer';
 import { createMapShell } from '../../ui/map-shell';
-import type { Region } from '../../map-core/types';
-import type { FeatureCollection, Point } from 'geojson';
+import type { Region, View } from '../../map-core/types';
 import { IncomeRepository } from './data';
 import { createIncomePanel, type IncomePartyMode } from './panel';
-import { createPartyMarkers } from './party-markers';
 import { PoliticsRepository } from '../politics/data';
 import { recordColor as politicalColor, recordMissing } from '../politics/theme';
 import { FILL_OPACITY, formatWan, recordColor } from './theme';
@@ -24,7 +22,7 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
   let manifest: IncomeManifest;
   let layer: ReturnType<typeof createRegionLayer> | undefined;
   let basemap: ReturnType<typeof createMap> | undefined;
-  let partyMarkers: ReturnType<typeof createPartyMarkers> | undefined;
+  let partyColors: Record<string, string> = {};
   let alive = true;
   let partyMode: IncomePartyMode | null = null;
   let partySequence = 0;
@@ -47,8 +45,8 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
     const view = navigator.current;
     if (!view) return;
     routing?.commit({ theme: 'income', ids: view.path.map(r => r.properties.code), query: mode ? new URLSearchParams({ party: mode }).toString() : '' });
-    if (mode) void renderPartyMarkers(view, mode);
-    else { partySequence++; partyMarkers?.clear(); panel.setPartyStatus(''); }
+    if (mode) void loadPartyLabels(view, mode);
+    else { partySequence++; layer?.refreshLabels(); panel.setPartyStatus(''); }
   });
   const navigator = new RegionNavigator(
     async (file) => {
@@ -60,8 +58,8 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
       routing?.commit({ theme: 'income', ids: view.path.map(r => r.properties.code), query: partyMode ? new URLSearchParams({ party: partyMode }).toString() : '' });
       shell.render(view); panel.render(view, manifest);
       layer?.render(view, navigator.context, restore);
-      if (partyMode) void renderPartyMarkers(view, partyMode);
-      else partyMarkers?.clear();
+      if (partyMode) void loadPartyLabels(view, partyMode);
+      else layer?.refreshLabels();
     },
     (loading) => { shell.setBusy(loading); layer?.setBusy(loading); if (!loading) layer?.cancelPreview(); },
     (error, retry) => shell.showError(error, retry),
@@ -76,33 +74,23 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
     return navigator.restorePath(route.ids);
   }
 
-  async function renderPartyMarkers(view: import('../../map-core/types').View, mode: IncomePartyMode) {
+  async function loadPartyLabels(view: View, mode: IncomePartyMode) {
     const ticket = ++partySequence;
     const file = view.level === 'county' ? 'counties.geojson'
       : view.level === 'town' ? `towns/${view.path[0].properties.code}.geojson`
       : `villages/${view.path.at(-1)?.properties.code ?? ''}.geojson`;
     panel.setPartyStatus('正在載入選舉結果…');
-    partyMarkers?.clear();
+    layer?.refreshLabels();
     try {
       const [, meta] = await Promise.all([politics.load(mode, file), politics.manifest()]);
       if (!alive || ticket !== partySequence || partyMode !== mode || navigator.current !== view) return;
-      const collection: FeatureCollection<Point, { code: string; color: string }> = {
-        type: 'FeatureCollection',
-        features: view.data.features.flatMap(region => {
-          const record = politics.get(mode, region.properties.code);
-          if (recordMissing(record)) return [];
-          return [{
-            type: 'Feature' as const, id: region.properties.code,
-            geometry: { type: 'Point' as const, coordinates: region.properties.label },
-            properties: { code: region.properties.code, color: politicalColor(record, meta.colors) },
-          }];
-        }),
-      };
-      partyMarkers?.render(collection);
-      panel.setPartyStatus(`顯示 ${mode === 'mayor' ? '2022 縣市長' : '2024 總統'}選舉結果 · ${collection.features.length.toLocaleString()} 個區域有可標示結果`);
+      partyColors = meta.colors;
+      const visibleResults = view.data.features.filter(region => !recordMissing(politics.get(mode, region.properties.code))).length;
+      layer?.refreshLabels();
+      panel.setPartyStatus(`顯示 ${mode === 'mayor' ? '2022 縣市長' : '2024 總統'}選舉結果 · ${visibleResults.toLocaleString()} 個區域已標記`);
     } catch {
       if (!alive || ticket !== partySequence || partyMode !== mode) return;
-      partyMarkers?.clear(); panel.setPartyStatus('選舉結果載入失敗，所得地圖仍可使用。');
+      layer?.refreshLabels(); panel.setPartyStatus('選舉結果載入失敗，所得地圖仍可使用。');
     }
   }
   try {
@@ -111,6 +99,11 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
       getColor, isMissing: (region) => income.get(region.properties.code)?.meanK == null,
       fillOpacity: FILL_OPACITY, hoverOpacity: FILL_OPACITY, selectedOpacity: FILL_OPACITY,
       outlineColor: '#59796e', emphasisColor: '#174d3f',
+      getLabelAdornment: region => {
+        if (!partyMode) return null;
+        const record = politics.get(partyMode, region.properties.code);
+        return recordMissing(record) ? null : { text: '▪', color: politicalColor(record, partyColors) };
+      },
       getPadding: shell.getPadding,
       getLabelObstacles: () => [...shell.getLabelObstacles(), ...panel.obstacles()],
       duration: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 720,
@@ -121,7 +114,6 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
         else void navigator.enter(hit.region, layer.camera());
       },
     });
-    partyMarkers = createPartyMarkers(basemap.map);
     if (routing) void restoreRoute(routing.current); else void navigator.start();
   } catch { shell.showInitializationError(() => location.reload()); }
   void Promise.all([boundaries.manifest(), income.manifest()])
@@ -129,6 +121,6 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
     .catch(() => { if (alive) shell.showManifestError(); });
   return { restoreRoute, destroy() {
     if (!alive) return;
-    alive = false; partySequence++; navigator.destroy(); partyMarkers?.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy(); root.classList.remove('income-page');
+    alive = false; partySequence++; navigator.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy(); root.classList.remove('income-page');
   } };
 }

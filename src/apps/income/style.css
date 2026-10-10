@@ -6,6 +6,7 @@
 .income-page .breadcrumbs, .income-page .breadcrumbs button, .income-page .location-footer { color: #7c9086; }
 .income-page .map-label { color: #2c5847; }
 .income-page .map-label.context { color: #78877f; }
+.income-page .map-label-party-symbol { font-size: .78em; text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 4px #fff; }
 .income-page .hover-tooltip { background: #244f42ee; white-space: pre-line; line-height: 1.7; }
 .income-page .region-option-meta { color: #39765d; font-variant-numeric: tabular-nums; }
 .income-page .region-option:hover { background: #edf5f0; }

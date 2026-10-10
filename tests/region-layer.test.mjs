@@ -27,7 +27,12 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
   const container = { clientWidth: 390, clientHeight: 844 };
   globalThis.requestAnimationFrame = fn => { frames.set(++nextFrame, fn); return nextFrame; };
   globalThis.cancelAnimationFrame = id => frames.delete(id);
-  globalThis.document = { createElement: () => ({ dataset: {}, style: {}, setAttribute() {}, get offsetWidth() { layouts++; return 50; } }) };
+  globalThis.document = { createdElements: [], createElement() {
+    const element = { dataset: {}, style: {}, children: [], setAttribute() {},
+      replaceChildren(...children) { this.children = children; }, append(...children) { this.children.push(...children); },
+      get offsetWidth() { layouts++; return 50; } };
+    this.createdElements.push(element); return element;
+  } };
   const emit = name => { for (const fn of events.get(name) ?? []) fn(); };
   const map = {
     loaded: () => hasStyle, isMoving: () => moving,
@@ -110,6 +115,21 @@ test('Context fill opacity can be tuned per map theme', () => {
   const f = fixture(0, { contextOpacity: .4, contextHoverOpacity: .5 });
   f.layer.render(view('selected'), [{ region: county('neighbor'), parentIndex: 0 }]); f.tick();
   assert.deepEqual(f.layers.get('context-fill').paint['fill-opacity'], ['case', ['boolean', ['feature-state', 'hover'], false], .5, .4]);
+  f.layer.destroy();
+});
+
+test('Label adornments append colored symbols and can refresh without recreating the map view', () => {
+  let adornment = null;
+  const f = fixture(0, { getLabelAdornment: () => adornment });
+  f.layer.render(view('region'), [], true); f.tick();
+  const label = document.createdElements.find(element => element.className === 'map-label');
+  assert.deepEqual(label.children, ['region']);
+  adornment = { text: '▪', color: '#509b6a' };
+  f.layer.refreshLabels();
+  assert.equal(label.children[0], 'region');
+  assert.equal(label.children[1].textContent, ' ▪');
+  assert.equal(label.children[1].style.color, '#509b6a');
+  assert.equal(f.sources.get('regions').data.features[0].properties.code, 'region');
   f.layer.destroy();
 });
 

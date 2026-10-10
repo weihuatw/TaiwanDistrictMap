@@ -65,7 +65,7 @@ npm run dev -- --port 5173 --strictPort
 | `src/ui/map-shell.html`、`map-shell.ts`、`style.css` | 清單、搜尋、麵包屑、提示、來源視窗及手機資訊面板；不持有資料載入或導覽歷史 |
 | `src/data/population.ts` | 共用人口資料 manifest、村里／各層彙總與單一年齡分片 repository；不耦合主題或地圖幾何 |
 | `src/apps/*/main.ts` | 引入該主題 CSS，組合核心、介面及主題回呼，處理主題資訊；行政區主題的跨主題資訊卡由 `src/apps/admin/facts-panel.ts` 讀取各主題 repository |
-| `src/apps/income/party-markers.ts` | 所得頁選舉政黨傾向 GeoJSON 點位圖層；使用行政區 label 座標與獨立政黨統計，不寫回界線 GeoJSON |
+| `src/apps/income/main.ts`、`panel.ts` | 所得頁選舉政黨傾向互斥控制、路由還原及 PoliticalRepository 整合；不寫回界線 GeoJSON |
 | `src/apps/school/navigation.ts` | 獨立 `SchoolNavigator`；`polygonView()` 將學校狀態轉成共用 polygon View；比較模式選校保留相機 |
 | `src/apps/school/data.ts`、`markers.ts` | 學校分檔、學區里界載入與學校標記 |
 | `src/apps/housing/` | 房價統計、行政區導覽及選取後載入成交明細 |
@@ -178,7 +178,7 @@ npm run population:check
 
 學區頁另有互斥的「學區／所得／房價」著色模式。所得在縣市、鄉鎮及村里層級分別按同層官方數值著色；選定鄉鎮的學校畫面只顯示該鄉鎮各里的所得，周邊行政區保留灰色且可點選切換。房價依現有資料按縣市或鄉鎮市區著色，村里畫面仍以其所屬鄉鎮房價著色，不代表里別價格；學校畫面可點選其他鄉鎮切換。所得／房價比較模式使用 TomTom `monoLight`，學區模式使用 `standardLight`；切換樣式後共用區域圖層會在新 style 載入時重建。比較模式選校時保留視角，以白色外框加深藍色細線標示涵蓋里界的聯集外框，學區內部仍顯示原始里界，並提供查看完整學區的按鈕。選校資訊卡的所得採可對應涵蓋里申報戶數加權平均；房價逐列顯示涵蓋里所屬鄉鎮的中位數，不合併為學區房價。模式寫入學區路由 `map` query，直接分享可還原；瀏覽器返回到未帶模式的舊階層時沿用目前模式。無資料及樣本不足沿用斜紋／灰色狀態，滑過區域顯示數值與房價統計層級。
 
-所得頁「顯示政黨傾向」可互斥選取 2024 總統或 2022 縣市長選舉；取消目前選取即可移除標記。縣市、鄉鎮、村里各自載入同層選舉結果，以行政區 label 點位顯示小型圓角方塊；色彩取該層最高票候選人的推薦政黨，並列以紫色表示，缺漏／部分票不畫標記。選項寫入所得路由 `party` query，資料由 `PoliticsRepository` 按當前層級分片載入，圖形使用單一 GeoJSON symbol layer，勿建立大量 DOM marker。
+所得頁「顯示政黨傾向」可互斥選取 2024 總統或 2022 縣市長選舉；取消目前選取即可移除標記。縣市、鄉鎮、村里各自載入同層選舉結果，將小型彩色 Unicode 方塊接在行政區名稱後方；色彩取該層最高票候選人的推薦政黨，並列以紫色表示，缺漏／部分票不畫標記。選項寫入所得路由 `party` query，資料由 `PoliticsRepository` 按當前層級分片載入。`RegionLayerOptions.getLabelAdornment` 提供通用文字附加項，資料抵達後呼叫 `refreshLabels()` 原位更新標籤，不另建地圖點位圖層，也不應建立大量 DOM marker。
 
 學校位置來自教育部名錄，以國土測繪中心校地代表點及官方校園位置補足。學區來自各縣市官方 CSV、ODT、PDF、教育處或學校公告，保留來源、原文、備註及每校學年度；不可用最近學校或距離推估官方學區。
 

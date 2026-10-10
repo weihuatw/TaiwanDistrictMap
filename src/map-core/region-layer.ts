@@ -18,6 +18,7 @@ export interface RegionLayerOptions {
   outlineColor?: string;
   emphasisColor?: string;
   isMissing?: (region: Region) => boolean;
+  getLabelAdornment?: (region: Region) => { text: string; color: string } | null;
   onSelect: (hit: RegionHit) => void;
   onHover?: (hit: RegionHit, point: { x: number; y: number }) => void;
   onHoverEnd?: () => void;
@@ -237,13 +238,27 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
       const label = document.createElement('div');
       label.className = `map-label${context ? ' context' : ''}${region.properties.unassigned ? ' unassigned' : ''}`;
       label.dataset.code = region.properties.code;
-      label.textContent = region.properties.name;
+      renderLabelContent(label, region, !context);
       label.setAttribute('aria-hidden', 'true');
       const marker = new Marker({ element: label, anchor: 'center' }).setLngLat(region.properties.label).addTo(map);
       labels.push({ marker, element: label, region, context });
     }
     if (revealing) { setOpacity(false); checkReveal(); }
     else if (options.fadeDuration) setOpacity(true);
+    scheduleLabels();
+  }
+
+  function renderLabelContent(element: HTMLDivElement, region: Region, includeAdornment = true) {
+    element.replaceChildren(region.properties.name);
+    const adornment = includeAdornment ? options.getLabelAdornment?.(region) : null;
+    if (!adornment) return;
+    const symbol = document.createElement('span');
+    symbol.className = 'map-label-party-symbol'; symbol.textContent = ` ${adornment.text}`;
+    symbol.style.color = adornment.color; element.append(symbol);
+  }
+
+  function refreshLabels() {
+    for (const { element, region, context } of labels) renderLabelContent(element, region, !context);
     scheduleLabels();
   }
 
@@ -294,6 +309,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
       if (loading) clearHover();
     },
     scheduleLabels,
+    refreshLabels,
     destroy() {
       updates.destroy(); reveals.destroy(); revealing = false; afterRender = undefined;
       map.off('style.load', onStyleLoad); map.off('move', scheduleLabels); map.off('resize', onResize);
