@@ -32,7 +32,7 @@
 .income-party-note, .income-party-status { margin: 0; color: #87978e; font-size: 9px; line-height: 1.5; }
 .income-party-status { color: #527363; }
 .income-page .location-footer { margin-top: 12px; border-color: #e7eeea; }
-.income-legend { position: absolute; left: 24px; bottom: 42px; width: 306px; padding: 16px 17px 13px; border-radius: 15px; border: 1px solid #dce7e1; background: #fffffcf5; box-shadow: 0 5px 22px #26435912; pointer-events: auto; backdrop-filter: blur(14px); }
+.income-legend { position: absolute; right: 24px; bottom: 42px; width: 306px; padding: 16px 17px 13px; border-radius: 15px; border: 1px solid #dce7e1; background: #fffffcf5; box-shadow: 0 5px 22px #26435912; pointer-events: auto; backdrop-filter: blur(14px); }
 .income-legend-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .income-legend-heading strong { font-size: 12px; font-weight: 600; color: #416956; }
 .income-legend-heading > span { font-size: 9px; color: #8b9b91; }
@@ -53,6 +53,9 @@
 .income-page .basemap-status { top: auto; bottom: 253px; }
 .income-page .error-banner { top: auto; bottom: 305px; }
 @media (max-width: 1000px) { .income-page .map-hint { display: none; } }
+@media (min-width: 761px) {
+  .income-page .location-panel { max-height: calc(100dvh - 48px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #cad7cc transparent; }
+}
 @media (max-width: 760px) {
   .income-page .location-panel { padding: 0; }
   .income-year { margin-top: 9px; font-size: 9px; gap: 6px; }
