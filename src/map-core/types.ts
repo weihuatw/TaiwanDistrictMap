@@ -1,4 +1,4 @@
-import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import type { Feature, FeatureCollection, MultiLineString, MultiPolygon, Polygon } from 'geojson';
 
 export type RegionLevel = 'county' | 'town' | 'village';
 export type ViewLevel = RegionLevel | 'detail';
@@ -10,6 +10,7 @@ export interface RegionProperties {
 }
 export type Region = Feature<Polygon | MultiPolygon, RegionProperties>;
 export type Regions = FeatureCollection<Polygon | MultiPolygon, RegionProperties>;
+export type RegionOutline = FeatureCollection<MultiLineString, { code: string }>;
 export interface Camera { center: [number, number]; zoom: number; bearing: number; pitch: number }
 export interface View { level: ViewLevel; path: Region[]; data: Regions; camera: Camera | null; selected: Region | null }
 export interface ContextRegion { region: Region; parentIndex: number }

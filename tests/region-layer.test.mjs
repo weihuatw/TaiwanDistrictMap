@@ -53,6 +53,7 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
     stop() { moving = false; emit('moveend'); },
     start() { moving = true; emit('movestart'); },
     loadStyle() { hasStyle = true; emit('style.load'); },
+    clearStyle() { sources.clear(); layers.clear(); hasStyle = false; },
     loadSources() { sources.forEach(source => { source.loaded = true; }); emit('sourcedata'); },
     get listenerCount() { return [...events.values()].reduce((sum, set) => sum + set.size, 0); },
   };
@@ -109,6 +110,38 @@ test('Context fill opacity can be tuned per map theme', () => {
   const f = fixture(0, { contextOpacity: .4, contextHoverOpacity: .5 });
   f.layer.render(view('selected'), [{ region: county('neighbor'), parentIndex: 0 }]); f.tick();
   assert.deepEqual(f.layers.get('context-fill').paint['fill-opacity'], ['case', ['boolean', ['feature-state', 'hover'], false], .5, .4]);
+  f.layer.destroy();
+});
+
+test('School catchment emphasis uses an independent outline source above comparison fills', () => {
+  const f = fixture(0);
+  const highlighted = county('catchment');
+  f.layer.render(view('comparison'), [], false, undefined, { type: 'FeatureCollection', features: [highlighted] });
+  f.tick();
+  assert.deepEqual(f.sources.get('emphasis').data.features, [highlighted]);
+  assert.equal(f.layers.get('emphasis-line').source, 'emphasis');
+  assert.deepEqual(f.layers.get('emphasis-casing').paint['line-color'], '#fff');
+  assert.deepEqual(f.layers.get('emphasis-line').paint['line-color'], '#174a7e');
+  assert.ok(f.layers.get('emphasis-casing').paint['line-width'][4] > f.layers.get('emphasis-line').paint['line-width'][4]);
+  f.layer.render(view('comparison-next'), [], false, undefined, { type: 'FeatureCollection', features: [] });
+  f.tick();
+  assert.deepEqual(f.sources.get('emphasis').data.features, []);
+  f.layer.destroy();
+  assert.equal(f.sources.has('emphasis'), false);
+  assert.equal(f.layers.has('emphasis-casing'), false);
+});
+
+test('A basemap style change recreates current fills and school outlines after the new style loads', () => {
+  const f = fixture(0), highlighted = county('catchment'); let renders = 0;
+  f.layer.render(view('before'), [], false, () => renders++, { type: 'FeatureCollection', features: [highlighted] }); f.tick();
+  f.layer.prepareStyleChange(); f.clearStyle();
+  f.layer.render(view('after'), [], true, () => renders++, { type: 'FeatureCollection', features: [highlighted] });
+  assert.equal(f.sources.size, 0);
+  f.loadStyle(); f.tick();
+  assert.equal(f.sources.get('regions').data.features[0].properties.code, 'after');
+  assert.deepEqual(f.sources.get('emphasis').data.features, [highlighted]);
+  assert.ok(f.layers.has('emphasis-casing'));
+  assert.equal(renders, 2);
   f.layer.destroy();
 });
 

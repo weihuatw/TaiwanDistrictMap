@@ -4,10 +4,11 @@ import { Map, NavigationControl, ScaleControl, setWorkerUrl, type StyleSpecifica
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 
 export type BasemapStatus = 'preview' | 'unavailable' | 'ready';
+export type BasemapStyle = 'standardLight' | 'monoLight';
 interface MapOptions {
   container: HTMLElement;
   apiKey?: string;
-  style?: 'standardLight' | 'monoLight';
+  style?: BasemapStyle;
   onStatus?: (status: BasemapStatus) => void;
 }
 
@@ -26,6 +27,7 @@ export function createMap({ container, apiKey, onStatus, style = 'standardLight'
     style: { type: 'standard', id: style, include: [] },
     mapLibre: common,
   }) : undefined;
+  let currentStyle = style;
   const map = sdk?.mapLibreMap ?? new Map({ ...common, style: emptyStyle });
   if (!key) {
     onStatus?.('preview');
@@ -48,7 +50,18 @@ export function createMap({ container, apiKey, onStatus, style = 'standardLight'
     }
     if (key && !basemapFailed && event.sourceId === BASE_MAP_SOURCE_ID && event.isSourceLoaded) onStatus?.('ready');
   });
-  return { map, destroy: () => map.remove() };
+  return {
+    map,
+    get style() { return currentStyle; },
+    get supportsStyleChanges() { return Boolean(sdk); },
+    setStyle(next: BasemapStyle) {
+      if (!sdk || currentStyle === next) return false;
+      currentStyle = next;
+      sdk.setStyle({ type: 'standard', id: next, include: [] });
+      return true;
+    },
+    destroy: () => map.remove(),
+  };
 }
 
 function addPreviewGrid(map: Map) {

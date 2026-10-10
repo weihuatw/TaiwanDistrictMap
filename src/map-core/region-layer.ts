@@ -1,7 +1,7 @@
 import { Marker, type Map as MapLibreMap, type MapMouseEvent, type GeoJSONSource } from 'maplibre-gl';
 import { createCameraController } from './camera.ts';
 import { createSettledUpdate } from './settled-update.ts';
-import type { ContextRegion, Padding, Rect, Region, RegionColor, RegionHit, Regions, View } from './types';
+import type { ContextRegion, Padding, Rect, Region, RegionColor, RegionHit, RegionOutline, Regions, View } from './types';
 
 export interface RegionLayerOptions {
   getPadding: () => Padding;
@@ -41,6 +41,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   let pendingRestore = false;
   let view: View | null = null;
   let contextRegions: ContextRegion[] = [];
+  let emphasisRegions: RegionOutline = { type: 'FeatureCollection', features: [] };
   let hovered: { code: string; source: 'regions' | 'context' } | null = null;
   let busy = false;
   let renderFrame = 0;
@@ -150,8 +151,16 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     clearHover();
     revealing = fadeDuration > 0;
     if (revealing) setOpacity(false);
-    // Keep vector basemap labels above the administrative fill and outlines.
-    const beforeLabel = map.getStyle().layers.find((layer) => layer.type === 'symbol')?.id;
+    // Keep fills and ordinary outlines below the basemap labels. Some styles
+    // interleave labels and geographic linework, so catchment emphasis needs a
+    // later anchor: immediately below the first symbol layer after the last
+    // non-symbol basemap layer. That keeps every basemap boundary beneath the
+    // school outline while leaving the final label stack above it.
+    const styleLayers = map.getStyle().layers;
+    const beforeLabel = styleLayers.find((layer) => layer.type === 'symbol')?.id;
+    const lastGeometryIndex = styleLayers.reduce((last, layer, index) =>
+      layer.type !== 'symbol' && layer.type !== 'background' ? index : last, -1);
+    const beforeEmphasis = styleLayers.slice(lastGeometryIndex + 1).find((layer) => layer.type === 'symbol')?.id;
     const surrounding: Regions = { type: 'FeatureCollection', features: contextRegions.map(({ region }) => region) };
     if (map.getSource('context')) {
       map.removeFeatureState({ source: 'context' });
@@ -206,6 +215,19 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     if (current.selected) for (const region of current.data.features) {
       map.setFeatureState({ source: 'regions', id: region.properties.code }, { selected: region.id === current.selected.id, dim: region.id !== current.selected.id });
     }
+    if (map.getSource('emphasis')) {
+      (map.getSource('emphasis') as GeoJSONSource).setData(emphasisRegions);
+    } else {
+      map.addSource('emphasis', { type: 'geojson', data: emphasisRegions, promoteId: 'code' });
+      map.addLayer({ id: 'emphasis-casing', type: 'line', source: 'emphasis', paint: {
+        'line-color': '#fff', 'line-opacity': 0.98,
+        'line-width': ['interpolate', ['linear'], ['zoom'], 5, 5, 10, 6, 15, 7],
+      } }, beforeEmphasis);
+      map.addLayer({ id: 'emphasis-line', type: 'line', source: 'emphasis', paint: {
+        'line-color': options.emphasisColor ?? '#174a7e', 'line-opacity': 1,
+        'line-width': ['interpolate', ['linear'], ['zoom'], 5, 2.2, 10, 3, 15, 3.8],
+      } }, beforeEmphasis);
+    }
     labels.forEach(({ marker }) => marker.remove()); labels = [];
     const labelRegions = [
       ...current.data.features.map((region) => ({ region, context: current.level === 'detail' && region.id !== current.selected?.id })),
@@ -255,10 +277,18 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     previewRegion: camera.previewRegion,
     previewPoint: camera.previewPoint,
     cancelPreview: camera.cancelPreview,
-    render(current: View, surrounding: ContextRegion[], restore = false, onRendered?: () => void) {
-      view = current; contextRegions = surrounding; pendingRestore = restore; afterRender = onRendered;
+    prepareStyleChange() {
+      if (!styleReady) return;
+      styleReady = false;
+      updates.cancel(); reveals.cancel(); revealing = false; afterRender = undefined;
+      clearHover(); labels.forEach(({ marker }) => marker.remove()); labels = [];
+      view = null; contextRegions = []; emphasisRegions = { type: 'FeatureCollection', features: [] };
+    },
+    render(current: View, surrounding: ContextRegion[], restore = false, onRendered?: () => void, emphasis: RegionOutline = { type: 'FeatureCollection', features: [] }) {
+      view = current; contextRegions = surrounding; emphasisRegions = emphasis; pendingRestore = restore; afterRender = onRendered;
       if (styleReady) present(current, restore);
     },
+    focus(current: View) { camera.fit(current); },
     setBusy(loading: boolean) {
       busy = loading;
       if (loading) clearHover();
@@ -272,10 +302,10 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
       map.getCanvas().removeEventListener('mouseleave', clearHover);
       if (renderFrame) cancelAnimationFrame(renderFrame);
       clearHover(); labels.forEach(({ marker }) => marker.remove()); labels = [];
-      for (const id of ['region-emphasis', 'region-line', 'region-missing', 'region-fill', 'context-emphasis', 'context-line', 'context-fill']) {
+      for (const id of ['emphasis-line', 'emphasis-casing', 'region-emphasis', 'region-line', 'region-missing', 'region-fill', 'context-emphasis', 'context-line', 'context-fill']) {
         if (map.getLayer(id)) map.removeLayer(id);
       }
-      for (const id of ['regions', 'context']) if (map.getSource(id)) map.removeSource(id);
+      for (const id of ['emphasis', 'regions', 'context']) if (map.getSource(id)) map.removeSource(id);
       if (options.isMissing && map.hasImage('region-missing-hatch')) map.removeImage('region-missing-hatch');
       view = null; styleReady = false;
     },

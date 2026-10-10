@@ -36,6 +36,11 @@ test('Switching schools restores the original overview, and missing catchment cl
   const f=fixture();await inTown(f);await f.nav.choose(elementary,camera);await f.nav.choose(junior,{...camera,zoom:16});
   assert.equal(f.nav.current.selected.id,junior.id);assert.deepEqual(f.nav.current.catchment,data());f.nav.back();assert.deepEqual(f.nav.current.camera,camera);
 });
+test('Comparison selection preserves the camera and skips the school-location preview',async()=>{
+  const previews=[];const f=fixture({onPreview:target=>previews.push(target)});await inTown(f);
+  const before=previews.length;await f.nav.choose(elementary,camera,true);
+  assert.equal(previews.length,before);assert.deepEqual(f.nav.current.camera,camera);assert.deepEqual(f.nav.current.overviewCamera,camera);
+});
 test('Switching a gray county or district replaces the child path and schools',async()=>{
   const f=fixture();await inTown(f);assert.ok(f.nav.context.some(c=>c.region.id===county2.id&&c.parentIndex===0));assert.ok(f.nav.context.some(c=>c.region.id===town2.id&&c.parentIndex===1));
   await f.nav.enter(town2,undefined,1);assert.deepEqual(f.nav.current.path.map(r=>r.id),[county.id,town2.id]);
@@ -91,6 +96,14 @@ test('Catchment fitting includes cross-district bounds without mutating cached t
   const f=fixture();await inTown(f);const before=JSON.stringify(town);await f.nav.choose(elementary,camera);
   const v=polygonView(f.nav.current);assert.equal(JSON.stringify(town),before);assert.notEqual(v.path.at(-1),town);assert.equal(v.data.features.length,2);
   assert.equal(filterSchools([elementary,junior],{elementary:false,junior:true}).length,1);
+});
+test('Catchment fitting uses village focus bounds while retaining complete offshore geometry',async()=>{
+  const offshore={...village,properties:{...village.properties,bounds:[121.8,24.8,124.5,26],focusBounds:[121.8,24.8,121.9,24.9]}};
+  const school={...elementary,position:[121.85,24.85]};
+  const f=fixture({loadSchools:async()=>[school],loadCatchment:async()=>data(offshore)});await inTown(f);await f.nav.choose(school,camera);
+  const v=polygonView(f.nav.current);
+  assert.deepEqual(v.path.at(-1).properties.focusBounds,[121.8,24.8,121.9,24.9]);
+  assert.deepEqual(v.data.features,[offshore]);
 });
 
 test('Home, back and checkbox changes during initial load preserve the initial request',async()=>{

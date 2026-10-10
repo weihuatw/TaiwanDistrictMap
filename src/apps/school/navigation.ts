@@ -62,18 +62,19 @@ export class SchoolNavigator {
       };
     }, () => this.enter(region, camera, parentIndex));
   }
-  async choose(school: School, camera: Camera): Promise<void> {
+  async choose(school: School, camera: Camera, preserveCamera = false): Promise<void> {
     const view = this.current;
     if (!view || view.level !== 'school' || !this.filter[school.level] || !view.schools.some(s => s.id === school.id)) return;
     return this.request(async () => {
-      this.onPreview(school);
+      if (!preserveCamera) this.onPreview(school);
       const catchment = await this.loadCatchment(school);
       return () => {
         if (!view.selected) view.overviewCamera = camera;
+        if (preserveCamera) view.camera = camera;
         view.selected = school; view.catchment = catchment;
         this.onChange(view, false);
       };
-    }, () => this.choose(school, camera));
+    }, () => this.choose(school, camera, preserveCamera));
   }
   setFilter(level: SchoolLevel, checked: boolean, camera: Camera) {
     this.filter[level] = checked;
@@ -136,7 +137,10 @@ export class SchoolNavigator {
 export function polygonView(view: SchoolView): View {
   let path = view.path;
   if (view.selected) {
-    const bounds = view.catchment.features.map(v => v.properties.bounds);
+    // Some villages include distant offshore islets in their official geometry.
+    // Use each village's curated focusBounds for framing while still rendering
+    // its complete geometry as the school catchment outline.
+    const bounds = view.catchment.features.map(v => v.properties.focusBounds ?? v.properties.bounds);
     if (view.selected.position) { const [x,y] = view.selected.position; bounds.push([x-.001,y-.001,x+.001,y+.001]); }
     if (bounds.length) {
       const focusBounds = [Math.min(...bounds.map(b=>b[0])),Math.min(...bounds.map(b=>b[1])),Math.max(...bounds.map(b=>b[2])),Math.max(...bounds.map(b=>b[3]))];
