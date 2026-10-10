@@ -78,7 +78,7 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
     const ticket = ++partySequence;
     const file = view.level === 'county' ? 'counties.geojson'
       : view.level === 'town' ? `towns/${view.path[0].properties.code}.geojson`
-      : `villages/${view.path.at(-1)?.properties.code ?? ''}.geojson`;
+      : `villages/${view.path.at(-1)?.properties.code.slice(0, 8) ?? ''}.geojson`;
     panel.setPartyStatus('正在載入選舉結果…');
     layer?.refreshLabels();
     try {

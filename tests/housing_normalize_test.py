@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts/housing'))
-from normalize import classify, number, percentile, roc_date, normalize_address, summary
+from normalize import classify, deduplicate_address_prefix, number, percentile, roc_date, normalize_address, summary
 
 
 def row(**overrides):
@@ -25,6 +25,7 @@ class HousingNormalizeTest(unittest.TestCase):
         self.assertEqual(number('２０，０００'),20000)
         self.assertIsNone(number('Infinity'))
         self.assertEqual(normalize_address('台北市  仁愛路 １２之３號'),'臺北市仁愛路12之3號')
+        self.assertEqual(deduplicate_address_prefix('連江縣南竿鄉連江縣南竿鄉仁愛村４－１號２樓','連江縣','南竿鄉'),'連江縣南竿鄉仁愛村４－１號２樓')
 
     def test_no_parking(self):
         result=classify(row())

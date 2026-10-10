@@ -41,6 +41,22 @@ def normalize_address(value):
     return s
 
 
+def deduplicate_address_prefix(value, county_name, town_name):
+    """Remove repeated leading county/town names from official address text."""
+    address = str(value or '').strip()
+    prefix = f'{county_name or ""}{town_name or ""}'
+    normalized_prefix = normalize_address(prefix)
+    if not normalized_prefix:
+        return address
+    normalized_address = normalize_address(address)
+    while normalized_address.startswith(normalized_prefix * 2):
+        # County and town names are Chinese characters, unchanged in NFKC,
+        # so their source length is also the correct slice length here.
+        address = address[len(prefix):]
+        normalized_address = normalize_address(address)
+    return address
+
+
 def classify(row):
     target = row.get('交易標的', '')
     building_type = row.get('建物型態', '')

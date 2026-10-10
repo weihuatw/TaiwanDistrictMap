@@ -11,7 +11,7 @@ import zipfile
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
-from normalize import classify, normalize_address, number, percentile, roc_date, summary
+from normalize import classify, deduplicate_address_prefix, normalize_address, number, percentile, roc_date, summary
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RAW = ROOT / 'data/raw/housing'
@@ -105,9 +105,10 @@ def main():
         county_code = county_codes.get(county); town_code = towns_by_county.get(county,{}).get(town_name)
         if not county_code: outcomes['county_unresolved'] += 1; county_misses[county] += 1; continue
         outcome = classify(row); building_area=number(row.get('建物移轉總面積平方公尺'))
+        address = deduplicate_address_prefix(row.get('土地位置建物門牌',''), county, row.get('鄉鎮市區',''))
         sale = {'id': f"{county_code}:{(row.get('編號') or item['rowHash'])}",
             'countyCode': county_code, 'townCode': town_code, 'townName': row.get('鄉鎮市區',''),
-            'tradeDate': item['date'], 'address': row.get('土地位置建物門牌',''), 'addressNormalized':normalize_address(row.get('土地位置建物門牌','')),
+            'tradeDate': item['date'], 'address': address, 'addressNormalized':normalize_address(address),
             'target': row.get('交易標的',''), 'buildingType': row.get('建物型態',''),
             'buildingTypeGroup': outcome['buildingTypeGroup'], 'mainUse': row.get('主要用途',''),
             'totalPriceTwd': int(number(row.get('總價元'))) if number(row.get('總價元')) is not None else None,
