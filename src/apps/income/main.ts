@@ -9,7 +9,7 @@ import type { Region, View } from '../../map-core/types';
 import { IncomeRepository } from './data';
 import { createIncomePanel, type IncomePartyMode } from './panel';
 import { PoliticsRepository } from '../politics/data';
-import { recordColor as politicalColor, recordMissing } from '../politics/theme';
+import { recordLabelStyle, recordMissing } from '../politics/theme';
 import { FILL_OPACITY, formatWan, recordColor } from './theme';
 import type { IncomeManifest } from './types';
 
@@ -99,10 +99,10 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
       getColor, isMissing: (region) => income.get(region.properties.code)?.meanK == null,
       fillOpacity: FILL_OPACITY, hoverOpacity: FILL_OPACITY, selectedOpacity: FILL_OPACITY,
       outlineColor: '#59796e', emphasisColor: '#174d3f',
-      getLabelAdornment: region => {
+      getLabelStyle: region => {
         if (!partyMode) return null;
         const record = politics.get(partyMode, region.properties.code);
-        return recordMissing(record) ? null : { text: '▪', color: politicalColor(record, partyColors) };
+        return recordMissing(record) ? null : recordLabelStyle(record, partyColors);
       },
       getPadding: shell.getPadding,
       getLabelObstacles: () => [...shell.getLabelObstacles(), ...panel.obstacles()],

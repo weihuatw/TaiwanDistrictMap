@@ -15,7 +15,7 @@ export function createIncomePanel(shell: Shell, income: IncomeRepository, onPart
   summary.innerHTML = '<p class="income-metric-label">每申報戶平均年綜合所得</p><div class="income-value-row"><strong id="income-value">—</strong><span id="income-unit">萬元／年</span></div><p id="income-description" class="income-description">正在載入官方統計…</p><div class="income-facts"><div><span>納稅申報戶</span><strong id="income-units">—</strong></div><div id="median-fact" hidden><span>中位數</span><strong id="income-median">—</strong></div></div><p id="income-comparison" class="income-comparison" hidden></p><p id="income-origin" class="income-origin"></p>';
   shell.viewExtra.append(summary);
   const partyControl = document.createElement('fieldset'); partyControl.className = 'income-party-control';
-  partyControl.innerHTML = '<legend>顯示政黨傾向</legend><label><input type="checkbox" id="income-party-president" />2024 總統選舉</label><label><input type="checkbox" id="income-party-mayor" />2022 縣市長選舉</label><p class="income-party-note">在各區域中心標示最高票候選人的推薦政黨；紫色表示最高票並列。空白區域可能是無資料或票數不完整。</p><p class="income-party-status" aria-live="polite"></p>';
+  partyControl.innerHTML = '<legend>顯示政黨傾向</legend><label><input type="checkbox" id="income-party-president" />2024 總統選舉</label><label><input type="checkbox" id="income-party-mayor" />2022 縣市長選舉</label><p class="income-party-note">標籤底色代表最高票政黨：藍色國民黨、綠色民進黨、青色民眾黨、淡灰無黨籍；其他政黨依代表色，紫色表示最高票並列。無底色可能是無資料或票數不完整。</p><p class="income-party-status" aria-live="polite"></p>';
   shell.viewExtra.append(partyControl);
   const mayorInput = partyControl.querySelector<HTMLInputElement>('#income-party-mayor')!;
   const presidentInput = partyControl.querySelector<HTMLInputElement>('#income-party-president')!;

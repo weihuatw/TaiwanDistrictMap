@@ -18,7 +18,7 @@ export interface RegionLayerOptions {
   outlineColor?: string;
   emphasisColor?: string;
   isMissing?: (region: Region) => boolean;
-  getLabelAdornment?: (region: Region) => { text: string; color: string } | null;
+  getLabelStyle?: (region: Region) => { backgroundColor: string; textColor: string } | null;
   onSelect: (hit: RegionHit) => void;
   onHover?: (hit: RegionHit, point: { x: number; y: number }) => void;
   onHoverEnd?: () => void;
@@ -248,13 +248,16 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     scheduleLabels();
   }
 
-  function renderLabelContent(element: HTMLDivElement, region: Region, includeAdornment = true) {
+  function renderLabelContent(element: HTMLDivElement, region: Region, includeStyle = true) {
     element.replaceChildren(region.properties.name);
-    const adornment = includeAdornment ? options.getLabelAdornment?.(region) : null;
-    if (!adornment) return;
-    const symbol = document.createElement('span');
-    symbol.className = 'map-label-party-symbol'; symbol.textContent = ` ${adornment.text}`;
-    symbol.style.color = adornment.color; element.append(symbol);
+    const labelStyle = includeStyle ? options.getLabelStyle?.(region) : null;
+    element.style.backgroundColor = labelStyle?.backgroundColor ?? '';
+    element.style.color = labelStyle?.textColor ?? '';
+    element.style.textShadow = labelStyle ? 'none' : '';
+    element.style.borderRadius = labelStyle ? '3px' : '';
+    // Expand the painted background without padding or changing marker bounds,
+    // so switching party mode never moves the region name or alters collisions.
+    element.style.boxShadow = labelStyle ? `0 0 0 2px ${labelStyle.backgroundColor}` : '';
   }
 
   function refreshLabels() {

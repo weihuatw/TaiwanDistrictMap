@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { PoliticsRepository, politicalPath, validatePart } from '../src/apps/politics/data.ts';
-import { availableModes, defaultMode, modeForLevel, winners, recordParty, recordColor, recordMissing, recordLabel, TIE_COLOR, MISSING_COLOR } from '../src/apps/politics/theme.ts';
+import { availableModes, defaultMode, modeForLevel, winners, recordParty, recordColor, recordMissing, recordLabel, recordLabelStyle, TIE_COLOR, MISSING_COLOR } from '../src/apps/politics/theme.ts';
 const manifest = JSON.parse(await readFile(new URL('../public/data/politics/manifest.json', import.meta.url)));
 const part = JSON.parse(await readFile(new URL(`../public/data/politics/${manifest.paths.president}villages/63000080.json`, import.meta.url)));
 const official = JSON.parse(await readFile(new URL(`../public/data/politics/${manifest.paths.officials}villages/63000080.json`, import.meta.url)));
@@ -48,6 +48,22 @@ test('pooled ballots and missing party stay unknown; explicit independent remain
   assert.equal(recordMissing(r), false); assert.equal(recordColor(r, { '無黨籍':'#8a929c' }), '#8a929c');
   r.party = null; assert.equal(recordMissing(r), true);
   r.status = 'conflicting-roster'; r.name = null; assert.equal(recordLabel(r), '名錄待查證');
+});
+test('party label fills use readable foregrounds and distinguish independents and ties', () => {
+  const winner = party => ({ ...part.records[code], candidates: [
+    { id:'1', number:1, name:'甲', party, votes:10 },
+    { id:'2', number:2, name:'乙', party:'其他黨', votes:1 },
+  ], validVotes:11 });
+  assert.deepEqual(recordLabelStyle(winner('中國國民黨'), {}), { backgroundColor:'#376bb3', textColor:'#ffffff' });
+  assert.deepEqual(recordLabelStyle(winner('民主進步黨'), {}), { backgroundColor:'#407c55', textColor:'#ffffff' });
+  assert.deepEqual(recordLabelStyle(winner('台灣民眾黨'), {}), { backgroundColor:'#51aeb4', textColor:'#17363a' });
+  assert.deepEqual(recordLabelStyle(winner('無黨籍及未經政黨推薦'), {}), { backgroundColor:'#e4e7eb', textColor:'#17363a' });
+  assert.deepEqual(recordLabelStyle(winner('時代力量'), { '時代力量':'#f2cb0d' }), { backgroundColor:'#f2cb0d', textColor:'#17363a' });
+  assert.deepEqual(recordLabelStyle({ ...winner('中國國民黨'), candidates: [
+    { id:'1', number:1, name:'甲', party:'中國國民黨', votes:10 },
+    { id:'2', number:2, name:'乙', party:'民主進步黨', votes:10 },
+  ], validVotes:20 }, {}), { backgroundColor:'#795f95', textColor:'#ffffff' });
+  assert.equal(recordLabelStyle({ ...winner('中國國民黨'), partialReason:'合併票數' }, {}), null);
 });
 test('politics repositories coalesce requests, isolate modes, and use project base', async () => {
   const calls = [];

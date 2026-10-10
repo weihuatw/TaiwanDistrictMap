@@ -118,17 +118,27 @@ test('Context fill opacity can be tuned per map theme', () => {
   f.layer.destroy();
 });
 
-test('Label adornments append colored symbols and can refresh without recreating the map view', () => {
-  let adornment = null;
-  const f = fixture(0, { getLabelAdornment: () => adornment });
+test('Party colors update the existing label background without moving or replacing its text', () => {
+  let labelStyle = null;
+  const f = fixture(0, { getLabelStyle: () => labelStyle });
   f.layer.render(view('region'), [], true); f.tick();
   const label = document.createdElements.find(element => element.className === 'map-label');
   assert.deepEqual(label.children, ['region']);
-  adornment = { text: '▪', color: '#509b6a' };
+  labelStyle = { backgroundColor: '#407c55', textColor: '#ffffff' };
   f.layer.refreshLabels();
-  assert.equal(label.children[0], 'region');
-  assert.equal(label.children[1].textContent, ' ▪');
-  assert.equal(label.children[1].style.color, '#509b6a');
+  assert.deepEqual(label.children, ['region']);
+  assert.equal(label.style.backgroundColor, '#407c55');
+  assert.equal(label.style.color, '#ffffff');
+  assert.equal(label.style.textShadow, 'none');
+  assert.equal(label.style.borderRadius, '3px');
+  assert.equal(label.style.boxShadow, '0 0 0 2px #407c55');
+  assert.equal(label.style.padding, undefined);
+  labelStyle = null;
+  f.layer.refreshLabels();
+  assert.deepEqual(label.children, ['region']);
+  assert.equal(label.style.backgroundColor, '');
+  assert.equal(label.style.color, '');
+  assert.equal(label.style.boxShadow, '');
   assert.equal(f.sources.get('regions').data.features[0].properties.code, 'region');
   f.layer.destroy();
 });
