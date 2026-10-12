@@ -1,9 +1,9 @@
-    <div id="map" aria-label="臺灣行政區互動地圖"></div>
+    <div data-ui="map" aria-label="臺灣行政區互動地圖"></div>
     <main class="map-ui">
       <section class="location-panel" aria-label="目前地圖層級">
-        <button id="info-toggle" class="sheet-handle" aria-label="收折地圖資訊" aria-expanded="true" aria-controls="info-content"><span aria-hidden="true"></span></button>
-        <div id="info-content" class="info-content">
-        <div class="brand"><span class="brand-icon" aria-hidden="true">臺</span><span>TAIWAN <span class="brand-separator">/</span> <span id="brand-title">行政區地圖</span></span></div>
+        <button data-ui="info-toggle" class="sheet-handle" aria-label="收折地圖資訊" aria-expanded="true" aria-controls="info-content"><span aria-hidden="true"></span></button>
+        <div data-ui="info-content" class="info-content">
+        <div class="brand"><span class="brand-icon" aria-hidden="true">臺</span><span>TAIWAN <span class="brand-separator">/</span> <span data-ui="brand-title">行政區地圖</span></span></div>
         <nav class="map-links" aria-label="其他地圖">
           <a href="#/admin" data-map-page="admin">行政區</a>
           <a href="#/population" data-map-page="population">人口</a>
@@ -13,45 +13,45 @@
           <a href="#/politics" data-map-page="politics">政黨</a>
           <a href="#/indigenous" data-map-page="indigenous">原住民</a>
         </nav>
-        <div class="heading-row"><h1 id="location-title">臺灣</h1><span id="level-badge" class="level-badge">縣市</span></div>
-        <nav id="breadcrumbs" class="breadcrumbs" aria-label="行政區導覽"></nav>
-        <button id="share-button" class="back-button" type="button">複製分享</button>
-        <div id="view-extra"></div>
-        <div class="location-footer"><span id="region-count">正在載入行政區…</span><button id="back-button" class="back-button" hidden><span aria-hidden="true">←</span><span id="back-label">返回</span></button></div>
-        <div id="info-extra"></div>
+        <div class="heading-row"><h1 data-ui="location-title">臺灣</h1><span data-ui="level-badge" class="level-badge">縣市</span></div>
+        <nav data-ui="breadcrumbs" class="breadcrumbs" aria-label="行政區導覽"></nav>
+        <button data-ui="share-button" class="back-button" type="button">複製分享</button>
+        <div data-ui="view-extra"></div>
+        <div class="location-footer"><span data-ui="region-count">正在載入行政區…</span><button data-ui="back-button" class="back-button" hidden><span aria-hidden="true">←</span><span data-ui="back-label">返回</span></button></div>
+        <div data-ui="info-extra"></div>
         </div>
       </section>
 
       <div class="toolbar" aria-label="地圖工具">
-        <button id="list-toggle" class="tool-button" aria-label="區域清單" aria-expanded="false" aria-controls="region-panel" title="區域清單"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg><span>區域清單</span></button>
-        <button id="home-button" class="tool-button icon-button" aria-label="回到全臺" title="回到全臺"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8"/></svg></button>
-        <button id="source-button" class="tool-button icon-button" aria-label="資料來源與版本" title="資料來源與版本"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></button>
+        <button data-ui="list-toggle" class="tool-button" aria-label="區域清單" aria-expanded="false" aria-controls="region-panel" title="區域清單"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg><span>區域清單</span></button>
+        <button data-ui="home-button" class="tool-button icon-button" aria-label="回到全臺" title="回到全臺"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-8h6v8"/></svg></button>
+        <button data-ui="source-button" class="tool-button icon-button" aria-label="資料來源與版本" title="資料來源與版本"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg></button>
       </div>
 
-      <aside id="region-panel" class="region-panel" aria-label="區域清單" hidden>
-        <div class="panel-heading"><h2 id="list-title">選擇縣市</h2><button id="list-close" class="close-button" aria-label="關閉區域清單">×</button></div>
-        <label class="search-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="region-search" type="search" placeholder="搜尋目前層級的區域" autocomplete="off" aria-label="搜尋目前層級的區域" /></label>
-        <p id="list-summary" class="list-summary"></p>
-        <div id="region-list" class="region-list"></div>
+      <aside data-ui="region-panel" class="region-panel" aria-label="區域清單" hidden>
+        <div class="panel-heading"><h2 data-ui="list-title">選擇縣市</h2><button data-ui="list-close" class="close-button" aria-label="關閉區域清單">×</button></div>
+        <label class="search-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input data-ui="region-search" type="search" placeholder="搜尋目前層級的區域" autocomplete="off" aria-label="搜尋目前層級的區域" /></label>
+        <p data-ui="list-summary" class="list-summary"></p>
+        <div data-ui="region-list" class="region-list"></div>
       </aside>
 
-      <div id="basemap-status" class="basemap-status" hidden></div>
-      <div id="loading" class="loading-pill" role="status" hidden><span class="spinner" aria-hidden="true"></span><span id="loading-text">載入區域中…</span></div>
-      <div id="error-banner" class="error-banner" role="alert" hidden><span id="error-text"></span><button id="retry-button">重試</button><button id="error-close" class="close-button" aria-label="關閉錯誤訊息">×</button></div>
+      <div data-ui="basemap-status" class="basemap-status" hidden></div>
+      <div data-ui="loading" class="loading-pill" role="status" hidden><span class="spinner" aria-hidden="true"></span><span data-ui="loading-text">載入區域中…</span></div>
+      <div data-ui="error-banner" class="error-banner" role="alert" hidden><span data-ui="error-text"></span><button data-ui="retry-button">重試</button><button data-ui="error-close" class="close-button" aria-label="關閉錯誤訊息">×</button></div>
 
-      <section id="selection-card" class="selection-card" aria-label="所選區域" hidden>
-        <span id="selection-swatch" class="selection-swatch" aria-hidden="true"></span>
-        <div><p id="selection-path" class="selection-path"></p><h2 id="selection-name"></h2><p id="selection-description"></p><div id="selection-extra" class="selection-extra" aria-live="polite" aria-atomic="true"></div></div>
+      <section data-ui="selection-card" class="selection-card" aria-label="所選區域" hidden>
+        <span data-ui="selection-swatch" class="selection-swatch" aria-hidden="true"></span>
+        <div><p data-ui="selection-path" class="selection-path"></p><h2 data-ui="selection-name"></h2><p data-ui="selection-description"></p><div data-ui="selection-extra" class="selection-extra" aria-live="polite" aria-atomic="true"></div></div>
       </section>
-      <div id="map-hint" class="map-hint"><span class="hint-dot" aria-hidden="true"></span><span id="hint-text">點選縣市，探索下一層行政區</span></div>
-      <div id="hover-tooltip" class="hover-tooltip" hidden></div>
-      <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
+      <div data-ui="map-hint" class="map-hint"><span class="hint-dot" aria-hidden="true"></span><span data-ui="hint-text">點選縣市，探索下一層行政區</span></div>
+      <div data-ui="hover-tooltip" class="hover-tooltip" hidden></div>
+      <div data-ui="announcement" class="sr-only" role="status" aria-live="polite"></div>
     </main>
 
-    <dialog id="source-dialog" class="source-dialog" aria-labelledby="source-title">
-      <div class="panel-heading"><div><p class="eyebrow">ABOUT THE MAP</p><h2 id="source-title">資料來源與版本</h2></div><button id="source-close" class="close-button" aria-label="關閉資料來源">×</button></div>
+    <dialog data-ui="source-dialog" class="source-dialog" aria-labelledby="source-title">
+      <div class="panel-heading"><div><p class="eyebrow">ABOUT THE MAP</p><h2 data-ui="source-title">資料來源與版本</h2></div><button data-ui="source-close" class="close-button" aria-label="關閉資料來源">×</button></div>
       <p class="source-intro">行政區界由內政部國土測繪中心提供，底圖使用 TomTom。圖形經簡化以利瀏覽，資料版本依官方發布檔案記錄。</p>
-      <div id="source-content"></div>
+      <div data-ui="source-content"></div>
       <p class="source-footnote">界線圖資供地理位置與範圍展示參考。詮釋資料更新時間與各行政區界線生效日期可能不同。</p>
       <a class="license-link" href="https://data.gov.tw/license" target="_blank" rel="noopener noreferrer">政府資料開放授權條款－第1版 ↗</a>
     </dialog>

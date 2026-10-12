@@ -1,13 +1,14 @@
 import './ui/style.css';
 import { HashRouter, type Theme } from './routing/hash-router';
-import { createThemeAppHost, type ThemeAppLoader } from './routing/theme-app-host';
+import type { ThemeAppLoader } from './routing/theme-app-host';
+import { createComparisonWorkspace } from './comparison/workspace';
 
 const rootElement = document.getElementById('app');
 if (!rootElement) throw new Error('Missing application root');
 const root = rootElement;
 if (location.pathname.endsWith('/index.html')) history.replaceState(history.state, '', import.meta.env.BASE_URL + location.search + location.hash);
 const routing = new HashRouter(window);
-const loaders: Record<Theme, ThemeAppLoader> = {
+const loaders = (root: HTMLElement, routing: HashRouter): Record<Theme, ThemeAppLoader> => ({
   admin: () => import('./apps/admin/main').then(({ startAdminApp }) => () => startAdminApp(root, routing)),
   population: () => import('./apps/population/main').then(({ startPopulationApp }) => () => startPopulationApp(root, routing)),
   income: () => import('./apps/income/main').then(({ startIncomeApp }) => () => startIncomeApp(root, routing)),
@@ -15,21 +16,7 @@ const loaders: Record<Theme, ThemeAppLoader> = {
   housing: () => import('./apps/housing/main').then(({ startHousingApp }) => () => startHousingApp(root, routing)),
   politics: () => import('./apps/politics/main').then(({ startPoliticsApp }) => () => startPoliticsApp(root, routing)),
   indigenous: () => import('./apps/indigenous/main').then(({ startIndigenousApp }) => () => startIndigenousApp(root, routing)),
-};
+});
 
-function showLoading() {
-  root.className = '';
-  root.innerHTML = '<div class="loading-pill" role="status"><span class="spinner" aria-hidden="true"></span><span>載入地圖…</span></div>';
-}
-
-function showLoadError() {
-  root.className = '';
-  root.innerHTML = '<div class="error-banner" role="alert"><span>地圖程式載入失敗，請重試。</span><button type="button">重試</button></div>';
-  // Browsers remember failed module fetches. Reload resets that module map
-  // while retaining the hash and the existing hierarchy history entries.
-  root.querySelector('button')?.addEventListener('click', () => location.reload(), { once: true });
-}
-
-const appHost = createThemeAppHost(routing, loaders, showLoading, showLoadError);
-routing.subscribe(route => appHost.activate(route));
-import.meta.hot?.dispose(() => { appHost.destroy(); routing.destroy(); });
+const workspace = createComparisonWorkspace(root, routing, loaders);
+import.meta.hot?.dispose(() => { workspace.destroy(); routing.destroy(); });

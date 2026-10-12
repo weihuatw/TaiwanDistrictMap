@@ -59,9 +59,9 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     if (view) present(view, pendingRestore, pendingPreserveCamera);
     options.onReady?.();
   };
-  const onResize = () => {
+  const onResize = (event?: unknown) => {
     scheduleLabels();
-    if (view && styleReady && !camera.isPreviewing) camera.fit(view, 0);
+    if (view && styleReady && !camera.isPreviewing && !(event as { preserveViewport?: boolean } | undefined)?.preserveViewport) camera.fit(view, 0);
   };
   const onClick = (event: MapMouseEvent) => {
     if (updates.pending || revealing) return;

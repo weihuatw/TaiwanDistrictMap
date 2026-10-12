@@ -2,7 +2,7 @@
 .school-filter legend { float: left; font-size: 11px; color: var(--muted); margin-right: 4px; padding: 0; }
 .school-filter label { display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; min-height: 28px; }
 .school-filter input { margin: 0; width: 16px; height: 16px; accent-color: #18816a; }
-.school-filter #filter-junior { accent-color: #526bb2; }
+.school-filter [data-ui=filter-junior] { accent-color: #526bb2; }
 .school-page .school-map-display { display: flex; flex-wrap: wrap; gap: 7px 13px; align-items: center; border: 0; border-top: 1px solid var(--border); margin: 10px 0 0; padding: 9px 0 0; }
 .school-map-display legend { float: left; width: 100%; padding: 0; color: var(--muted); font-size: 11px; }
 .school-map-display label { display: flex; align-items: center; gap: 5px; min-height: 28px; color: #456658; font-size: 12px; cursor: pointer; }

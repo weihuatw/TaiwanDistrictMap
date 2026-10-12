@@ -83,6 +83,7 @@ export function startAdminApp(root: HTMLElement, routing?: HashRouter) {
 
   return {
     restoreRoute,
+    get map() { return basemap?.map; },
     destroy() {
       if (!alive) return;
       alive = false; populationPanel.destroy(); factsPanel.destroy(); navigator.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy();

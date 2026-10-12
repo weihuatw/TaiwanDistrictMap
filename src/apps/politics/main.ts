@@ -94,7 +94,7 @@ export function startPoliticsApp(root: HTMLElement, routing?: HashRouter) {
   void Promise.all([boundaries.manifest(), politics.manifest()]).then(([geometry, stats]) => {
     if (alive) { shell.renderManifest(geometry); panel.showSources(stats); }
   }).catch(() => { if (alive) shell.showManifestError(); });
-  return { restoreRoute, destroy() {
+  return { restoreRoute, get map() { return basemap?.map; }, destroy() {
     if (!alive) return;
     alive = false; navigator.destroy(); populationPanel.destroy(); panel.destroy(); layer?.destroy(); basemap?.destroy();
     root.removeEventListener('politicsresize', onResize); shell.destroy(); root.classList.remove('politics-page');

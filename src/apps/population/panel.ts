@@ -13,13 +13,13 @@ export function createPopulationMapPanel(shell: ReturnType<typeof createMapShell
   shell.mapContainer.setAttribute('aria-label', '臺灣戶籍人口互動地圖');
   shell.viewExtra.innerHTML = `
     <div class="population-map-control"><label for="population-metric">地圖指標</label>
-      <select id="population-metric">${[['人口概況', metrics.slice(0, 2)], ['年齡與性別', metrics.slice(2, 5)], ['年度統計', metrics.slice(5)]].map(([label, group]) => `<optgroup label="${label}">${(group as PopulationMetric[]).map(metric => `<option value="${metric}">${metricLabels[metric]}</option>`).join('')}</optgroup>`).join('')}</select>
+      <select data-ui="population-metric">${[['人口概況', metrics.slice(0, 2)], ['年齡與性別', metrics.slice(2, 5)], ['年度統計', metrics.slice(5)]].map(([label, group]) => `<optgroup label="${label}">${(group as PopulationMetric[]).map(metric => `<option value="${metric}">${metricLabels[metric]}</option>`).join('')}</optgroup>`).join('')}</select>
     </div>
     <div class="population-map-control population-map-year-control" hidden>
-      <div class="population-map-year-heading"><label for="population-year">統計年份</label><output for="population-year" id="population-year-label"></output></div>
-      <input id="population-year" type="range" min="0" max="0" step="1" value="0" aria-label="年度統計年份">
+      <div class="population-map-year-heading"><label for="population-year">統計年份</label><output for="population-year" data-ui="population-year-label"></output></div>
+      <input data-ui="population-year" type="range" min="0" max="0" step="1" value="0" aria-label="年度統計年份">
       <div class="population-map-year-footer"><div class="population-map-year-endpoints" aria-hidden="true"><span class="population-year-oldest"></span><span class="population-year-newest"></span></div>
-        <button id="population-play" type="button" aria-label="從最早年份開始播放" aria-pressed="false" disabled>播放</button>
+        <button data-ui="population-play" type="button" aria-label="從最早年份開始播放" aria-pressed="false" disabled>播放</button>
       </div>
     </div>
     <section class="population-map-summary" aria-label="目前地區人口統計" aria-live="polite">
@@ -31,9 +31,9 @@ export function createPopulationMapPanel(shell: ReturnType<typeof createMapShell
   const find = (selector: string) => shell.viewExtra.querySelector<HTMLElement>(selector)!;
   const select = shell.viewExtra.querySelector<HTMLSelectElement>('select')!;
   const yearControl = shell.viewExtra.querySelector<HTMLElement>('.population-map-year-control')!;
-  const yearSlider = shell.viewExtra.querySelector<HTMLInputElement>('#population-year')!;
-  const yearLabel = shell.viewExtra.querySelector<HTMLOutputElement>('#population-year-label')!;
-  const playButton = shell.viewExtra.querySelector<HTMLButtonElement>('#population-play')!;
+  const yearSlider = shell.viewExtra.querySelector<HTMLInputElement>('[data-ui=population-year]')!;
+  const yearLabel = shell.viewExtra.querySelector<HTMLOutputElement>('[data-ui=population-year-label]')!;
+  const playButton = shell.viewExtra.querySelector<HTMLButtonElement>('[data-ui=population-play]')!;
   const oldestYear = shell.viewExtra.querySelector<HTMLElement>('.population-year-oldest')!;
   const newestYear = shell.viewExtra.querySelector<HTMLElement>('.population-year-newest')!;
   let yearsAscending: number[] = [];

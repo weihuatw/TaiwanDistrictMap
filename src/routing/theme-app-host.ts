@@ -1,6 +1,8 @@
 import type { HashRouter, Route, Theme } from './hash-router';
+import type { Map } from 'maplibre-gl';
 
 interface ThemeApp {
+  readonly map?: Map;
   restoreRoute(route: Route): unknown;
   destroy(): void;
 }
@@ -13,6 +15,7 @@ export function createThemeAppHost(
   loaders: Record<Theme, ThemeAppLoader>,
   showLoading: () => void,
   showLoadError: (retry: () => void) => void,
+  onApp: (app: ThemeApp | undefined) => void = () => {},
 ) {
   let app: ThemeApp | undefined;
   let activeTheme: Theme | undefined;
@@ -30,6 +33,7 @@ export function createThemeAppHost(
     const currentRequest = ++request;
     loadingTheme = route.theme;
     activeTheme = undefined;
+    onApp(undefined);
     app?.destroy();
     app = undefined;
     showLoading();
@@ -39,6 +43,7 @@ export function createThemeAppHost(
       loadingTheme = undefined;
       activeTheme = route.theme;
       app = start();
+      onApp(app);
     }).catch(() => {
       if (disposed || currentRequest !== request) return;
       loadingTheme = undefined;
@@ -49,6 +54,7 @@ export function createThemeAppHost(
   function destroy() {
     disposed = true;
     request++;
+    onApp(undefined);
     app?.destroy();
     app = undefined;
     loadingTheme = undefined;

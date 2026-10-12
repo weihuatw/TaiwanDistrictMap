@@ -49,3 +49,14 @@ test('a late theme import cannot replace a more recent route', async () => {
   assert.deepEqual(started, ['income']);
   host.destroy();
 });
+
+test('pane synchronization is detached before destroying or replacing an application', async () => {
+  let current = route('school'); const events = [];
+  const host = createThemeAppHost({ get current() { return current; } },
+    allLoaders({ school: async () => () => ({ restoreRoute() {}, destroy() { events.push('destroy'); } }) }),
+    () => {}, () => {}, app => events.push(app ? 'attach' : 'detach'));
+  host.activate(current); await flush(); assert.deepEqual(events, ['detach', 'attach']);
+  current = route('income'); host.activate(current);
+  assert.deepEqual(events.slice(-2), ['detach', 'destroy']);
+  await flush(); host.destroy(); assert.equal(events.at(-1), 'detach');
+});

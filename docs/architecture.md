@@ -4,7 +4,8 @@
 
 ```text
 index.html                       HTML 入口與 #app 掛載點
-src/main.ts                      啟動行政區頁、共用 CSS、開發時清理
+src/main.ts                      按需啟動主題、共用 CSS、開發時清理
+src/comparison/                  桌面雙地圖、分隔尺寸與同步協調
 src/apps/admin/main.ts           行政區瀏覽的組合與設定
 
 src/map-core/

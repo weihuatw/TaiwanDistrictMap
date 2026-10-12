@@ -54,6 +54,8 @@ npm run dev -- --port 5173 --strictPort
 
 ## 模組責任
 
+桌面（>760px）分割畫面由 `src/comparison/` 組合兩個獨立主題應用；左側保留瀏覽器 hash 歷史、右側透過 `src/routing/local-router.ts` 保留記憶體歷史。同步相機有重入鎖及操作來源，同步導覽辨識待提交路徑，不能讓晚到的同步提交回傳；完整地理選取獨立保存，鄉鎮粒度的平移／篩選不得清除另一側村里。共用 UI 改用 pane 內 `data-ui` 查詢與 CSS，DOM ID／ARIA／radio name 必須唯一。分隔 resize 的 `preserveViewport` 事件不得重新 fit；手機不建立第二個應用。完整設計與限制見 `docs/comparison.md`。
+
 | 位置 | 責任與修改時注意事項 |
 | --- | --- |
 | `src/main.ts`、`src/routing/theme-app-host.ts`、各應用 `entry.ts` | 共用路由啟動器按需載入單一主題；共用 CSS 靜態載入、主題 CSS 隨主題模組載入；舊 HTML 保持為相容轉址入口 |

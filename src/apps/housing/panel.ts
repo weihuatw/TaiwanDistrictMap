@@ -14,10 +14,10 @@ export function createHousingPanel(shell: Shell, repo: HousingRepository, onFilt
   shell.root.classList.add('housing-page');
   let alive = true;
   const controls=document.createElement('section'); controls.className='housing-controls';
-  controls.innerHTML='<label>交易年度 <select id="housing-year" aria-label="交易年度"></select></label><label>住宅型態 <select id="housing-group" aria-label="住宅型態"></select></label>';
-  const yearSelect=controls.querySelector<HTMLSelectElement>('#housing-year')!;
+  controls.innerHTML='<label>交易年度 <select data-ui="housing-year" aria-label="交易年度"></select></label><label>住宅型態 <select data-ui="housing-group" aria-label="住宅型態"></select></label>';
+  const yearSelect=controls.querySelector<HTMLSelectElement>('[data-ui=housing-year]')!;
   for (const y of [2025,2024]) { const o=document.createElement('option');o.value=String(y);o.textContent=`${y} 年`;yearSelect.append(o); }
-  const groupSelect=controls.querySelector<HTMLSelectElement>('#housing-group')!;
+  const groupSelect=controls.querySelector<HTMLSelectElement>('[data-ui=housing-group]')!;
   for (const g of GROUPS) { const o=document.createElement('option');o.value=g;o.textContent=groupName(g);groupSelect.append(o); }
   yearSelect.value=new URLSearchParams(location.hash.split('?')[1] ?? location.search.slice(1)).get('year')==='2024'?'2024':'2025';
   groupSelect.value=GROUPS.includes(new URLSearchParams(location.hash.split('?')[1] ?? location.search.slice(1)).get('type') as HousingGroup)?new URLSearchParams(location.hash.split('?')[1] ?? location.search.slice(1)).get('type')!: 'standard';

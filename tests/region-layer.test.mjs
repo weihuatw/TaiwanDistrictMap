@@ -34,7 +34,7 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
       get offsetWidth() { layouts++; return 50; } };
     this.createdElements.push(element); return element;
   } };
-  const emit = name => { for (const fn of events.get(name) ?? []) fn(); };
+  const emit = (name, data) => { for (const fn of events.get(name) ?? []) fn(data); };
   const map = {
     loaded: () => hasStyle, isMoving: () => moving,
     on(name, fn) { if (!events.has(name)) events.set(name, new Set()); events.get(name).add(fn); },
@@ -65,6 +65,14 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
     get listenerCount() { return [...events.values()].reduce((sum, set) => sum + set.size, 0); },
   };
 }
+
+test('comparison divider resize preserves the synchronized camera while normal resize reframes', () => {
+  const f = fixture(); f.layer.render(view('first'), []); f.stop();
+  const count = f.eases.length;
+  f.emit('resize', { preserveViewport: true }); assert.equal(f.eases.length, count);
+  f.emit('resize'); assert.equal(f.eases.length, count + 1);
+  f.layer.destroy();
+});
 
 test('Year changes interpolate feature colors for 400ms without resending GeoJSON per frame', () => {
   let color = '#112233';

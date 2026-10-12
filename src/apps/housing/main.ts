@@ -66,5 +66,5 @@ export function startHousingApp(root: HTMLElement, routing?: HashRouter){
     if (routing) void restoreRoute(routing.current); else void navigator.start();
   }catch{shell.showInitializationError(()=>location.reload());}
   void Promise.all([boundaries.manifest(),housing.manifest()]).then(([geometry,data])=>{if(alive){manifest=data;shell.renderManifest(geometry);panel.showSources(data);}}).catch(()=>{if(alive)shell.showManifestError();});
-  return{restoreRoute,destroy(){if(!alive)return;alive=false;panel.destroy();navigator.destroy();layer?.destroy();basemap?.destroy();shell.destroy();root.classList.remove('housing-page');}};
+  return{restoreRoute,get map(){return basemap?.map},destroy(){if(!alive)return;alive=false;panel.destroy();navigator.destroy();layer?.destroy();basemap?.destroy();shell.destroy();root.classList.remove('housing-page');}};
 }

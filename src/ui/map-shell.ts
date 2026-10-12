@@ -28,12 +28,33 @@ interface ShellOptions {
 /** Shared page chrome; map and data modules communicate through callbacks. */
 export function createMapShell(root: HTMLElement, options: ShellOptions) {
   root.innerHTML = template;
+  // Stable local selectors, unique DOM IDs and label/radio ownership per pane.
+  function scopeIds() {
+    const prefix = root.id === 'app' ? '' : `${root.id}-`;
+    root.querySelectorAll<HTMLElement>('[data-ui]').forEach(node => {
+      const id = prefix + node.dataset.ui;
+      if (node.id !== id) node.id = id;
+    });
+    for (const node of root.querySelectorAll<HTMLElement>('[for], [aria-controls], [aria-labelledby]')) {
+      for (const attribute of ['for', 'aria-controls', 'aria-labelledby']) {
+        const value = node.getAttribute(attribute);
+        if (value && !value.startsWith(prefix)) node.setAttribute(attribute, value.split(' ').map(id => prefix + id).join(' '));
+      }
+    }
+    root.querySelectorAll<HTMLInputElement>('input[type=radio]').forEach(node => {
+      if (prefix && !node.name.startsWith(prefix)) node.name = prefix + node.name;
+    });
+  }
+  scopeIds();
+  const identityObserver = new MutationObserver(scopeIds);
+  identityObserver.observe(root, { childList: true, subtree: true });
   const el = <T extends HTMLElement = HTMLElement>(id: string): T => {
-    const element = root.querySelector<T>(`#${id}`);
+    const element = root.querySelector<T>(`[data-ui=${id}]`);
     if (!element) throw new Error(`Missing map UI element: ${id}`);
     return element;
   };
   const lifetime = new AbortController();
+  root.addEventListener('comparisonlayout', options.onPanelChange, { signal: lifetime.signal });
   const mapContainer = el('map');
   const mobile = matchMedia('(max-width: 760px)');
   const infoPanel = el('info-toggle').closest<HTMLElement>('.location-panel')!;
@@ -100,7 +121,7 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   panelResize.observe(el('selection-card'));
   infoPanel.addEventListener('transitionend', updateSheet);
   if (options.brandTitle) el('brand-title').textContent = options.brandTitle;
-  const currentPage = location.hash.split('/')[1]?.split('?')[0] ?? 'admin';
+  const currentPage = options.routing?.current.theme ?? 'admin';
   root.querySelectorAll<HTMLAnchorElement>('[data-map-page]').forEach((link) => {
     if (link.dataset.mapPage === currentPage) link.setAttribute('aria-current', 'page');
   });
@@ -113,9 +134,11 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   }, { signal: lifetime.signal });
   el('share-button').addEventListener('click', async () => {
     if (mapContainer.getAttribute('aria-busy') === 'true') return;
-    const names = [...root.querySelectorAll('#breadcrumbs > button, #breadcrumbs > span:not(.breadcrumb-divider)')].map(node => node.textContent).filter(name => name && name !== '全臺');
+    const names = [...root.querySelectorAll('[data-ui=breadcrumbs] > button, [data-ui=breadcrumbs] > span:not(.breadcrumb-divider)')].map(node => node.textContent).filter(name => name && name !== '全臺');
     const title = `${names.join('・') || '全臺'}｜${options.brandTitle ?? '行政區地圖'}`;
-    const text = `${title}\n${location.href}`;
+    const url = new URL(location.href);
+    if (options.routing) url.hash = routeHash(options.routing.current);
+    const text = `${title}\n${url.href}`;
     try {
       await navigator.clipboard.writeText(text);
       if (!lifetime.signal.aborted) { el('share-button').textContent = '已複製'; announce('已複製中文標題與分享連結。'); }
@@ -174,17 +197,19 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   const showTooltip = (hit: RegionHit, point: { x: number; y: number }) => {
     const bounds = mapContainer.getBoundingClientRect();
     el('hover-tooltip').textContent = options.formatTooltip?.(hit) ?? `${hit.parentIndex !== undefined ? '切換至 ' : ''}${hit.region.properties.name}`;
-    el('hover-tooltip').style.left = `${Math.min(bounds.left + point.x + 15, innerWidth - 140)}px`;
-    el('hover-tooltip').style.top = `${Math.min(bounds.top + point.y + 15, innerHeight - 45)}px`;
+    el('hover-tooltip').style.left = `${Math.max(0, Math.min(point.x + 15, bounds.width - 140))}px`;
+    el('hover-tooltip').style.top = `${Math.min(point.y + 15, bounds.height - 45)}px`;
     el('hover-tooltip').hidden = false;
   };
   const getPadding = (): Padding => innerWidth <= 760
     ? { top: 55, right: 55, bottom: Math.min(innerHeight * .45, Math.max(34, innerHeight - infoPanel.getBoundingClientRect().top)) + 20, left: 20 }
-    : { top: 70, right: 90, bottom: 90, left: 355 };
+    : root.closest('.comparison-dual')
+      ? { top: 70, right: 50, bottom: 70, left: root.closest('.cards-hidden') ? 20 : Math.min(280, mapContainer.clientWidth * .4) }
+      : { top: 70, right: 90, bottom: 90, left: root.closest('.cards-hidden') ? 20 : 355 };
   const getLabelObstacles = (): Rect[] => {
     const origin = mapContainer.getBoundingClientRect();
     const location = el('location-title').closest('.location-panel')!.getBoundingClientRect();
-    const rectangles = [{ x: location.left - origin.left - 8, y: location.top - origin.top - 8, w: location.width + 16, h: location.height + 16 }];
+    const rectangles = location.width ? [{ x: location.left - origin.left - 8, y: location.top - origin.top - 8, w: location.width + 16, h: location.height + 16 }] : [];
     if (!el('region-panel').hidden) {
       const panel = el('region-panel').getBoundingClientRect();
       rectangles.push({ x: panel.x - origin.left, y: panel.y - origin.top, w: panel.width, h: panel.height });
@@ -200,7 +225,7 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     updateThemeLinks();
     const title = current.selected?.properties.name ?? current.path.at(-1)?.properties.name ?? '臺灣';
     el('location-title').textContent = title;
-    document.title = `${title}｜${options.pageTitle ?? '臺灣行政區地圖'}`;
+    if (root.id === 'app') document.title = `${title}｜${options.pageTitle ?? '臺灣行政區地圖'}`;
     const levelLabels = { county: '縣市', town: '鄉鎮市區', village: '村里', detail: '村里' };
     el('level-badge').textContent = levelLabels[current.level];
     el('region-count').textContent = current.level === 'detail'
@@ -312,6 +337,7 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   });
   document.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape' || sourceDialog.open) return;
+    if (root.closest('.comparison-dual') && !root.parentElement?.matches('[data-active=true]')) return;
     if (!el('region-panel').hidden) toggleList(false);
     else options.onBack();
   }, { signal: lifetime.signal });
@@ -330,6 +356,6 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     showTooltip, hideTooltip, getPadding, getLabelObstacles,
     renderManifest, showManifestError,
     markMapReady: () => { mapContainer.dataset.ready = 'true'; },
-    destroy: () => { lifetime.abort(); panelResize.disconnect(); if (sheetFrame) cancelAnimationFrame(sheetFrame); root.style.removeProperty('--info-visible-height'); root.replaceChildren(); },
+    destroy: () => { lifetime.abort(); identityObserver.disconnect(); panelResize.disconnect(); if (sheetFrame) cancelAnimationFrame(sheetFrame); root.style.removeProperty('--info-visible-height'); root.replaceChildren(); },
   };
 }

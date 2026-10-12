@@ -76,7 +76,7 @@ export function startPopulationApp(root: HTMLElement, routing?: HashRouter) {
     metricRestore = undefined;
     routing?.commit(route); shell.render(view);
     if (savedMetricView?.data === view.data) {
-      shell.root.querySelector<HTMLInputElement>('#region-search')!.value = savedMetricView.search;
+      shell.root.querySelector<HTMLInputElement>('[data-ui=region-search]')!.value = savedMetricView.search;
       shell.refreshList();
     }
     panel.render(view, metric, year, availableYears, manifest, national, annualManifest, annualNational);
@@ -111,7 +111,7 @@ export function startPopulationApp(root: HTMLElement, routing?: HashRouter) {
     stopPlayback(); layer?.cancelColorTransition();
     const ids = metricPath(idsFor(view), next);
     metricRestore = { ids: ids.join('/'), camera: layer?.ready ? layer.camera() : undefined, data: view.data,
-      search: shell.root.querySelector<HTMLInputElement>('#region-search')!.value };
+      search: shell.root.querySelector<HTMLInputElement>('[data-ui=region-search]')!.value };
     requestedMetric = next; requestedYear = year; shell.hideTooltip();
     void navigator.restorePath(ids, next === 'density');
   }
@@ -124,7 +124,7 @@ export function startPopulationApp(root: HTMLElement, routing?: HashRouter) {
     else layer?.transitionNextRender(yearColorTransitionDuration());
     const ids = metricPath(idsFor(view), metric);
     metricRestore = { ids: ids.join('/'), camera: layer?.ready ? layer.camera() : undefined, data: view.data,
-      search: shell.root.querySelector<HTMLInputElement>('#region-search')!.value };
+      search: shell.root.querySelector<HTMLInputElement>('[data-ui=region-search]')!.value };
     requestedMetric = metric; requestedYear = next; shell.hideTooltip();
     await navigator.restorePath(ids, metric === 'density');
     return alive && year === next;
@@ -208,7 +208,7 @@ export function startPopulationApp(root: HTMLElement, routing?: HashRouter) {
   void Promise.all([boundaries.manifest(), population.manifest()]).then(([geometry, stats]) => {
     if (alive) { shell.renderManifest(geometry); panel.showSources(stats); if (annualManifest) panel.showAnnualSources(annualManifest); }
   }).catch(() => { if (alive) shell.showManifestError(); });
-  return { restoreRoute, destroy() {
+  return { restoreRoute, get map() { return basemap?.map; }, destroy() {
     if (!alive) return;
     stopPlayback(); alive = false; navigator.destroy(); panel.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy();
   } };

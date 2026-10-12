@@ -11,7 +11,7 @@ export function createIncomePanel(shell: Shell, income: IncomeRepository) {
   badge.innerHTML = '<span>2024 所得年度</span><span class="preliminary-badge">初步核定</span>';
   shell.root.querySelector('.heading-row')!.before(badge);
   const summary = document.createElement('section'); summary.className = 'income-summary'; summary.setAttribute('aria-label', '所得統計');
-  summary.innerHTML = '<p class="income-metric-label">每申報戶平均年綜合所得</p><div class="income-value-row"><strong id="income-value">—</strong><span id="income-unit">萬元／年</span></div><p id="income-description" class="income-description">正在載入官方統計…</p><div class="income-facts"><div><span>納稅申報戶</span><strong id="income-units">—</strong></div><div id="median-fact" hidden><span>中位數</span><strong id="income-median">—</strong></div></div><p id="income-comparison" class="income-comparison" hidden></p><p id="income-origin" class="income-origin"></p>';
+  summary.innerHTML = '<p class="income-metric-label">每申報戶平均年綜合所得</p><div class="income-value-row"><strong data-ui="income-value">—</strong><span data-ui="income-unit">萬元／年</span></div><p data-ui="income-description" class="income-description">正在載入官方統計…</p><div class="income-facts"><div><span>納稅申報戶</span><strong data-ui="income-units">—</strong></div><div data-ui="median-fact" hidden><span>中位數</span><strong data-ui="income-median">—</strong></div></div><p data-ui="income-comparison" class="income-comparison" hidden></p><p data-ui="income-origin" class="income-origin"></p>';
   shell.viewExtra.append(summary);
   const legend = document.createElement('section'); legend.className = 'income-legend'; legend.setAttribute('aria-label', '所得色階圖例');
   legend.innerHTML = '<div class="income-legend-heading"><strong>平均年綜合所得</strong><span>萬元／戶</span></div><div class="income-legend-scale"></div><p class="income-legend-note">全國統一級距 · 深色代表較高所得</p><div class="income-legend-key"><span class="missing-swatch"></span><span>斜紋：無可對應資料</span><span class="context-swatch"></span><span>灰色：可切換地區</span></div><p class="income-data-note">2024稅務統計，非個人薪資或可支配所得。</p><a class="income-app-link" href="#/admin" data-map-page="admin">行政區瀏覽 ↗</a>';
@@ -24,7 +24,7 @@ export function createIncomePanel(shell: Shell, income: IncomeRepository) {
   }
   shell.uiContainer.append(legend);
   shell.addMobileContent(legend);
-  const element = (id: string) => summary.querySelector<HTMLElement>(`#${id}`)!;
+  const element = (id: string) => summary.querySelector<HTMLElement>(`[data-ui=${id}]`)!;
   let manifest: IncomeManifest | null = null;
 
   function render(view: View, meta: IncomeManifest) {

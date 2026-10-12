@@ -40,6 +40,11 @@ interface Browser {
 }
 /** One owned browser entry per hierarchy level. Same-level choices replace it. */
 export class HashRouter {
+  private commitListeners = new Set<(route: Route) => void>();
+  observeCommits(listener: (route: Route) => void) {
+    this.commitListeners.add(listener);
+    return () => this.commitListeners.delete(listener);
+  }
   private browser: Browser;
   private session: string;
   private committed?: Route;
@@ -127,6 +132,7 @@ export class HashRouter {
     this.themeQueries.set(route.theme, route.query);
     const old = this.committed;
     this.committed = route;
+    for (const listener of this.commitListeners) listener(route);
     if (this.pending) { this.pending = route; return; }
     if (this.applying && this.target?.theme === route.theme && this.target.ids.join('/') === route.ids.join('/')) {
       this.applying = false;
@@ -151,6 +157,7 @@ export class HashRouter {
     if (common === route.ids.length) this.write(route, true);
   }
   destroy() {
+    this.commitListeners.clear();
     this.browser.removeEventListener('popstate', this.onEvent);
     this.browser.removeEventListener('hashchange', this.onEvent);
     this.handler = undefined; this.pending = undefined; this.queuedNavigation = undefined; this.restorationCamera = null;

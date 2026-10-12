@@ -78,7 +78,7 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
   void Promise.all([boundaries.manifest(), income.manifest()])
     .then(([geometry, stats]) => { if (alive) { shell.renderManifest(geometry); panel.showSources(stats); } })
     .catch(() => { if (alive) shell.showManifestError(); });
-  return { restoreRoute, destroy() {
+  return { restoreRoute, get map() { return basemap?.map; }, destroy() {
     if (!alive) return;
     alive = false; navigator.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy(); root.classList.remove('income-page');
   } };

@@ -59,7 +59,7 @@ export function startSchoolApp(root: HTMLElement, routing?: HashRouter) {
   let overlayBusy = false;
   let overlaySequence = 0;
   let displayedView: View | undefined;
-  const el = <T extends HTMLElement = HTMLElement>(id: string) => root.querySelector<T>(`#${id}`)!;
+  const el = <T extends HTMLElement = HTMLElement>(id: string) => root.querySelector<T>(`[data-ui=${id}]`)!;
   const getColor = (r: Region) => {
     if (displayMode === 'income') return recordColor(income.get(r.properties.code));
     if (displayMode === 'housing') return housingColor(housing.get(HOUSING_YEAR, HOUSING_GROUP, housingCode(r)));
@@ -125,7 +125,7 @@ export function startSchoolApp(root: HTMLElement, routing?: HashRouter) {
     },
   });
   shell.mapContainer.setAttribute('aria-label', '臺灣國小與國中學區互動地圖');
-  shell.viewExtra.innerHTML = `<fieldset class="school-filter"><legend>顯示學校</legend><label><input type="checkbox" id="filter-elementary" checked /><span class="school-key elementary"></span>國小</label><label><input type="checkbox" id="filter-junior" checked /><span class="school-key junior"></span>國中</label></fieldset><fieldset class="school-map-display"><legend>地圖著色</legend><label><input type="radio" name="school-map-mode" value="school" checked />學區</label><label><input type="radio" name="school-map-mode" value="income" />所得</label><label><input type="radio" name="school-map-mode" value="housing" />房價</label></fieldset><p id="school-map-description" class="school-map-description"></p><div id="school-map-legend" class="school-map-legend" hidden></div><p id="school-coverage" class="school-coverage">全臺學校 · 學區依各縣市公告收錄</p><div id="school-detail" class="school-detail" hidden></div>`;
+  shell.viewExtra.innerHTML = `<fieldset class="school-filter"><legend>顯示學校</legend><label><input type="checkbox" data-ui="filter-elementary" checked /><span class="school-key elementary"></span>國小</label><label><input type="checkbox" data-ui="filter-junior" checked /><span class="school-key junior"></span>國中</label></fieldset><fieldset class="school-map-display"><legend>地圖著色</legend><label><input type="radio" name="school-map-mode" value="school" checked />學區</label><label><input type="radio" name="school-map-mode" value="income" />所得</label><label><input type="radio" name="school-map-mode" value="housing" />房價</label></fieldset><p data-ui="school-map-description" class="school-map-description"></p><div data-ui="school-map-legend" class="school-map-legend" hidden></div><p data-ui="school-coverage" class="school-coverage">全臺學校 · 學區依各縣市公告收錄</p><div data-ui="school-detail" class="school-detail" hidden></div>`;
   const mapStatus = document.createElement('div');
   mapStatus.className = 'school-map-status'; mapStatus.setAttribute('role', 'status'); mapStatus.setAttribute('aria-live', 'polite'); mapStatus.hidden = true;
   root.querySelector('.map-ui')?.append(mapStatus);
@@ -154,7 +154,7 @@ export function startSchoolApp(root: HTMLElement, routing?: HashRouter) {
     },
   });
 
-  for (const input of shell.viewExtra.querySelectorAll<HTMLInputElement>('input[name="school-map-mode"]')) {
+  for (const input of shell.viewExtra.querySelectorAll<HTMLInputElement>('input[type="radio"]')) {
     input.addEventListener('change', () => {
       if (!input.checked || !['school', 'income', 'housing'].includes(input.value)) return;
       const previousMode = displayMode;
@@ -228,7 +228,7 @@ export function startSchoolApp(root: HTMLElement, routing?: HashRouter) {
       const text = document.createElement('span'); text.textContent = '無資料'; missing.append(swatch, text); row.append(missing);
       legend.append(row);
     }
-    for (const input of shell.viewExtra.querySelectorAll<HTMLInputElement>('input[name="school-map-mode"]')) input.checked = input.value === displayMode;
+    for (const input of shell.viewExtra.querySelectorAll<HTMLInputElement>('input[type="radio"]')) input.checked = input.value === displayMode;
     mapStatus.hidden = displayMode === 'school';
     mapStatus.textContent = displayMode === 'school' ? '' : `${name} · ${scope}${selected ? ' · 學區粗框' : ''}`;
   }
@@ -479,7 +479,7 @@ export function startSchoolApp(root: HTMLElement, routing?: HashRouter) {
     const audit = document.createElement('a'); audit.href = `${base}data/school/join-report.json`; audit.textContent = '查看資料對照紀錄 ↗'; audit.target = '_blank'; audit.rel = 'noopener noreferrer'; audit.className = 'license-link';
     shell.sourceContent.append(note, audit);
   }).catch(() => { if (alive) shell.showManifestError(); });
-  return { restoreRoute, destroy() {
+  return { restoreRoute, get map() { return basemap?.map; }, destroy() {
     if (!alive) return;
     alive = false; navigator.destroy(); markers?.destroy(); layer?.destroy(); basemap?.destroy(); shell.destroy(); root.classList.remove('school-page');
   } };

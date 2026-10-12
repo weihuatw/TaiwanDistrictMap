@@ -15,9 +15,9 @@
 .income-summary { margin-top: 13px; padding-top: 13px; border-top: 1px solid #e7eeea; }
 .income-metric-label { margin: 0 0 6px; font-size: 11px; color: #73887d; }
 .income-value-row { display: flex; align-items: baseline; gap: 9px; }
-#income-value { font-size: 39px; letter-spacing: -.8px; line-height: 1.14; font-weight: 650; color: #285744; font-variant-numeric: tabular-nums; }
-#income-value.is-missing { font-size: 26px; color: #788b97; }
-#income-unit { font-size: 10px; color: #789084; white-space: nowrap; }
+[data-ui=income-value] { font-size: 39px; letter-spacing: -.8px; line-height: 1.14; font-weight: 650; color: #285744; font-variant-numeric: tabular-nums; }
+[data-ui=income-value].is-missing { font-size: 26px; color: #788b97; }
+[data-ui=income-unit] { font-size: 10px; color: #789084; white-space: nowrap; }
 .income-description { font-size: 10px; color: #7a8e83; line-height: 1.6; margin: 6px 0 0; }
 .income-facts { display: flex; gap: 19px; margin-top: 13px; }
 .income-facts > div { display: flex; flex-direction: column; gap: 4px; }
@@ -55,7 +55,7 @@
   .income-year { margin-top: 9px; font-size: 9px; gap: 6px; }
   .income-page .heading-row { margin-top: 8px; }
   .income-summary { margin-top: 8px; padding-top: 9px; }
-  #income-value { font-size: 31px; }
+  [data-ui=income-value] { font-size: 31px; }
   .income-facts { margin-top: 8px; gap: 17px; }
   .income-description { margin-top: 4px; font-size: 9px; }
   .income-comparison { margin-top: 7px; padding: 4px 6px; font-size: 9px; }
