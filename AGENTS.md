@@ -4,12 +4,13 @@
 
 ## 專案與現況
 
-這是 Vite + TypeScript 的純靜態地圖網站，沒有後端。根 HTML 的六個 hash 主題共用地圖核心與介面，另保留原本五個 HTML 入口：
+這是 Vite + TypeScript 的純靜態地圖網站，沒有後端。根 HTML 的七個 hash 主題共用地圖核心與介面，另保留原本五個 HTML 入口：
 
 | 入口 | 用途 | 應用目錄 |
 | --- | --- | --- |
 | `index.html` | 縣市 → 鄉鎮市區 → 村里行政區瀏覽 | `src/apps/admin/` |
 | `#/population` | 戶籍人口、密度、出生／死亡與自然增減指標切換 | `src/apps/population/` |
+| `#/indigenous` | 原住民人口數與占總戶籍人口比例、族群切換 | `src/apps/indigenous/` |
 | `income.html` | 2024 年平均年綜合所得地圖 | `src/apps/income/` |
 | `school.html` | 國小、國中位置與官方學區地圖 | `src/apps/school/` |
 | `housing.html` | 實價登錄住宅成交統計與案件明細 | `src/apps/housing/` |
@@ -17,8 +18,8 @@
 
 - Repository：<https://github.com/weihuatw/TaiwanDistrictMap>，發布分支為 `main`。
 - GitHub Pages：<https://weihuatw.github.io/TaiwanDistrictMap/>；另有 `income.html`、`school.html`、`housing.html`、`politics.html`。
-- 人口主題與跨主題位置延續於 2026-10-12 加入：切換保留地區、視角與各主題 query；學區／房價止於鄉鎮，校 ID 不轉成村里代碼。相機存在 history.state，URL 不帶暫時視角；地理返回仍逐層。跨主題仍重建 map。
-- 既有五個主題均已部署；政治地圖已有全臺選舉模式與模式跨層級保留。人口主題的發布狀態需以當次部署工作流程確認。
+- 人口／原住民主題與跨主題位置延續於 2026-10-12 加入：切換保留地區、視角與各主題 query；學區／房價止於鄉鎮，校 ID 不轉成村里代碼。相機存在 history.state，URL 不帶暫時視角；地理返回仍逐層。跨主題仍重建 map。
+- 既有五個主題均已部署；政治地圖已有全臺選舉模式與模式跨層級保留；原住民地圖使用 11508 同月族別與總人口快照。人口與原住民主題的發布狀態需以當次部署工作流程確認。
 - `f7c058a` 加入手機底部資訊面板與載入前動畫；`eff2c81` 擴充全臺學校、學區資料並修正新北正規化；`6464a53` 是臺北學區頁的初版。
 - `docs/verification.md` 與 `docs/income.md` 仍有早期「尚未部署／等待 Secret」的文字，屬歷史狀態，不能當作目前阻礙。
 - 網站、文件及與使用者溝通以繁體中文為主。
@@ -26,7 +27,7 @@
 ## 開始工作
 
 1. 先看 `git status`，保留使用者尚未提交的修改。
-2. 本文件提供整體脈絡；需要細節時再讀 `README.md`、`docs/architecture.md`、`docs/income.md`、`docs/school.md`。
+2. 本文件提供整體脈絡；需要細節時再讀 `README.md`、`docs/architecture.md`、`docs/income.md`、`docs/population.md`、`docs/indigenous.md`、`docs/school.md`。
 3. 一般前端開發直接使用已提交的 `public/data/`，不必重新下載或生成官方資料。
 4. 啟動前確認是否已有可用的開發 server。Port 由當次環境決定，不要假設一定是 5173，也不要停止使用者正在使用的 server。
 
@@ -41,7 +42,7 @@ npm run dev -- --port 5173 --strictPort
 
 ## 網址與瀏覽器歷史
 
-2026-10-09 起由根目錄 `index.html` 與 `src/main.ts` 使用 hash 路由啟動主題；2026-10-12 新增人口後共有 `#/admin`、`#/population`、`#/income`、`#/school`、`#/housing`、`#/politics` 六個主題。舊 HTML 保留為相容轉址入口。完整設計見 `docs/routing.md`。
+2026-10-09 起由根目錄 `index.html` 與 `src/main.ts` 使用 hash 路由啟動主題；2026-10-12 新增人口與原住民後共有 `#/admin`、`#/population`、`#/indigenous`、`#/income`、`#/school`、`#/housing`、`#/politics` 七個主題。舊 HTML 保留為相容轉址入口。完整設計見 `docs/routing.md`。
 
 - URL 使用行政區代碼與學校 ID，不使用中文名稱；「複製分享」附中文麵包屑標題。
 - `src/routing/hash-router.ts` 管理每層一筆的瀏覽器歷史：下鑽新增、同層切換／篩選替換、跨祖先切換重建分支，直接連結補父層。網站返回、麵包屑與瀏覽器返回遵循相同階層。
@@ -59,14 +60,16 @@ npm run dev -- --port 5173 --strictPort
 | `scripts/vite/initial-preload.mjs` | 正式建置時依實際 chunk 產生根 HTML 的 hash 主題 preload；只提前下載目前主題靜態依賴／CSS 及 counties，支援當次 base |
 | `src/map-core/create-map.ts` | TomTom 底圖、無 key 預覽、MapLibre worker、縮放與比例尺控制 |
 | `src/map-core/boundaries.ts` | 按父層分檔載入 GeoJSON；成功結果快取，失敗不快取，請求逾時 20 秒 |
-| `src/map-core/navigation.ts` | 基本與所得頁導覽、歷史視角、灰色鄰區切換、非同步請求序號 |
-| `src/map-core/camera.ts` | 三個頁面共用的取景、預覽動畫、取消及返回視角 |
+| `src/map-core/navigation.ts` | 行政區、所得、人口與原住民頁導覽、歷史視角、灰色鄰區切換、非同步請求序號 |
+| `src/map-core/camera.ts` | 地圖主題共用的取景、預覽動畫、取消及返回視角 |
 | `src/map-core/settled-update.ts` | 最新更新排程：相機停止後下一幀執行，清理時取消 |
 | `src/map-core/region-layer.ts` | GeoJSON 填色／輪廓、灰色背景區域、獨立強調外框、點擊命中、避讓標籤；MapLibre `style.load` 後即可加入行政區圖層，不等底圖圖磚與字型全部載入；不查詢頁面元素 ID |
 | `src/map-core/types.ts` | 行政區、View、Camera、Padding 等共用型別 |
 | `src/ui/map-shell.html`、`map-shell.ts`、`style.css` | 清單、搜尋、麵包屑、提示、來源視窗及手機資訊面板；不持有資料載入或導覽歷史 |
-| `src/data/population.ts` | 共用人口資料 manifest、村里／各層彙總與單一年齡分片 repository；不耦合主題或地圖幾何 |
+| `src/data/population.ts` | 共用戶籍人口 manifest、村里／各層彙總與單一年齡分片 repository；不耦合主題或地圖幾何 |
+| `src/data/indigenous.ts` | 原住民資料 manifest、村里／各層彙總 repository；不載入年齡分片、不耦合地圖幾何 |
 | `src/apps/*/main.ts` | 引入該主題 CSS，組合核心、介面及主題回呼，處理主題資訊；行政區主題的跨主題資訊卡由 `src/apps/admin/facts-panel.ts` 讀取各主題 repository |
+| `src/apps/indigenous/` | 原住民族別 repository、人口比例主題與地圖面板 |
 | `src/apps/income/main.ts`、`panel.ts` | 所得資料、介面與路由還原；地名標籤維持一般樣式，不載入政治資料 |
 | `src/apps/school/navigation.ts` | 獨立 `SchoolNavigator`；`polygonView()` 將學校狀態轉成共用 polygon View；比較模式選校保留相機 |
 | `src/apps/school/data.ts`、`markers.ts` | 學校分檔、學區里界載入與學校標記 |
@@ -177,6 +180,24 @@ npm run population:check
 
 發布 CI 執行 `population:check`；原始 CSV 不必放入 CI。月份更新後要檢視對照報告並審核例外清單。
 
+## 原住民人口資料
+
+原住民主題位於 `#/indigenous`，資料及來源流程詳見 `docs/indigenous.md`。目前公開快照為 11508（2026-08），分子來自戶政司 ODRP018，總人口分母取同月既有 ODRP014 村里資料。比例一律是所選族群人數 ÷ 同月總戶籍人口；上層先加總再計算。這是戶籍登記統計，不代表實際居住分布或法律認定狀態。
+
+- `src/data/indigenous.ts` 獨立載入摘要分片；行政區代碼為主鍵，不把人口寫入 GeoJSON，也不下載年齡明細。
+- `data/indigenous/tribes.json` 登錄當期官方欄位；11508 有 26 個族別欄位，未申報納入「所有族群」總數但不是可選族別。遇到新增／移除欄位先審核登錄，不能將缺欄轉零。
+- 原住民資訊面板的可收折「各民族人口數」列出目前範圍的全部 26 族，官方零值顯示 `0 人`；尚未申報族別另列且不當成一族。區域、指標與地圖族群切換不得清除該區塊的收折狀態。
+- 三和村 `10013280006` 有統計與人口分母但無主圖層界線；保留於上層加總。來源名稱差異依代碼記錄，不模糊配對。
+- 原始分頁在忽略提交的 `data/raw/indigenous/`；來源與 SHA-256 在 `data/indigenous/sources.json`；輸出在 `public/data/indigenous/`。
+
+```sh
+npm run indigenous:fetch -- 11508
+npm run indigenous:build -- 11508
+npm run indigenous:check
+```
+
+`indigenous:check` 只讀公開輸出，CI 不需重新下載來源。更新月份時先確認 ODRP018 完整分頁、ODRP014 同月分母與資料欄位，審核名稱／界線例外後再建置。
+
 ## 學校與學區資料
 
 學區頁仍保留縣市 → 行政區 → 第三層互動，但**進入行政區顯示學校位置，不先畫所有里**。選校後才載入該校學區的里。國小／國中兩個 checkbox 預設皆 checked，兩者都關閉時顯示明確空狀態。國中部與國小部獨立記錄，同位置 marker 並排。
@@ -272,6 +293,7 @@ npm run school:check
 npm run housing:check
 npm run population:check
 npm run politics:check
+npm run indigenous:check
 npm run build
 git diff --check
 ```
@@ -298,7 +320,7 @@ git diff --check
 
 使用者要求發布時，完成修改、相關測試及提交後推送 `main`；不能只說已觸發部署就宣告上線。
 
-`.github/workflows/deploy-pages.yml` 在 main push 或手動觸發時：Node 24／Python 3.13 → `npm ci` → 測試與六種資料檢查 → 確認 key Secret → 使用 `/TaiwanDistrictMap/` base 建置 → 上傳 `dist/` → 部署。Pages Source 為 GitHub Actions。
+`.github/workflows/deploy-pages.yml` 在 main push 或手動觸發時：Node 24／Python 3.13 → `npm ci` → 測試與七類資料檢查（行政區、所得、學區、房價、人口、政治、原住民）→ 確認 key Secret → 使用 `/TaiwanDistrictMap/` base 建置 → 上傳 `dist/` → 部署。Pages Source 為 GitHub Actions。
 
 ```sh
 npm run build -- --base /TaiwanDistrictMap/

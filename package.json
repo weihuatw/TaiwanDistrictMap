@@ -28,6 +28,9 @@
     "politics:fetch": "python3 scripts/politics/fetch.py",
     "politics:build": "${POLITICS_PYTHON:-python3} scripts/politics/build.py",
     "politics:check": "python3 scripts/politics/check.py",
+    "indigenous:fetch": "python3 scripts/indigenous/fetch.py",
+    "indigenous:build": "python3 scripts/indigenous/build.py",
+    "indigenous:check": "python3 scripts/indigenous/check.py",
     "population:annual:fetch": "python3 scripts/population/annual_fetch.py",
     "population:annual:build": "python3 scripts/population/annual_build.py"
   },

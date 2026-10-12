@@ -135,3 +135,9 @@ test('Leaving a still-loading theme preserves its requested route and preference
   assert.equal(router.themeRoute('population').query, 'metric=elderly');
   assert.equal(requested.at(-1).theme, 'income');
 });
+test('Indigenous links preserve geographic hierarchy with independent metric and tribe query', () => {
+  const indigenous = route(['10001','10001010','10001010001'], 'indigenous', 'metric=share&tribe=siraya');
+  assert.deepEqual(parseRoute(routeHash(indigenous)), indigenous);
+  assert.deepEqual(transferTheme(indigenous, 'admin').ids, indigenous.ids);
+  assert.deepEqual(transferTheme(indigenous, 'housing').ids, indigenous.ids.slice(0, 2));
+});

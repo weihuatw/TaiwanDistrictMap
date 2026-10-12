@@ -14,6 +14,7 @@ const loaders: Record<Theme, ThemeAppLoader> = {
   school: () => import('./apps/school/main').then(({ startSchoolApp }) => () => startSchoolApp(root, routing)),
   housing: () => import('./apps/housing/main').then(({ startHousingApp }) => () => startHousingApp(root, routing)),
   politics: () => import('./apps/politics/main').then(({ startPoliticsApp }) => () => startPoliticsApp(root, routing)),
+  indigenous: () => import('./apps/indigenous/main').then(({ startIndigenousApp }) => () => startIndigenousApp(root, routing)),
 };
 
 function showLoading() {

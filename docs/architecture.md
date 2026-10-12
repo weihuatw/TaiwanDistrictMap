@@ -41,11 +41,11 @@ public/data/                     現有預先生成的界線與版本資訊
 
 ## 之後加入主題頁
 
-新增主題時，在 `src/apps/<主題>/` 組合共用模組，更新 `hash-router.ts` 的主題集合、`src/main.ts` 的動態啟動器及共用 shell 連結。只有需要相容 HTML 入口時才新增 Vite 多入口；人口主題僅使用 `#/population`。建置 preload 由主題集合及實際 chunk 生成。
+新增主題時，在 `src/apps/<主題>/` 組合共用模組，更新 `hash-router.ts` 的主題集合、`src/main.ts` 的動態啟動器及共用 shell 連結。只有需要相容 HTML 入口時才新增 Vite 多入口；人口、原住民主題僅使用 hash 路由。建置 preload 由主題集合及實際 chunk 生成。
 
 人口主題的月度與年度 repository 分開：`PopulationRepository` 供人口概況，`AnnualPopulationRepository` 供 2020–2025 年出生、死亡與官方密度。年度資料僅在選取相關指標後按層載入；年度指標另從年度索引產生年份選單並將年份保存在 `year` query。資料成功後才提交指標、年份及導覽，失敗保留原畫面並可重試。密度沿用共用 navigator 的鄉鎮選取模式，其他指標可下鑽村里，不增加地圖核心的主題判斷。
 
-六個主題共用路由入口，跨主題連結保留目前地理代碼、相機及各自主題偏好。相機由 shell 回呼取得，路由器管理 history.state，應用在成功還原 View 時套用；shell 不持有導覽歷史。跨主題仍清理並重建應用，各主題 repository 保持獨立。
+七個主題共用路由入口，跨主題連結保留目前地理代碼、相機及各自主題偏好。相機由 shell 回呼取得，路由器管理 history.state，應用在成功還原 View 時套用；shell 不持有導覽歷史。跨主題仍清理並重建應用，各主題 repository 保持獨立。
 
 所得頁透過共用介面的標題、清單文字、排序與提示回呼接入主題內容；共用圖層可設定透明度、輪廓與資料缺漏斜紋。這些選項皆有原本的預設值，行政區瀏覽不需讀取所得資料。主題資料放在 `public/data/income/`，界線重建只替換其自身管理的檔案，保留主題資料。
 

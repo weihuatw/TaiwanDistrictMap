@@ -4,7 +4,9 @@
 
 行政區資訊卡整合戶籍人口、2024 所得、住宅成交統計與政黨資料；村里層級另列出已對照的國小、國中學區。各卡片預設收折，可展開查看明細與來源。
 
-六個主題在同一入口切換，保留目前行政區與視角，並記住各主題指標／篩選。目的主題為學區或房價時保留至鄉鎮市區，行政區資訊卡亦可直接開啟該地區的主題分析。
+七個主題在同一入口切換，保留目前行政區與視角，並記住各主題指標／篩選。目的主題為學區或房價時保留至鄉鎮市區，行政區資訊卡亦可直接開啟該地區的主題分析。
+
+原住民主題 `#/indigenous` 可依族群切換人口數或占同月總戶籍人口比例，並在可收折明細中查看目前範圍的 26 個族別人數；11508 快照含官方明列為 0 的族別。資料定義與更新方式見 [原住民人口地圖說明](docs/indigenous.md)。
 
 人口主題 `#/population` 可切換人口數、戶數、高齡人口比例、幼年人口比例及女性比例；人口概況採 2026 年 8 月戶籍快照，年度指標可選 2020–2025 年的人口密度、出生／死亡人數、粗出生／死亡率與自然增減。密度提供到鄉鎮，其餘年度資料可查看完整村里；切換指標或年份會保留視角，分享網址會還原年份。資料設計與定義見 [人口資料說明](docs/population.md)。
 
@@ -44,6 +46,8 @@ npm run dev -- --port 5173 --strictPort
 ```
 
 開啟 <http://127.0.0.1:5173/>。沒有 key 時仍可操作官方行政區圖形，底圖顯示為資料預覽背景。
+
+原住民地圖由根入口開啟 <http://127.0.0.1:5173/#/indigenous>；已提交的統計快照可直接使用，不需下載來源資料。
 
 所得頁開啟 <http://127.0.0.1:5173/income.html>；學區頁開啟 <http://127.0.0.1:5173/school.html>。
 房價頁開啟 <http://127.0.0.1:5173/housing.html>；先執行 `npm run housing:fetch` 與 `npm run housing:build` 產生資料。
@@ -119,7 +123,7 @@ npm run preview -- --port 4173 --strictPort
 
 ## GitHub Pages 部署
 
-`.github/workflows/deploy-pages.yml` 在每次推送至 `main` 或手動執行時，使用 Node.js 24 安裝鎖定的相依套件、執行測試及行政區、所得、學區資料檢查，再以 `/TaiwanDistrictMap/` 為 base 建置並發布 `dist/`。預先生成的 `public/data/` 隨原始碼提交，不必在 Actions 下載或重建官方資料。
+`.github/workflows/deploy-pages.yml` 在每次推送至 `main` 或手動執行時，使用 Node.js 24 安裝鎖定的相依套件，執行測試與七類資料檢查（行政區、所得、學區、房價、人口、政治、原住民），再以 `/TaiwanDistrictMap/` 為 base 建置並發布 `dist/`。預先生成的 `public/data/` 隨原始碼提交，不必在 Actions 下載或重建官方資料。
 
 Repository 的 Settings → Pages → Source 設為 **GitHub Actions**。在 Settings → Secrets and variables → Actions 設定 `VITE_TOMTOM_API_KEY`；工作流程缺少 key 時會停止，避免意外發布沒有底圖的版本。`.env.local`、原始下載檔、`node_modules/` 與 `dist/` 不提交。
 
@@ -144,4 +148,4 @@ SDK 版本沿用 ParkingMap 的 `0.51.3`；MapLibre 使用相容的 `6.13.0`。�
 
 ## 分享網址與返回
 
-六個地圖使用根目錄 hash 路由，例如 `#/school/63000/63000020/323604-elementary`。行政區與學校以代碼／ID 識別，「複製分享」附上中文位置標題；同層切換不累積瀏覽器歷史，返回回上一層。舊 `.html` 網址仍可開啟並導向新入口。格式與實作見 [網址與導覽](docs/routing.md)。
+七個地圖主題使用根目錄 hash 路由，例如 `#/school/63000/63000020/323604-elementary` 或 `#/indigenous?metric=share&tribe=amis`。行政區與學校以代碼／ID 識別，「複製分享」附上中文位置標題；同層切換不累積瀏覽器歷史，返回回上一層。舊 `.html` 網址仍可開啟並導向新入口。格式與實作見 [網址與導覽](docs/routing.md)。

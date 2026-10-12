@@ -1,0 +1,39 @@
+{
+  "months": {
+    "11508": {
+      "sourceMonth": "11508",
+      "period": "2026-08",
+      "retrievedAt": "2026-10-12",
+      "totalPage": 4,
+      "totalDataSize": 7781,
+      "pages": [
+        {
+          "page": 1,
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP018/11508?PAGE=1",
+          "sha256": "2aa713b9ee8da20b3b823c92d49b37123200acdc64545f3ebcab70af71bd2980"
+        },
+        {
+          "page": 2,
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP018/11508?PAGE=2",
+          "sha256": "4ffad423f868ba5336e39742bfd1fd740bf79b5a914124da52ddb6be0c75c783"
+        },
+        {
+          "page": 3,
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP018/11508?PAGE=3",
+          "sha256": "a7569b7a6d04a63cecbac1eabd0f5a2e783a026ba062cb7efdea205d1a38b819"
+        },
+        {
+          "page": 4,
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP018/11508?PAGE=4",
+          "sha256": "c734d1ec01fe5bd50e4363f2ea4531fbebf748b0b451193bcc0d60eea93e66ea"
+        }
+      ],
+      "mergedSha256": "0e0ffb8ce628dce6fd263f6b42b942bbe0ca0eb7829b9dd051fd249a89088ad7",
+      "denominator": {
+        "sourceMonth": "11508",
+        "period": "2026-08",
+        "manifest": "public/data/population/2026-08/manifest.json"
+      }
+    }
+  }
+}
