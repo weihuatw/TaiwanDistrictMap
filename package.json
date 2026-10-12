@@ -24,10 +24,12 @@
     "housing:check": "node scripts/housing/check.mjs",
     "population:fetch": "python3 scripts/population/fetch.py",
     "population:build": "python3 scripts/population/build.py",
-    "population:check": "python3 scripts/population/check.py",
+    "population:check": "python3 scripts/population/check.py && python3 scripts/population/annual_check.py",
     "politics:fetch": "python3 scripts/politics/fetch.py",
     "politics:build": "${POLITICS_PYTHON:-python3} scripts/politics/build.py",
-    "politics:check": "python3 scripts/politics/check.py"
+    "politics:check": "python3 scripts/politics/check.py",
+    "population:annual:fetch": "python3 scripts/population/annual_fetch.py",
+    "population:annual:build": "python3 scripts/population/annual_build.py"
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "0.51.3",

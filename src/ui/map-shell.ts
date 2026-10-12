@@ -1,8 +1,11 @@
 import template from './map-shell.html?raw';
 import type { BoundaryManifest, Padding, Rect, Region, RegionColor, RegionHit, View } from '../map-core/types';
 import type { BasemapStatus } from '../map-core/create-map';
+import { parseRoute, routeHash, type HashRouter, type Route, type Theme } from '../routing/hash-router';
 
 interface ShellOptions {
+  routing?: HashRouter;
+  getCamera?: () => import('../map-core/types').Camera | undefined;
   onChoose: (region: Region) => void;
   onBack: () => void;
   onHome: () => void;
@@ -101,6 +104,13 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   root.querySelectorAll<HTMLAnchorElement>('[data-map-page]').forEach((link) => {
     if (link.dataset.mapPage === currentPage) link.setAttribute('aria-current', 'page');
   });
+  root.addEventListener('click', event => {
+    const link = (event.target as Element).closest<HTMLAnchorElement>('a[data-map-page], a[data-theme-link]');
+    if (!link || !options.routing || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    if (link.dataset.mapPage === currentPage) return;
+    options.routing.navigate(parseRoute(link.hash), options.getCamera?.());
+  }, { signal: lifetime.signal });
   el('share-button').addEventListener('click', async () => {
     if (mapContainer.getAttribute('aria-busy') === 'true') return;
     const names = [...root.querySelectorAll('#breadcrumbs > button, #breadcrumbs > span:not(.breadcrumb-divider)')].map(node => node.textContent).filter(name => name && name !== '全臺');
@@ -117,6 +127,24 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   if (options.sourceIntro) root.querySelector<HTMLElement>('.source-intro')!.textContent = options.sourceIntro;
   const getColor = options.getColor ?? ((region: Region) => region.properties.color);
   let view: View | null = null;
+  function updateThemeLinks() {
+    if (!options.routing) return;
+    const ids = view ? [...view.path.map(region => region.properties.code),
+      ...(view.selected?.properties.level === 'town' ? [view.selected.properties.code] : [])] : options.routing.current.ids;
+    const source: Route = { theme: options.routing.current.theme, ids, query: '' };
+    for (const link of root.querySelectorAll<HTMLAnchorElement>('[data-map-page]')) {
+      link.href = routeHash(link.dataset.mapPage === source.theme ? options.routing.current
+        : options.routing.themeRoute(link.dataset.mapPage as Theme, source));
+    }
+  }
+  function themeLink(theme: Theme, label: string, route?: Route) {
+    const link = document.createElement('a');
+    link.className = 'theme-detail-link'; link.textContent = label;
+    if (route) { link.dataset.themeLink = ''; link.href = routeHash(route); }
+    else { link.dataset.mapPage = theme; link.href = routeHash(options.routing?.themeRoute(theme) ?? { theme, ids: [], query: '' }); }
+    return link;
+  }
+  updateThemeLinks();
   let retry: (() => void) | null = null;
   const announce = (message: string) => { el('announcement').textContent = message; };
   const hideTooltip = () => { el('hover-tooltip').hidden = true; };
@@ -169,6 +197,7 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   };
   function render(current: View) {
     view = current; clearError(); el('share-button').textContent = '複製分享';
+    updateThemeLinks();
     const title = current.selected?.properties.name ?? current.path.at(-1)?.properties.name ?? '臺灣';
     el('location-title').textContent = title;
     document.title = `${title}｜${options.pageTitle ?? '臺灣行政區地圖'}`;
@@ -295,6 +324,8 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     sourceContent: el('source-content'),
     mapContainer, render, setBusy, showError, showInitializationError, setBasemapStatus,
     refreshList: renderList,
+    themeLink,
+    refreshThemeLinks: updateThemeLinks,
     addMobileContent,
     showTooltip, hideTooltip, getPadding, getLabelObstacles,
     renderManifest, showManifestError,

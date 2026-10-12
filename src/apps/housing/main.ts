@@ -19,6 +19,7 @@ export function startHousingApp(root: HTMLElement, routing?: HashRouter){
   let layer:ReturnType<typeof createRegionLayer>|undefined,basemap:ReturnType<typeof createMap>|undefined,manifest:HousingManifest|undefined,alive=true;
   const getColor=(region:Region)=>color(housing.get(year,group,region.properties.code));
   const shell=createMapShell(root,{
+    routing,getCamera:()=>layer?.ready&&navigator.current?layer.camera():undefined,
     brandTitle:'房價地圖',pageTitle:'臺灣實價登錄地圖',getColor,showSelectionCard:false,
     loadingText:'載入房價與行政區…',errorText:'房價或行政區資料載入失敗，請重試。',
     sourceIntro:'內政部不動產成交案件實際資訊（免費批次），行政區界來自國土測繪中心，底圖為TomTom向量地圖。',
@@ -31,7 +32,7 @@ export function startHousingApp(root: HTMLElement, routing?: HashRouter){
   const panel=createHousingPanel(shell,housing,changeFilter);
   const navigator=new RegionNavigator(
     async(file)=>{const [geometry]=await Promise.all([boundaries.load(file),housing.load(file,year,group)]);return geometry;},
-    (view,restore=false)=>{routing?.commit(housingRoute(view));shell.render(view);panel.setFilter(year,group);panel.render(view);layer?.render(view,navigator.context,restore);},
+    (view,restore=false)=>{const route=housingRoute(view),camera=routing?.consumeRouteCamera(route);if(camera)view.camera=camera;routing?.commit(route);shell.render(view);panel.setFilter(year,group);panel.render(view);layer?.render(view,navigator.context,restore);},
     (loading)=>{shell.setBusy(loading);layer?.setBusy(loading);if(!loading)layer?.cancelPreview();},
     (error,retry)=>shell.showError(error,retry),region=>layer?.previewRegion(region),
   );

@@ -5,8 +5,7 @@ import type { IncomeManifest, IncomeRecord } from './types';
 import { COLORS, LABELS, compareIncome, formatWan } from './theme';
 
 type Shell = ReturnType<typeof createMapShell>;
-export type IncomePartyMode = 'mayor' | 'president';
-export function createIncomePanel(shell: Shell, income: IncomeRepository, onPartyModeChange: (mode: IncomePartyMode | null) => void) {
+export function createIncomePanel(shell: Shell, income: IncomeRepository) {
   shell.root.classList.add('income-page');
   const badge = document.createElement('p'); badge.className = 'income-year';
   badge.innerHTML = '<span>2024 所得年度</span><span class="preliminary-badge">初步核定</span>';
@@ -14,25 +13,8 @@ export function createIncomePanel(shell: Shell, income: IncomeRepository, onPart
   const summary = document.createElement('section'); summary.className = 'income-summary'; summary.setAttribute('aria-label', '所得統計');
   summary.innerHTML = '<p class="income-metric-label">每申報戶平均年綜合所得</p><div class="income-value-row"><strong id="income-value">—</strong><span id="income-unit">萬元／年</span></div><p id="income-description" class="income-description">正在載入官方統計…</p><div class="income-facts"><div><span>納稅申報戶</span><strong id="income-units">—</strong></div><div id="median-fact" hidden><span>中位數</span><strong id="income-median">—</strong></div></div><p id="income-comparison" class="income-comparison" hidden></p><p id="income-origin" class="income-origin"></p>';
   shell.viewExtra.append(summary);
-  const partyControl = document.createElement('fieldset'); partyControl.className = 'income-party-control';
-  partyControl.innerHTML = '<legend>顯示政黨傾向</legend><label><input type="checkbox" id="income-party-president" />2024 總統選舉</label><label><input type="checkbox" id="income-party-mayor" />2022 縣市長選舉</label><p class="income-party-note">標籤底色代表最高票政黨：藍色國民黨、綠色民進黨、青色民眾黨、淡灰無黨籍；其他政黨依代表色，紫色表示最高票並列。無底色可能是無資料或票數不完整。</p><p class="income-party-status" aria-live="polite"></p>';
-  shell.viewExtra.append(partyControl);
-  const mayorInput = partyControl.querySelector<HTMLInputElement>('#income-party-mayor')!;
-  const presidentInput = partyControl.querySelector<HTMLInputElement>('#income-party-president')!;
-  const status = partyControl.querySelector<HTMLElement>('.income-party-status')!;
-  const setPartyMode = (mode: IncomePartyMode | null) => {
-    mayorInput.checked = mode === 'mayor'; presidentInput.checked = mode === 'president';
-  };
-  mayorInput.addEventListener('change', () => {
-    const mode = mayorInput.checked ? 'mayor' : null;
-    setPartyMode(mode); onPartyModeChange(mode);
-  });
-  presidentInput.addEventListener('change', () => {
-    const mode = presidentInput.checked ? 'president' : null;
-    setPartyMode(mode); onPartyModeChange(mode);
-  });
   const legend = document.createElement('section'); legend.className = 'income-legend'; legend.setAttribute('aria-label', '所得色階圖例');
-  legend.innerHTML = '<div class="income-legend-heading"><strong>平均年綜合所得</strong><span>萬元／戶</span></div><div class="income-legend-scale"></div><p class="income-legend-note">全國統一級距 · 深色代表較高所得</p><div class="income-legend-key"><span class="missing-swatch"></span><span>斜紋：無可對應資料</span><span class="context-swatch"></span><span>灰色：可切換地區</span></div><p class="income-data-note">2024稅務統計，非個人薪資或可支配所得。</p><a class="income-app-link" href="#/admin">行政區瀏覽 ↗</a>';
+  legend.innerHTML = '<div class="income-legend-heading"><strong>平均年綜合所得</strong><span>萬元／戶</span></div><div class="income-legend-scale"></div><p class="income-legend-note">全國統一級距 · 深色代表較高所得</p><div class="income-legend-key"><span class="missing-swatch"></span><span>斜紋：無可對應資料</span><span class="context-swatch"></span><span>灰色：可切換地區</span></div><p class="income-data-note">2024稅務統計，非個人薪資或可支配所得。</p><a class="income-app-link" href="#/admin" data-map-page="admin">行政區瀏覽 ↗</a>';
   const scale = legend.querySelector('.income-legend-scale')!;
   for (const [i, label] of LABELS.entries()) {
     const item = document.createElement('div'); item.className = 'income-legend-item';
@@ -85,7 +67,7 @@ export function createIncomePanel(shell: Shell, income: IncomeRepository, onPart
     const origin = shell.mapContainer.getBoundingClientRect(); const rect = legend.getBoundingClientRect();
     return [{ x: rect.x - origin.x - 6, y: rect.y - origin.y - 6, w: rect.width + 12, h: rect.height + 12 }];
   }
-  return { render, tooltip, showSources, obstacles, setPartyMode, setPartyStatus: (message: string) => { status.textContent = message; }, get manifest() { return manifest; } };
+  return { render, tooltip, showSources, obstacles, get manifest() { return manifest; } };
 }
 
 function originLabel(r: IncomeRecord) {

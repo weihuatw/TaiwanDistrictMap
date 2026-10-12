@@ -10,6 +10,7 @@ import type { ElectionRecord, PoliticalManifest, PoliticalMode, PoliticalPart, P
 import type { SchoolRepository } from '../school/data';
 import type { School, SchoolManifest } from '../school/types';
 import { populationTarget } from './population-panel';
+import type { createMapShell } from '../../ui/map-shell';
 
 type FactTarget = ReturnType<typeof populationTarget> & { townCode: string | null };
 type FactCard = { element: HTMLDetailsElement; summary: HTMLElement; body: HTMLElement };
@@ -88,11 +89,17 @@ function electionTitle(record: ElectionRecord, mode: PoliticalMode) {
 }
 
 /** Adds compact, independently collapsible topic facts to the administrative explorer. */
-export function createAdminFactsPanel(container: HTMLElement, repositories: FactData, onResize: () => void) {
+export function createAdminFactsPanel(container: HTMLElement, repositories: FactData, onResize: () => void, themeLink?: ReturnType<typeof createMapShell>['themeLink']) {
   const incomeCard = makeCard(container, '所得', onResize);
   const schoolCard = makeCard(container, '學區', onResize);
   const housingCard = makeCard(container, '房價', onResize);
   const politicsCard = makeCard(container, '政黨', onResize);
+  if (themeLink) {
+    for (const [card, theme, title] of [[incomeCard, 'income', '所得'], [schoolCard, 'school', '學區'],
+      [housingCard, 'housing', '房價'], [politicsCard, 'politics', '政黨']] as const) {
+      card.element.append(themeLink(theme, `查看${title}地圖 →`));
+    }
+  }
   const lifetime = new AbortController();
   let sequence = 0;
   let alive = true;
@@ -164,7 +171,13 @@ export function createAdminFactsPanel(container: HTMLElement, repositories: Fact
         ];
         if (!schools.length) content.push(text('p', '目前未找到已對照至此里界的學區學校。學區資料收錄範圍不完整，不能據此判定沒有學區。', 'admin-fact-note'));
         const list = document.createElement('ul'); list.className = 'admin-school-list';
-        for (const school of schools) list.append(schoolListItem(school, manifest, target.code));
+        for (const school of schools) {
+          const item = schoolListItem(school, manifest, target.code);
+          if (themeLink) item.append(themeLink('school', '查看此校學區 →', {
+            theme: 'school', ids: [school.countyCode, school.townCode, school.id], query: '',
+          }));
+          list.append(item);
+        }
         if (schools.length) content.push(list);
         content.push(text('p', '里界填色表示有部分或全部鄰屬於該校，不代表整里所有住戶皆屬學區。各校學年度以來源為準。', 'admin-fact-note'));
         cardContent(schoolCard, content);

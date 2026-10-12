@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PUBLIC = ROOT / "public/data"
 DATA = PUBLIC / "population"
 EXCEPTIONS = json.loads((ROOT / "data/population/expected-exceptions.json").read_text(encoding="utf-8"))
+METRICS = ("households", "population", "male", "female", "age0to14", "age15to64", "age65plus")
 
 
 def load(path: Path):
@@ -23,8 +24,9 @@ def require(condition: bool, message: str) -> None:
 def check_record(code: str, record: dict, level: str) -> None:
     require(record.get("code") == code, f"Record code mismatch: {code}")
     require(isinstance(code, str), f"Code must remain a string: {code}")
-    require(all(type(record.get(key)) is int and record[key] >= 0 for key in ("households", "population", "male", "female")), f"Invalid population metrics: {code}")
+    require(all(type(record.get(key)) is int and record[key] >= 0 for key in METRICS), f"Invalid population metrics: {code}")
     require(record["population"] == record["male"] + record["female"], f"Male/female total mismatch: {code}")
+    require(record["population"] == record["age0to14"] + record["age15to64"] + record["age65plus"], f"Age group total mismatch: {code}")
     if level == "village":
         require(re.fullmatch(r"\d{11}", code) is not None, f"Invalid village code: {code}")
         require(record.get("townCode") == code[:8] and record.get("countyCode") == code[:5], f"Invalid village hierarchy: {code}")
@@ -89,6 +91,8 @@ def main() -> None:
             require(len(ages["male"]) == len(age_buckets) and len(ages["female"]) == len(age_buckets), f"Invalid age bucket length: {code}")
             require(all(type(value) is int and value >= 0 for value in ages["male"] + ages["female"]), f"Invalid age count: {code}")
             require(sum(ages["male"]) == record["male"] and sum(ages["female"]) == record["female"], f"Age totals mismatch: {code}")
+            for key, start, end in (("age0to14", 0, 15), ("age15to64", 15, 65), ("age65plus", 65, 101)):
+                require(record[key] == sum(ages["male"][start:end]) + sum(ages["female"][start:end]), f"Age summary mismatch: {code} {key}")
             require(code not in village_records, f"Duplicate village record: {code}")
             village_records[code] = record
             age_records[code] = ages
@@ -116,10 +120,10 @@ def main() -> None:
 
     grouped_counties = defaultdict(dict)
     for town_code, records in grouped_towns.items():
-        totals = {key: sum(row[key] for row in records.values()) for key in ("households", "population", "male", "female")}
+        totals = {key: sum(row[key] for row in records.values()) for key in METRICS}
         county_code = town_code[:5]
         grouped_counties[county_code][town_code] = totals
-    all_metrics = {key: sum(record[key] for record in village_records.values()) for key in ("households", "population", "male", "female")}
+    all_metrics = {key: sum(record[key] for record in village_records.values()) for key in METRICS}
 
     county_shard = load(version / "counties.json")
     require(county_shard["level"] == "county", "Invalid county aggregate shard")
@@ -127,7 +131,7 @@ def main() -> None:
     require(set(county_records) == set(grouped_counties), "County aggregate code coverage mismatch")
     for code, record in county_records.items():
         check_record(code, record, "county")
-        for key in ("households", "population", "male", "female"):
+        for key in METRICS:
             require(record[key] == sum(group[key] for group in grouped_counties[code].values()), f"County aggregate mismatch: {code} {key}")
 
     town_records = {}
@@ -140,7 +144,7 @@ def main() -> None:
             town_records[code] = record
     require(set(town_records) == set(grouped_towns), "Town aggregate code coverage mismatch")
     for code, records in grouped_towns.items():
-        for key in ("households", "population", "male", "female"):
+        for key in METRICS:
             require(town_records[code][key] == sum(row[key] for row in records.values()), f"Town aggregate mismatch: {code} {key}")
 
     national = load(version / "national.json")["record"]

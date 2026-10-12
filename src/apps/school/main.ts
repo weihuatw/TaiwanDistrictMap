@@ -73,6 +73,7 @@ export function startSchoolApp(root: HTMLElement, routing?: HashRouter) {
     })();
   const chooseSchool = (school: School) => { if (layer?.ready) void navigator.choose(school, layer.camera(), displayMode !== 'school'); };
   const shell = createMapShell(root, {
+    routing, getCamera: () => layer?.ready && navigator.current ? layer.camera() : undefined,
     brandTitle: '學區地圖', pageTitle: '臺灣學區地圖', getColor, showSelectionCard: false,
     loadingText: '載入學校與學區…', errorText: '學校或行政區資料載入失敗，請重試。',
     sourceIntro: '學校位置採教育部地理資訊及國土測繪中心校地圖；學區依各縣市官方公告對照村里，學年度與收錄情況分別標示。',
@@ -184,10 +185,14 @@ export function startSchoolApp(root: HTMLElement, routing?: HashRouter) {
     const params = new URLSearchParams();
     for (const [level, checked] of Object.entries(navigator.filter)) if (!checked) params.set(level, 'false');
     if (displayMode !== 'school') params.set('map', displayMode);
-    routing?.commit({
+    const route: Route = {
       theme: 'school', ids: [...view.path.map(r => r.properties.code), ...(view.selected ? [view.selected.id] : [])],
       query: params.toString(),
-    });
+    };
+    const camera = routing?.consumeRouteCamera(route);
+    if (camera) view.camera = camera;
+    routing?.commit(route);
+    shell.refreshThemeLinks();
   }
 
   function comparisonDescription(view: SchoolView) {

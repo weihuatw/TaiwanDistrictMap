@@ -23,6 +23,7 @@ export function startAdminApp(root: HTMLElement, routing?: HashRouter) {
   let basemap: ReturnType<typeof createMap> | undefined;
   let alive = true;
   const shell = createMapShell(root, {
+    routing, getCamera: () => layer?.ready && navigator.current ? layer.camera() : undefined,
     getColor,
     onChoose: (region) => {
       if (layer?.ready && navigator.current) void navigator.enter(region, layer.camera());
@@ -33,17 +34,21 @@ export function startAdminApp(root: HTMLElement, routing?: HashRouter) {
     onPanelChange: () => layer?.scheduleLabels(),
     showSelectionCard: false,
   });
-  const populationPanel = createPopulationPanel(shell.infoExtra, population, () => layer?.scheduleLabels(), false);
+  const populationPanel = createPopulationPanel(shell.infoExtra, population, () => layer?.scheduleLabels(), false,
+    shell.themeLink('population', '查看人口地圖 →'));
   const factsPanel = createAdminFactsPanel(shell.infoExtra, {
     income: new IncomeRepository(`${base}data/income/2024/`),
     housing: new HousingRepository(`${base}data/housing/`),
     school: new SchoolRepository(`${base}data/school/`),
     politics: new PoliticsRepository(`${base}data/politics/`),
-  }, () => layer?.scheduleLabels());
+  }, () => layer?.scheduleLabels(), shell.themeLink);
   const navigator = new RegionNavigator(
     (file) => boundaries.load(file),
     (view, restore = false) => {
-      routing?.commit({ theme: 'admin', ids: view.path.map(r => r.properties.code), query: '' });
+      const route: Route = { theme: 'admin', ids: view.path.map(r => r.properties.code), query: '' };
+      const camera = routing?.consumeRouteCamera(route);
+      if (camera) view.camera = camera;
+      routing?.commit(route);
       shell.render(view);
       populationPanel.render(view);
       factsPanel.render(view);

@@ -12,7 +12,7 @@ export function populationTarget(view: Pick<View, 'selected' | 'path'>) {
 }
 
 /** Keep one disclosure element alive so its open state survives navigation. */
-export function createPopulationPanel(container: HTMLElement, repository: PopulationRepository, onResize: () => void, openInitially = true) {
+export function createPopulationPanel(container: HTMLElement, repository: PopulationRepository, onResize: () => void, openInitially = true, themeLink?: HTMLAnchorElement) {
   container.innerHTML = `
     <details class="population-panel">
       <summary><span data-population-title>戶籍人口</span><strong data-population-total>載入中…</strong></summary>
@@ -36,6 +36,7 @@ export function createPopulationPanel(container: HTMLElement, repository: Popula
   const total = find('[data-population-total]');
   const status = find('[data-population-status]');
   const content = find('[data-population-content]');
+  if (themeLink) content.append(themeLink);
   const lifetime = new AbortController();
   let sequence = 0;
   disclosure.addEventListener('toggle', onResize, { signal: lifetime.signal });

@@ -28,6 +28,7 @@ export function startPoliticsApp(root: HTMLElement, routing?: HashRouter) {
   let alive = true;
   const getColor = (region: Region) => panel.getColor(politics.get(mode, region.properties.code));
   const shell = createMapShell(root, {
+    routing, getCamera: () => layer?.ready && navigator.current ? layer.camera() : undefined,
     brandTitle: '政治地圖', pageTitle: '臺灣政治地圖', getColor, showSelectionCard: false,
     loadingText: '載入政治與行政區資料…', errorText: '政治或行政區資料載入失敗，請重試。',
     sourceIntro: '縣市首長與村里長使用內政部本屆名錄及逐筆補充；歷史得票使用中選會正式統計。兩者的政黨欄位與日期獨立呈現。',
@@ -42,6 +43,7 @@ export function startPoliticsApp(root: HTMLElement, routing?: HashRouter) {
     const view = navigator.current;
     if (!view || !alive) return;
     routing?.commit({ theme: 'politics', ids: view.path.map(r => r.properties.code), query: new URLSearchParams({ mode: selected }).toString() });
+    shell.refreshThemeLinks();
     mode = selected; preferredMode = selected; modes.set(view.level === 'detail' ? 'village' : view.level, mode);
     shell.hideTooltip(); panel.render(view, mode, manifest); shell.refreshList();
     // Data for all modes was committed with this view; switching preserves the camera.
@@ -61,7 +63,10 @@ export function startPoliticsApp(root: HTMLElement, routing?: HashRouter) {
       const level = view.level === 'detail' ? 'village' : view.level;
       mode = modeForLevel(level, preferredMode, modes.get(level));
       modes.set(level, mode);
-      routing?.commit({ theme: 'politics', ids: view.path.map(r => r.properties.code), query: new URLSearchParams({ mode }).toString() });
+      const route: Route = { theme: 'politics', ids: view.path.map(r => r.properties.code), query: new URLSearchParams({ mode }).toString() };
+      const camera = routing?.consumeRouteCamera(route);
+      if (camera) view.camera = camera;
+      routing?.commit(route);
       shell.render(view); panel.render(view, mode, manifest); populationPanel.render(view);
       layer?.render(view, navigator.context, restore);
     },

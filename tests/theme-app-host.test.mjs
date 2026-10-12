@@ -1,11 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createThemeAppHost } from '../src/routing/theme-app-host.ts';
+import { themes } from '../src/routing/hash-router.ts';
 
 const route = (theme, ids = []) => ({ theme, ids, query: '' });
 const flush = () => new Promise(resolve => setImmediate(resolve));
 const allLoaders = (overrides = {}) => Object.fromEntries(
-  ['admin', 'income', 'school', 'housing', 'politics'].map(theme => [theme, overrides[theme] ?? (() => Promise.resolve(() => ({ restoreRoute() {}, destroy() {} })))]),
+  themes.map(theme => [theme, overrides[theme] ?? (() => Promise.resolve(() => ({ restoreRoute() {}, destroy() {} })))]),
 );
 
 test('starts only the requested theme and restores routes without reloading it', async () => {

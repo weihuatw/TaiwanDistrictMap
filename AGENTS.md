@@ -1,14 +1,15 @@
 # TaiwanDistrictMap 專案交接
 
-更新日期：2026-10-09。本文件整理既有設計決策與實作經驗；數量與驗證結果是該日快照，更新資料後以公開 manifest、檢查腳本及實際程式為準。
+更新日期：2026-10-12。本文件整理既有設計決策與實作經驗；各節數量與驗證結果是其註明日期的快照，更新資料後以公開 manifest、檢查腳本及實際程式為準。
 
 ## 專案與現況
 
-這是 Vite + TypeScript 的純靜態地圖網站，沒有後端。五個 HTML 入口共用地圖核心與介面：
+這是 Vite + TypeScript 的純靜態地圖網站，沒有後端。根 HTML 的六個 hash 主題共用地圖核心與介面，另保留原本五個 HTML 入口：
 
 | 入口 | 用途 | 應用目錄 |
 | --- | --- | --- |
 | `index.html` | 縣市 → 鄉鎮市區 → 村里行政區瀏覽 | `src/apps/admin/` |
+| `#/population` | 戶籍人口、密度、出生／死亡與自然增減指標切換 | `src/apps/population/` |
 | `income.html` | 2024 年平均年綜合所得地圖 | `src/apps/income/` |
 | `school.html` | 國小、國中位置與官方學區地圖 | `src/apps/school/` |
 | `housing.html` | 實價登錄住宅成交統計與案件明細 | `src/apps/housing/` |
@@ -16,7 +17,8 @@
 
 - Repository：<https://github.com/weihuatw/TaiwanDistrictMap>，發布分支為 `main`。
 - GitHub Pages：<https://weihuatw.github.io/TaiwanDistrictMap/>；另有 `income.html`、`school.html`、`housing.html`、`politics.html`。
-- 五個頁面均已部署；最近功能為政治地圖全臺選舉模式與模式跨層級保留。
+- 人口主題與跨主題位置延續於 2026-10-12 加入：切換保留地區、視角與各主題 query；學區／房價止於鄉鎮，校 ID 不轉成村里代碼。相機存在 history.state，URL 不帶暫時視角；地理返回仍逐層。跨主題仍重建 map。
+- 既有五個主題均已部署；政治地圖已有全臺選舉模式與模式跨層級保留。人口主題的發布狀態需以當次部署工作流程確認。
 - `f7c058a` 加入手機底部資訊面板與載入前動畫；`eff2c81` 擴充全臺學校、學區資料並修正新北正規化；`6464a53` 是臺北學區頁的初版。
 - `docs/verification.md` 與 `docs/income.md` 仍有早期「尚未部署／等待 Secret」的文字，屬歷史狀態，不能當作目前阻礙。
 - 網站、文件及與使用者溝通以繁體中文為主。
@@ -39,7 +41,7 @@ npm run dev -- --port 5173 --strictPort
 
 ## 網址與瀏覽器歷史
 
-2026-10-09 起由根目錄 `index.html` 與 `src/main.ts` 啟動五個主題，採 `#/admin`、`#/income`、`#/school`、`#/housing`、`#/politics` hash 路由。舊 HTML 保留為相容轉址入口。完整設計見 `docs/routing.md`。
+2026-10-09 起由根目錄 `index.html` 與 `src/main.ts` 使用 hash 路由啟動主題；2026-10-12 新增人口後共有 `#/admin`、`#/population`、`#/income`、`#/school`、`#/housing`、`#/politics` 六個主題。舊 HTML 保留為相容轉址入口。完整設計見 `docs/routing.md`。
 
 - URL 使用行政區代碼與學校 ID，不使用中文名稱；「複製分享」附中文麵包屑標題。
 - `src/routing/hash-router.ts` 管理每層一筆的瀏覽器歷史：下鑽新增、同層切換／篩選替換、跨祖先切換重建分支，直接連結補父層。網站返回、麵包屑與瀏覽器返回遵循相同階層。
@@ -65,7 +67,7 @@ npm run dev -- --port 5173 --strictPort
 | `src/ui/map-shell.html`、`map-shell.ts`、`style.css` | 清單、搜尋、麵包屑、提示、來源視窗及手機資訊面板；不持有資料載入或導覽歷史 |
 | `src/data/population.ts` | 共用人口資料 manifest、村里／各層彙總與單一年齡分片 repository；不耦合主題或地圖幾何 |
 | `src/apps/*/main.ts` | 引入該主題 CSS，組合核心、介面及主題回呼，處理主題資訊；行政區主題的跨主題資訊卡由 `src/apps/admin/facts-panel.ts` 讀取各主題 repository |
-| `src/apps/income/main.ts`、`panel.ts` | 所得頁選舉政黨傾向互斥控制、路由還原及 PoliticalRepository 整合；不寫回界線 GeoJSON |
+| `src/apps/income/main.ts`、`panel.ts` | 所得資料、介面與路由還原；地名標籤維持一般樣式，不載入政治資料 |
 | `src/apps/school/navigation.ts` | 獨立 `SchoolNavigator`；`polygonView()` 將學校狀態轉成共用 polygon View；比較模式選校保留相機 |
 | `src/apps/school/data.ts`、`markers.ts` | 學校分檔、學區里界載入與學校標記 |
 | `src/apps/housing/` | 房價統計、行政區導覽及選取後載入成交明細 |
@@ -162,6 +164,9 @@ Python 標準函式庫解析官方 HTML，需注意嵌套表格，不能漏掉�
 - 行政區頁透過共用 shell 的 `infoExtra` 插槽，將人口接在原本資訊面板下方；全臺、縣市、行政區及村里均顯示目前範圍的總人口，可展開男女與戶數或收折只留總數。區域切換保留展開狀態；載入失敗可重試，較舊的選取請求不得覆寫新狀態。
 - 行政區頁的資訊卡另整合 2024 所得、住宅成交統計、村里官方學區學校及政黨資料。每張卡各自收折並以單行摘要呈現；學區只在具名村里顯示，逐校列出國小／國中、學年度、部分鄰／共同學區註記與官方來源。房價在村里層級明確標示所屬鄉鎮參考，不當作村里價格。各卡沿用主題 repository、`BASE_URL` 與最新請求序號，不把資料寫入共用 GeoJSON。
 - 11508 基準有 7,781 筆官方村里資料；7,780 個具名界線皆對應，瑪家鄉三和村代碼 `10013280006` 有人口但未混入全國主圖層，206 個未編定範圍沒有村里人口。來源名稱有 23 筆字形差異，依代碼連接並保留報告。
+- 人口主題在 `src/apps/population/`，`metric` query 可選 `population|households|elderly|young|female`。三組年齡人數在資料建置時彙整到各層摘要；比例用加總後人口作分母，零人口比例無法計算。`loadRegions()` 驗證年月／父層／加總後發布同步記錄，不需載入年齡明細。人口總量級距按層固定、比例各層一致。
+- 年度人口由 `src/data/population-annual.ts` 獨立按需載入；2020–2025 出生／死亡月報、兩年底 ODRP013 人口及官方鄉鎮土地面積分年保存於 `public/data/population/annual/{year}/`。年度指標下方可選年份，URL 用 `year` query 還原。新增 `density|births|birthRate|deaths|deathRate|naturalIncrease|naturalRate`；粗率單位 ‰，分母為兩年底平均，不是總生育率。密度只到鄉鎮，以官方人口及面積計算／加總；不估村里面積。密度模式 `restorePath(ids, true)`，選取鄉鎮不下鑽村里；村里切密度縮短路徑。全年缺漏村里不補零、不分攤歷史數字，逐年覆蓋率見 `docs/population.md`；歷史代碼保留上層加總。2020 年 1–8 月使用 ODRP010、9–12 月用 ODRP060；2022 年 3 月 API 無資料，改用官方資料集 CSV。遷徙尚未提供。
+- 年度更新用 `population:annual:fetch -- 2020 2021 2022 2023 2024 2025`、`population:annual:build`；來源及已審核例外在 `data/population/annual-{sources,expected-exceptions}.json`。密度資源網址固定登錄並核對年度；建置不自動更新例外。`population:check` 驗證逐層加總、官方面積、分母與逐年缺漏，不依賴原始下載。
 - 原始檔在忽略提交的 `data/raw/population/`，來源與 SHA-256 在 `data/population/sources.json`，預期例外在 `data/population/expected-exceptions.json`，輸出在 `public/data/population/{西元年月}/`。
 
 ```sh
@@ -177,8 +182,6 @@ npm run population:check
 學區頁仍保留縣市 → 行政區 → 第三層互動，但**進入行政區顯示學校位置，不先畫所有里**。選校後才載入該校學區的里。國小／國中兩個 checkbox 預設皆 checked，兩者都關閉時顯示明確空狀態。國中部與國小部獨立記錄，同位置 marker 並排。
 
 學區頁另有互斥的「學區／所得／房價」著色模式。所得在縣市、鄉鎮及村里層級分別按同層官方數值著色；選定鄉鎮的學校畫面只顯示該鄉鎮各里的所得，周邊行政區保留灰色且可點選切換。房價依現有資料按縣市或鄉鎮市區著色，村里畫面仍以其所屬鄉鎮房價著色，不代表里別價格；學校畫面可點選其他鄉鎮切換。所得／房價比較模式使用 TomTom `monoLight`，學區模式使用 `standardLight`；切換樣式後共用區域圖層會在新 style 載入時重建。比較模式選校時保留視角，以白色外框加深藍色細線標示涵蓋里界的聯集外框，學區內部仍顯示原始里界，並提供查看完整學區的按鈕。選校資訊卡的所得採可對應涵蓋里申報戶數加權平均；房價逐列顯示涵蓋里所屬鄉鎮的中位數，不合併為學區房價。模式寫入學區路由 `map` query，直接分享可還原；瀏覽器返回到未帶模式的舊階層時沿用目前模式。無資料及樣本不足沿用斜紋／灰色狀態，滑過區域顯示數值與房價統計層級。
-
-所得頁「顯示政黨傾向」可互斥選取 2024 總統或 2022 縣市長選舉；取消目前選取即可移除標記。縣市、鄉鎮、村里各自載入同層選舉結果，政黨色直接作為區域名稱標籤的純色背景、文字依對比度採白色或深色；國民黨、民進黨使用稍深藍／綠，民眾黨使用青色，無黨籍使用淡灰底深色字，並列使用深紫底白字，缺漏／部分票不加底色。背景不可加 padding、描邊或改變字體尺寸，開關模式時標籤文字位置與碰撞寬度必須保持不變。選項寫入所得路由 `party` query，資料由 `PoliticsRepository` 按當前層級分片載入。`RegionLayerOptions.getLabelStyle` 提供通用標籤底色／文字色，資料抵達後呼叫 `refreshLabels()` 原位更新標籤，不另建地圖點位圖層，也不應建立大量 DOM marker。
 
 學校位置來自教育部名錄，以國土測繪中心校地代表點及官方校園位置補足。學區來自各縣市官方 CSV、ODT、PDF、教育處或學校公告，保留來源、原文、備註及每校學年度；不可用最近學校或距離推估官方學區。
 
@@ -273,7 +276,7 @@ npm run build
 git diff --check
 ```
 
-2026-10-09 首載更新後全套為 105 個 Node 測試、12 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
+2026-10-12 人口主題與跨主題切換更新後全套為 137 個 Node 測試、18 個 Python 測試通過。Node 直接載入可剝除型別的 TypeScript：測試會 import 的模組不要新增需轉譯的 enum 或 constructor parameter properties。建置包含 TypeScript 檢查。
 
 | 測試 | 主要涵蓋 |
 | --- | --- |
@@ -282,7 +285,7 @@ git diff --check
 | `tests/initial-preload.test.mjs`、`region-layer.test.mjs` | build preload 的目前主題／靜態依賴／base／CSS 等待、首次直接定位、後續動畫、晚到樣式及更新排程 |
 | `tests/school.test.mjs`、`school-data.test.mjs` | 第三層學校模式、filter、跨區學區、解析與里名語境 |
 | `tests/income.test.mjs`、`income_parser_test.py` | 指標、路徑、級距、缺漏及嵌套 HTML |
-| `tests/population.test.mjs`、`scripts/population/check.py` | 人口分片快取／重試、年月、村里代碼、年齡與行政區加總 |
+| `tests/population.test.mjs`、`population-annual.test.mjs`、`population_annual_test.py`、`scripts/population/{check,annual_check}.py` | 人口分片快取／重試、年月、村里代碼、年齡與行政區加總 |
 | `tests/politics.test.mjs`、`politics_parser_test.py`、`scripts/politics/check.py` | 模式／路徑、最高票與並列、缺漏／部分票數、快取重試、正副總統不重複計票及逐層加總 |
 
 瀏覽器驗證至少包含改動相關頁面、桌面及 390×844 手機、逐層進入與返回、連續選取、清單搜尋及灰色鄰區切換。改共用核心／介面時要回歸三個頁面。資料載入轉場可使用可控的延遲 server 驗證，避免只測快取命中。

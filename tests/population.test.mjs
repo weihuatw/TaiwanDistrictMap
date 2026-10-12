@@ -103,3 +103,42 @@ test('Village age shards remain opt-in and share the same period', async () => {
   assert.equal(result.record.male.length, 101);
   assert(requested.includes('/population/2026-08/ages/09007010.json'));
 });
+
+test('Population map levels reuse small summary shards and never request single-age detail', async () => {
+  const requested = [];
+  const repo = new PopulationRepository('/TaiwanDistrictMap/data/population/', async url => {
+    requested.push(url);
+    if (url.endsWith('/manifest.json')) return json(manifest);
+    const level = url.includes('/counties.json') ? 'county' : url.includes('/towns/') ? 'town' : 'village';
+    const code = level === 'county' ? '09007' : level === 'town' ? '09007010' : record.code;
+    return json({ schemaVersion: 1, period: manifest.period, level,
+      parentCode: level === 'town' ? '09007' : '09007010',
+      records: { [code]: { ...record, code, age0to14: 3, age15to64: 16, age65plus: 4 } } });
+  });
+  await Promise.all([repo.loadRegions('county'), repo.loadRegions('county')]);
+  await repo.loadRegions('town', '09007');
+  await repo.loadRegions('village', '09007010');
+  assert.equal(repo.get(record.code).age65plus, 4);
+  assert.equal(repo.get('missing'), null);
+  assert.deepEqual(requested.map(url => url.split('/population/')[1]), [
+    'manifest.json', '2026-08/counties.json', '2026-08/towns/09007.json', '2026-08/villages/09007010.json',
+  ]);
+  await assert.rejects(repo.loadRegions('village', '09007'), /Invalid population parent code/);
+  await assert.rejects(repo.loadRegions('town', '../00'), /Invalid population parent code/);
+});
+
+test('Population map validation rejects wrong months and broken age sums before publishing records', async () => {
+  let attempt = 0;
+  const repo = new PopulationRepository('/population/', async url => {
+    if (url.endsWith('/manifest.json')) return json(manifest);
+    attempt++;
+    return json({ schemaVersion: 1, period: attempt === 1 ? '2026-07' : '2026-08', level: 'village', parentCode: '09007010',
+      records: { [record.code]: { ...record, age0to14: 3, age15to64: 16, age65plus: attempt === 2 ? 5 : 4 } } });
+  });
+  for (let i = 0; i < 2; i++) {
+    await assert.rejects(repo.loadRegions('village', '09007010'), /Invalid population map summary/);
+    assert.equal(repo.get(record.code), null);
+  }
+  await repo.loadRegions('village', '09007010');
+  assert.equal(repo.get(record.code).age65plus, 4);
+});

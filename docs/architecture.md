@@ -33,6 +33,7 @@ public/data/                     現有預先生成的界線與版本資訊
 - `RegionNavigator` 接收資料載入函式與畫面、載入狀態、錯誤回呼。它不依賴 TomTom、MapLibre、fetch 或 DOM；原有逐層返回與灰色鄰區切換邏輯維持相同。
 - `createRegionLayer(map, options)` 接收畫面資料與周邊區域，處理圖層和標籤。點擊及滑過透過回呼交給應用。標籤避讓區域與地圖邊距由介面提供，圖層不查詢頁面的元素 ID。
   學區頁啟用 `deferUntilMoveEnd`，下載仍與相機動畫並行，最新已提交畫面在 `moveend` 後的 animation frame 才更新 GeoJSON、標籤與學校 marker。更新前後分別保留欲呈現與實際呈現狀態，避免舊 polygon 被當成新資料點擊。行政區來源載入完成後，以 MapLibre 圖層透明度做 180ms 淡入，不等待底圖的全域 idle；減少動態效果時取消淡入。所有頁面的標籤避讓在相機停止後計算，先集中量測再寫入樣式，避免動畫期間每幀強制排版。待執行更新採最新畫面優先，destroy 時取消 frame 並解除事件。
+  `render(..., preserveCamera)` 可更新地圖資料但維持相機位置；年度人口切換以每個 feature 的前後色彩搭配 MapLibre global state 插值，動畫期間只更新 global state，不逐幀重送 GeoJSON。
 - `createMapShell(root, options)` 掛載共用 HTML，處理頁面 DOM。它不下載資料、不建立底圖、不持有導覽歷史。
 - `startAdminApp(root)` 將上述回呼接在一起，是目前行政區瀏覽的應用層。
 
@@ -40,7 +41,11 @@ public/data/                     現有預先生成的界線與版本資訊
 
 ## 之後加入主題頁
 
-新增主題時，建立自己的 HTML 入口與 `src/apps/<主題>/`，在應用層組合共用模組；由 Vite 配置新增 HTML 建置入口。現有 `income.html` 與 `src/apps/income/` 已示範主題資料、色階與面板如何組合；行政區頁仍以原本的入口提供。
+新增主題時，在 `src/apps/<主題>/` 組合共用模組，更新 `hash-router.ts` 的主題集合、`src/main.ts` 的動態啟動器及共用 shell 連結。只有需要相容 HTML 入口時才新增 Vite 多入口；人口主題僅使用 `#/population`。建置 preload 由主題集合及實際 chunk 生成。
+
+人口主題的月度與年度 repository 分開：`PopulationRepository` 供人口概況，`AnnualPopulationRepository` 供 2020–2025 年出生、死亡與官方密度。年度資料僅在選取相關指標後按層載入；年度指標另從年度索引產生年份選單並將年份保存在 `year` query。資料成功後才提交指標、年份及導覽，失敗保留原畫面並可重試。密度沿用共用 navigator 的鄉鎮選取模式，其他指標可下鑽村里，不增加地圖核心的主題判斷。
+
+六個主題共用路由入口，跨主題連結保留目前地理代碼、相機及各自主題偏好。相機由 shell 回呼取得，路由器管理 history.state，應用在成功還原 View 時套用；shell 不持有導覽歷史。跨主題仍清理並重建應用，各主題 repository 保持獨立。
 
 所得頁透過共用介面的標題、清單文字、排序與提示回呼接入主題內容；共用圖層可設定透明度、輪廓與資料缺漏斜紋。這些選項皆有原本的預設值，行政區瀏覽不需讀取所得資料。主題資料放在 `public/data/income/`，界線重建只替換其自身管理的檔案，保留主題資料。
 

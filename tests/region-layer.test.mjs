@@ -21,8 +21,9 @@ const county = code => ({ type: 'Feature', id: code, geometry: { type: 'Polygon'
 const view = code => ({ level: 'town', path: [county('parent')], data: { type: 'FeatureCollection', features: [county(code)] }, selected: null, camera: null });
 
 function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
-  let moving = false, nextFrame = 0, layouts = 0, hasStyle = styleAvailable;
+  let moving = false, nextFrame = 0, layouts = 0, hasStyle = styleAvailable, animationNow = performance.now();
   const frames = new Map(), events = new Map(), sources = new Map(), layers = new Map(), eases = [];
+  const globalState = new Map();
   const canvas = { style: {}, addEventListener() {}, removeEventListener() {} };
   const container = { clientWidth: 390, clientHeight: 844 };
   globalThis.requestAnimationFrame = fn => { frames.set(++nextFrame, fn); return nextFrame; };
@@ -43,18 +44,19 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
     easeTo(options) { eases.push(options); moving = options.duration > 0; },
     getCanvas: () => canvas, getContainer: () => container, getStyle: () => ({ layers: [] }),
     getSource: id => sources.get(id), isSourceLoaded: id => sources.get(id)?.loaded ?? false,
-    addSource(id, options) { sources.set(id, { data: options.data, loaded: false, setData(data) { this.data = data; this.loaded = false; } }); },
+    addSource(id, options) { sources.set(id, { data: options.data, loaded: false, setDataCalls: 0, setData(data) { this.data = data; this.loaded = false; this.setDataCalls++; } }); },
     removeSource: id => sources.delete(id),
     getLayer: id => layers.get(id), addLayer: layer => layers.set(layer.id, layer), removeLayer: id => layers.delete(id),
     setPaintProperty(id, name, value) { layers.get(id).paint[name] = value; },
+    setGlobalStateProperty(name, value) { globalState.set(name, value); },
     setFeatureState() {}, removeFeatureState() {}, queryRenderedFeatures: () => [],
     getStyle: () => hasStyle ? { layers: [] } : undefined,
     project: () => ({ x: 150, y: 300 }),
   };
   const layer = createRegionLayer(map, { duration, deferUntilMoveEnd: true, fadeDuration: 180, ...renderOptions,
     getPadding: () => ({ top: 0, right: 0, bottom: 0, left: 0 }), onSelect() {} });
-  return { layer, map, sources, layers, eases, emit, get layouts() { return layouts; },
-    tick() { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(fn => fn()); },
+  return { layer, map, sources, layers, eases, globalState, emit, get layouts() { return layouts; },
+    tick(milliseconds = 16) { animationNow += milliseconds; const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(fn => fn(animationNow)); },
     stop() { moving = false; emit('moveend'); },
     start() { moving = true; emit('movestart'); },
     loadStyle() { hasStyle = true; emit('style.load'); },
@@ -63,6 +65,35 @@ function fixture(duration = 720, renderOptions = {}, styleAvailable = true) {
     get listenerCount() { return [...events.values()].reduce((sum, set) => sum + set.size, 0); },
   };
 }
+
+test('Year changes interpolate feature colors for 400ms without resending GeoJSON per frame', () => {
+  let color = '#112233';
+  const f = fixture(0, { getColor: () => color });
+  f.layer.render(view('same-region'), [], true); f.tick();
+  color = '#aabbcc';
+  f.layer.transitionNextRender(400);
+  f.layer.render(view('same-region'), [], true, undefined, undefined, true); f.tick();
+  const feature = f.sources.get('regions').data.features[0];
+  assert.equal(feature.properties.transitionFromColor, '#112233');
+  assert.equal(feature.properties.displayColor, '#aabbcc');
+  assert.equal(f.globalState.get('region-color-progress'), 0);
+  const updatesAfterRender = f.sources.get('regions').setDataCalls;
+  f.tick(200);
+  assert.ok(Math.abs(f.globalState.get('region-color-progress') - .5) < .1);
+  f.tick(200);
+  assert.equal(f.globalState.get('region-color-progress'), 1);
+  assert.equal(f.sources.get('regions').setDataCalls, updatesAfterRender);
+  f.layer.destroy();
+});
+
+test('A data-only render can preserve the current camera', () => {
+  const f = fixture(720); f.layer.render(view('before'), [], true); f.tick();
+  const easeCount = f.eases.length;
+  f.layer.render(view('after'), [], true, undefined, undefined, true); f.tick();
+  assert.equal(f.eases.length, easeCount);
+  assert.equal(f.sources.get('regions').data.features[0].id, 'after');
+  f.layer.destroy();
+});
 
 test('First view positions immediately; later navigation and returning retain camera animations', () => {
   const f = fixture();

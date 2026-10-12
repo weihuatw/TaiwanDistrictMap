@@ -40,6 +40,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   // administrative GeoJSON is already ready.
   let styleReady = Boolean(map.getStyle());
   let pendingRestore = false;
+  let pendingPreserveCamera = false;
   let view: View | null = null;
   let contextRegions: ContextRegion[] = [];
   let emphasisRegions: RegionOutline = { type: 'FeatureCollection', features: [] };
@@ -47,11 +48,15 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   let busy = false;
   let renderFrame = 0;
   let labels: { marker: Marker; element: HTMLDivElement; region: Region; context: boolean }[] = [];
+  let pendingColorTransition = 0;
+  let colorAnimationFrame = 0;
+  let lastDisplayColors = new Map<string, string>();
+  const colorProgressState = 'region-color-progress';
 
   const onStyleLoad = () => {
     if (styleReady) return;
     styleReady = true;
-    if (view) present(view, pendingRestore);
+    if (view) present(view, pendingRestore, pendingPreserveCamera);
     options.onReady?.();
   };
   const onResize = () => {
@@ -109,13 +114,15 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     if (hovered && map.getSource(hovered.source)) map.setFeatureState({ source: hovered.source, id: hovered.code }, { hover: false });
     hovered = null; map.getCanvas().style.cursor = ''; options.onHoverEnd?.();
   }
-  function present(current: View, restore: boolean) {
+  function present(current: View, restore: boolean, preserveCamera = false) {
     updates.cancel(); reveals.cancel();
     // The first view has no previous map to transition from. Do not delay its
     // geometry behind an initial camera animation; retain ongoing previews.
     const duration = !displayedView && !camera.isPreviewing ? 0 : undefined;
-    if (restore) camera.restore(current, duration);
-    else camera.fit(current, duration);
+    if (!preserveCamera) {
+      if (restore) camera.restore(current, duration);
+      else camera.fit(current, duration);
+    }
     const update = () => {
       displayedView = current; displayedContext = contextRegions;
       renderMap(current);
@@ -149,6 +156,12 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
   }
 
   function renderMap(current: View) {
+    const canTransitionColors = Boolean(pendingColorTransition && map.getSource('regions'));
+    const colorTransitionDuration = pendingColorTransition;
+    pendingColorTransition = 0;
+    if (colorAnimationFrame) cancelAnimationFrame(colorAnimationFrame);
+    colorAnimationFrame = 0;
+    map.setGlobalStateProperty(colorProgressState, canTransitionColors ? 0 : 1);
     clearHover();
     revealing = fadeDuration > 0;
     if (revealing) setOpacity(false);
@@ -181,15 +194,24 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
         'line-width': ['case', ['boolean', ['feature-state', 'hover'], false], 2, 0],
       } }, beforeLabel);
     }
-    const presented = { ...current.data, features: current.data.features.map((region) => ({ ...region, properties: { ...region.properties,
-      displayColor: options.getColor?.(region) ?? region.properties.color, displayMissing: options.isMissing?.(region) ?? false } })) };
+    const nextDisplayColors = new Map<string, string>();
+    const presented = { ...current.data, features: current.data.features.map((region) => {
+      const displayColor = options.getColor?.(region) ?? region.properties.color;
+      nextDisplayColors.set(region.properties.code, displayColor);
+      return { ...region, properties: { ...region.properties,
+        displayColor,
+        transitionFromColor: canTransitionColors ? lastDisplayColors.get(region.properties.code) ?? displayColor : displayColor,
+        displayMissing: options.isMissing?.(region) ?? false } };
+    }) };
+    lastDisplayColors = nextDisplayColors;
     if (map.getSource('regions')) {
       map.removeFeatureState({ source: 'regions' });
       (map.getSource('regions') as GeoJSONSource).setData(presented);
     } else {
       map.addSource('regions', { type: 'geojson', data: presented, promoteId: 'code' });
       map.addLayer({ id: 'region-fill', type: 'fill', source: 'regions', paint: {
-        'fill-color': ['case', ['boolean', ['feature-state', 'dim'], false], '#aeb8b4', ['get', 'displayColor']],
+        'fill-color': ['case', ['boolean', ['feature-state', 'dim'], false], '#aeb8b4',
+          ['interpolate', ['linear'], ['global-state', colorProgressState], 0, ['to-color', ['get', 'transitionFromColor']], 1, ['to-color', ['get', 'displayColor']]]],
         'fill-opacity': ['case', ['boolean', ['feature-state', 'selected'], false], options.selectedOpacity ?? 0.52,
           ['boolean', ['feature-state', 'hover'], false], options.hoverOpacity ?? 0.49,
           ['boolean', ['feature-state', 'dim'], false], 0.24, options.fillOpacity ?? 0.32],
@@ -213,6 +235,7 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
         'line-width': ['case', ['boolean', ['feature-state', 'selected'], false], 3, ['boolean', ['feature-state', 'hover'], false], 2, 0],
       } }, beforeLabel);
     }
+    if (canTransitionColors) animateColors(colorTransitionDuration);
     if (current.selected) for (const region of current.data.features) {
       map.setFeatureState({ source: 'regions', id: region.properties.code }, { selected: region.id === current.selected.id, dim: region.id !== current.selected.id });
     }
@@ -246,6 +269,17 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     if (revealing) { setOpacity(false); checkReveal(); }
     else if (options.fadeDuration) setOpacity(true);
     scheduleLabels();
+  }
+
+  function animateColors(duration: number) {
+    if (duration <= 0) { map.setGlobalStateProperty(colorProgressState, 1); return; }
+    const startedAt = performance.now();
+    const tick = (now: number) => {
+      map.setGlobalStateProperty(colorProgressState, Math.min(1, (now - startedAt) / duration));
+      if (now - startedAt < duration) colorAnimationFrame = requestAnimationFrame(tick);
+      else colorAnimationFrame = 0;
+    };
+    colorAnimationFrame = requestAnimationFrame(tick);
   }
 
   function renderLabelContent(element: HTMLDivElement, region: Region, includeStyle = true) {
@@ -302,9 +336,18 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
       clearHover(); labels.forEach(({ marker }) => marker.remove()); labels = [];
       view = null; contextRegions = []; emphasisRegions = { type: 'FeatureCollection', features: [] };
     },
-    render(current: View, surrounding: ContextRegion[], restore = false, onRendered?: () => void, emphasis: RegionOutline = { type: 'FeatureCollection', features: [] }) {
-      view = current; contextRegions = surrounding; emphasisRegions = emphasis; pendingRestore = restore; afterRender = onRendered;
-      if (styleReady) present(current, restore);
+    render(current: View, surrounding: ContextRegion[], restore = false, onRendered?: () => void,
+      emphasis: RegionOutline = { type: 'FeatureCollection', features: [] }, preserveCamera = false) {
+      view = current; contextRegions = surrounding; emphasisRegions = emphasis; pendingRestore = restore;
+      pendingPreserveCamera = preserveCamera; afterRender = onRendered;
+      if (styleReady) present(current, restore, preserveCamera);
+    },
+    transitionNextRender(duration: number) { pendingColorTransition = Math.max(0, duration); },
+    cancelColorTransition() {
+      pendingColorTransition = 0;
+      if (colorAnimationFrame) cancelAnimationFrame(colorAnimationFrame);
+      colorAnimationFrame = 0;
+      if (styleReady) map.setGlobalStateProperty(colorProgressState, 1);
     },
     focus(current: View) { camera.fit(current); },
     setBusy(loading: boolean) {
@@ -315,6 +358,8 @@ export function createRegionLayer(map: MapLibreMap, options: RegionLayerOptions)
     refreshLabels,
     destroy() {
       updates.destroy(); reveals.destroy(); revealing = false; afterRender = undefined;
+      if (colorAnimationFrame) cancelAnimationFrame(colorAnimationFrame);
+      colorAnimationFrame = 0; pendingColorTransition = 0; lastDisplayColors.clear();
       map.off('style.load', onStyleLoad); map.off('move', scheduleLabels); map.off('resize', onResize);
       map.off('moveend', scheduleLabels); map.off('sourcedata', checkReveal);
       map.off('click', onClick); map.off('mousemove', onMove); map.off('movestart', hideTooltip);

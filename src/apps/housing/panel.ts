@@ -26,7 +26,7 @@ export function createHousingPanel(shell: Shell, repo: HousingRepository, onFilt
   summary.innerHTML='<p class="housing-metric-label">可比住宅成交單價中位數</p><strong class="housing-price">載入中…</strong><p class="housing-description"></p><div class="housing-facts"><span>有效樣本 <b class="housing-eligible">—</b></span><span>住宅案件 <b class="housing-residential">—</b></span></div><p class="housing-spread"></p><p class="housing-exclusions"></p>';
   shell.viewExtra.append(summary);
   const legend=document.createElement('section');legend.className='housing-legend';legend.setAttribute('aria-label','房價色階圖例');
-  legend.innerHTML='<div class="housing-legend-title"><strong>成交單價中位數</strong><span>萬元／坪</span></div><div class="housing-scale"></div><p>固定級距；樣本數少於10不著色。</p><div class="housing-key"><span></span>灰色：無足夠可比樣本</div><p class="housing-note">僅統計住家用公寓、華廈與住宅大樓；透天可切換。成交不代表區內所有住宅行情。</p><a class="housing-map-link" href="#/admin">行政區瀏覽 ↗</a>';
+  legend.innerHTML='<div class="housing-legend-title"><strong>成交單價中位數</strong><span>萬元／坪</span></div><div class="housing-scale"></div><p>固定級距；樣本數少於10不著色。</p><div class="housing-key"><span></span>灰色：無足夠可比樣本</div><p class="housing-note">僅統計住家用公寓、華廈與住宅大樓；透天可切換。成交不代表區內所有住宅行情。</p><a class="housing-map-link" href="#/admin" data-map-page="admin">行政區瀏覽 ↗</a>';
   const scale=legend.querySelector('.housing-scale')!;
   for(const [i,label] of LABELS.entries()){const item=document.createElement('div');item.className='housing-scale-item';const sw=document.createElement('span');sw.style.background=COLORS[i];const tx=document.createElement('small');tx.textContent=label;item.append(sw,tx);scale.append(item);}
   shell.uiContainer.append(legend);shell.addMobileContent(legend);

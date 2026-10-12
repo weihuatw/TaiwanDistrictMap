@@ -6,16 +6,18 @@
 
 ```text
 /TaiwanDistrictMap/#/admin
+/TaiwanDistrictMap/#/population/63000/63000020?metric=elderly
 /TaiwanDistrictMap/#/income/63000/63000020
 /TaiwanDistrictMap/#/school/63000/63000020/323604-elementary
 /TaiwanDistrictMap/#/housing/63000/63000020?year=2024&type=apartment
 /TaiwanDistrictMap/#/politics/63000/63000020?mode=president
 ```
 
-主題使用 `admin`、`income`、`school`、`housing`、`politics`。後續路徑依序為縣市代碼、鄉鎮市區代碼、村里代碼或學校 ID；保留前導零及未編定代碼中的英文字母。學校使用既有資料 ID（含學制），不用不唯一的校名。房價止於鄉鎮市區。
+主題使用 `admin`、`population`、`income`、`school`、`housing`、`politics`。後續路徑依序為縣市代碼、鄉鎮市區代碼、村里代碼或學校 ID；保留前導零及未編定代碼中的英文字母。學校使用既有資料 ID（含學制），不用不唯一的校名。房價止於鄉鎮市區。
 
 `?` 位於 `#` 之後，屬於前端路由，不能使用 `location.search` 讀取。
 
+- 人口：`metric=population|households|elderly|young|female|density|births|birthRate|deaths|deathRate|naturalIncrease|naturalRate`；年度指標另帶 `year=2020..2025`，年份選單由新到舊排列。密度路徑止於鄉鎮；村里網址切密度時縮短到鄉鎮，其餘年度指標沿用村里路徑。
 - 房價：`year=2024|2025`；`type=standard|apartment|elevator_low|elevator_high|house`。
 - 政治：`mode=officials|mayor|president`，仍以該層允許的模式正規化。
 - 學區：`elementary=false`、`junior=false` 表示關閉學制；省略表示開啟。選校連結會開啟該校學制。
@@ -79,3 +81,11 @@ hash 各路徑不提供獨立的伺服器頁面或社群預覽 metadata；中文
 「介面建立」指 `#map` shell 出現；「界線開始繪製」指 MapLibre render 時行政區來源已完成且 fill 圖層開始揭露，不代表淡入完成或完整底圖就緒。學區約省 1,088ms，包含入口與首次動畫兩個不同階段；其他主題原本已能在動畫中繪圖，開始繪製約省 86–121ms。所有版本的 counties 在每次首載只有一次請求，修改後首次相機 duration 皆為 0。另將主題 CSS 額外延遲 1 秒，確認樣式下載完成後才建立地圖；連續兩次 503 後仍能重試恢復。
 
 這些是受控比較，不是公開 Pages、實機手機或 Core Web Vitals 的速度保證。根 HTML 約增加 0.67KB gzip，換取提前發現資源；大型核心與外部底圖仍是首載成本。回歸包含 `tests/initial-preload.test.mjs` 的路由／base／靜態依賴／CSS preload 測試及圖層初始定位／後續動畫／晚到樣式與預覽測試。瀏覽器另驗證五種正式地圖、手機與桌面、學校／村里深層連結、學校同層切換後 Back 回行政區、清單搜尋、灰色鄰區切換及舊 HTML query 相容轉址。
+
+## 跨主題切換
+
+共用 shell 的主題連結依目前已呈現地區產生目的網址，不再一律回到全臺。行政區、人口、所得與政治保留村里；目的為學區／房價時止於鄉鎮，離開學區時不把 school ID 當成村里代碼。各主題 query 在同一瀏覽工作階段分別記憶，不將人口指標或房價篩選套到其他主題。
+
+一般左鍵／鍵盤啟動連結由 `HashRouter.navigate()` 保存離開時的相機，再建立目的主題的父層歷史；地理返回仍逐層返回，走完目的主題分支後瀏覽器返回可回到前一主題。相機存在該筆 `history.state`，目的應用只在相符路由成功還原時消耗一次；分享 URL 不含暫時相機狀態。新分頁／修飾鍵開啟仍使用正常連結，依網址取景。
+
+跨主題仍會重建 map；此階段只改善地區與視角延續，沒有改成持續存在的單一 map 或跨主題共享 repository。行政區概覽卡提供深入該地區的主題連結，村里學區清單另可直接開啟指定學校。

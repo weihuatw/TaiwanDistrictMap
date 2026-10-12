@@ -16,6 +16,7 @@ PUBLIC = ROOT / "public/data"
 DEST = PUBLIC / "population"
 STAGING = PUBLIC / "population.next"
 CATALOG_URL = "https://data.gov.tw/dataset/77132"
+METRICS = ("households", "population", "male", "female", "age0to14", "age15to64", "age65plus")
 
 
 def load_json(path: Path):
@@ -28,7 +29,16 @@ def write_json(path: Path, value) -> None:
 
 
 def sum_records(records):
-    return {key: sum(record[key] for record in records) for key in ("households", "population", "male", "female")}
+    records = list(records)
+    return {key: sum(record[key] for record in records) for key in METRICS}
+
+
+def age_summary(ages):
+    return {
+        "age0to14": sum(sum(values[:15]) for values in ages.values()),
+        "age15to64": sum(sum(values[15:65]) for values in ages.values()),
+        "age65plus": sum(sum(values[65:]) for values in ages.values()),
+    }
 
 
 def main() -> None:
@@ -118,6 +128,7 @@ def main() -> None:
                 "population": values["人口數"],
                 "male": values["人口數-男"],
                 "female": values["人口數-女"],
+                **age_summary(ages),
             }
             rows_by_code[code] = record
             area_by_code[code] = area_name
@@ -156,7 +167,7 @@ def main() -> None:
         county_aggregates.setdefault(sample["countyCode"], []).append((sample, values))
     county_records = {}
     for county_code, rows in county_aggregates.items():
-        values = {key: sum(item[1][key] for item in rows) for key in ("households", "population", "male", "female")}
+        values = {key: sum(item[1][key] for item in rows) for key in METRICS}
         county = county_by_code.get(county_code)
         sample = rows[0][0]
         county_records[county_code] = {
