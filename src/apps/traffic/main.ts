@@ -25,7 +25,7 @@ export function startTrafficApp(root:HTMLElement,routing?:HashRouter){
   const route=routeFor(view),cam=routing?.consumeRouteCamera(route);if(cam)view.camera=cam;
   routing?.commit(route);shell.render(view);const meta=manifests.get(year);if(meta)panel.render(view,metric,meta,showPoints);
   layer?.render(view,nav.context,restore,undefined,undefined,keepCamera);
-  const county=view.path[0]?.properties.code;points?.render(county?eventsForView(eventCache.get(`${year}:${county}`)??[],view):[]);
+  const county=view.path[0]?.properties.code;points?.render(county?eventsForView(eventCache.get(`${year}:${county}`)??[],view,metric):[]);
  }
  const nav=new RegionNavigator(async file=>{
   const requestedYear=year,level=file==='counties.geojson'?'county':file.startsWith('towns/')?'town':'village',parent=file.match(/\/([0-9]+)\.geojson$/)?.[1];
