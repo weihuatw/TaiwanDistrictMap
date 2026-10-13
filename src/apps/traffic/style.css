@@ -105,3 +105,6 @@
 
 /* Keep map controls below the panel close button within the map stacking context. */
 .traffic-page [data-ui=map] { isolation: isolate; }
+
+.traffic-points-toggle { display: flex; align-items: center; gap: 8px; min-height: 36px; color: #234d69; cursor: pointer; }
+.traffic-points-toggle input { width: 16px; height: 16px; margin: 0; accent-color: #256f94; }

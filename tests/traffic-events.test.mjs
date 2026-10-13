@@ -21,3 +21,12 @@ test('busy or pending point updates cannot open stale events, and an event click
  const f=fixture();f.points.render([row]);f.emit('click',{point:{x:1,y:1}});assert.equal(f.points.clickHandled,false);f.tick();f.emit('click',{point:{x:1,y:1}});assert.equal(f.points.clickHandled,true);await Promise.resolve();assert.equal(f.points.clickHandled,false);
  f.points.setBusy(true);assert.equal(f.layers.get('traffic-event-dots').visibility,'none');f.emit('click',{point:{x:1,y:1}});assert.equal(f.points.clickHandled,false);f.points.setBusy(false);f.tick();assert.equal(f.layers.get('traffic-event-dots').visibility,'visible');f.points.destroy();
 });
+test('hidden event points remain hidden through navigation and style reloads, ignore clicks, and can be shown again',()=>{
+ const f=fixture();f.points.render([row]);f.tick();
+ f.points.setVisible(false);assert.equal(f.layers.get('traffic-event-dots').visibility,'none');
+ f.emit('click',{point:{x:1,y:1}});assert.equal(f.points.clickHandled,false);
+ f.points.render([row]);f.tick();assert.equal(f.layers.get('traffic-event-dots').visibility,'none');
+ f.clearStyle();f.tick();assert.equal(f.layers.get('traffic-event-dots').visibility,'none');
+ f.points.setVisible(true);f.tick();assert.equal(f.layers.get('traffic-event-dots').visibility,'visible');
+ assert.equal(f.sources.get('traffic-events').data.features.length,1);f.points.destroy();
+});
