@@ -1,10 +1,10 @@
 import fs from 'node:fs/promises';
 import {gzipSync} from 'node:zlib';
 import { booleanPointInPolygon, bbox } from '@turf/turf';
+import { addressRegions, assignRegions } from './spatial.mjs';
 
 const read = async p => JSON.parse(await fs.readFile(p, 'utf8'));
 const write = async (p, d) => { await fs.mkdir(p.slice(0, p.lastIndexOf('/')), { recursive: true }); await fs.writeFile(p, JSON.stringify(d) + '\n'); };
-const normalize = s => s.normalize('NFKC').replaceAll('台', '臺').replace(/\s/g, '');
 const counties = (await read('public/data/counties.geojson')).features;
 const towns = [], villages = [];
 for (const c of counties) towns.push(...(await read(`public/data/towns/${c.properties.code}.geojson`)).features);
@@ -31,6 +31,7 @@ function index(features) {
     return [...new Map(candidates.filter(p => booleanPointInPolygon(point, p)).map(p => [p.properties.code, p.properties])).values()];
   };
 }
+const countyProperties = counties.map(c => c.properties), townProperties = towns.map(t => t.properties);
 const findVillage = index(villages), findTown = index(towns), findCounty = index(counties);
 const sources = (await read('data/traffic/sources.json')).resources;
 const years = [];
@@ -58,26 +59,26 @@ for (const year of [2024, 2025, 2026]) {
   const national = make({ code: 'TW', name: '全臺' });
   const eventShards = new Map(counties.map(c => [c.properties.code, []]));
   const report = { sourceEvents: input.events.length, invalidCoordinates: 0, noCounty: 0, noTown: 0, noVillage: 0,
-    ambiguousVillage: 0, addressCoordinateTownMismatch: 0, unassigned: {}, sourceEndDates: input.sourceEndDates,
+    ambiguousVillage: 0, addressCoordinateTownMismatch: 0, addressCoordinateCountyMismatch: 0,
+    rejectedCoordinates: 0, coordinateConflictsByVillage: {}, unassigned: {}, sourceEndDates: input.sourceEndDates,
     sourceMonths: input.sourceMonths, excludedOutsideCommonMonths: input.excludedOutsideCommonMonths };
   const unresolved = [];
   let counter = 0;
   for (const e of input.events) {
-    const address = normalize(e.location);
-    const addressCounty = counties.find(c => address.startsWith(normalize(c.properties.name)))?.properties;
-    const addressTown = addressCounty && towns.find(t => t.properties.countyCode === addressCounty.code && address.startsWith(normalize(addressCounty.name + t.properties.name)))?.properties;
+    const address = addressRegions(e.location, countyProperties, townProperties);
     const hits = findVillage(e.coordinates);
-    // Border points can hit two polygons: require uniqueness, or narrow with exact address town.
-    const localHits = addressTown ? hits.filter(p => p.townCode === addressTown.code) : hits;
-    const village = hits.length === 1 ? hits[0] : localHits.length === 1 ? localHits[0] : null;
-    if (hits.length > 1 && !village) report.ambiguousVillage++;
-    const th = village ? [] : findTown(e.coordinates);
-    const town = village ? records.get(village.townCode) : th.length === 1 ? th[0] : addressTown;
-    const ch = town || village ? [] : findCounty(e.coordinates);
-    const countyCode = village?.countyCode ?? town?.countyCode ?? (ch.length === 1 ? ch[0].code : addressCounty?.code);
-    const townCode = village?.townCode ?? town?.code ?? null;
-    const villageCode = village?.code ?? null;
-    if (addressTown && townCode && addressTown.code !== townCode) report.addressCoordinateTownMismatch++;
+    const th = hits.length === 1 ? [] : findTown(e.coordinates);
+    const ch = hits.length || th.length === 1 ? [] : findCounty(e.coordinates);
+    const assignment = assignRegions({ coordinates: e.coordinates, address, villageHits: hits, townHits: th, countyHits: ch });
+    const { countyCode, townCode, villageCode, coordinates } = assignment;
+    if (assignment.ambiguousVillage) report.ambiguousVillage++;
+    if (assignment.townMismatch) report.addressCoordinateTownMismatch++;
+    if (assignment.countyMismatch) report.addressCoordinateCountyMismatch++;
+    if (assignment.coordinateConflict) {
+      report.rejectedCoordinates++;
+      const code = assignment.spatialVillageCode;
+      if (code) report.coordinateConflictsByVillage[code] = (report.coordinateConflictsByVillage[code] ?? 0) + 1;
+    }
     if (!e.coordinates) report.invalidCoordinates++;
     if (!countyCode) report.noCounty++;
     if (!townCode) report.noTown++;
@@ -85,11 +86,13 @@ for (const year of [2024, 2025, 2026]) {
     const codes = [countyCode, townCode, villageCode].filter(Boolean);
     for (const r of [national, ...codes.map(code => records.get(code))]) {
       r.accidents++; r.injuries += e.injuries; r.deaths += e.deaths;
-      if (e.coordinates) r.located++;
+      if (coordinates) r.located++;
       if (villageCode) r.villageAssigned++;
     }
-    if (countyCode && e.coordinates) eventShards.get(countyCode).push([e.id, ...e.coordinates, e.date, e.time, e.type, e.deaths, e.injuries, townCode, villageCode, e.location]);
-    if (!villageCode) unresolved.push({ id: e.id, coordinates: e.coordinates, location: e.location, countyCode, townCode });
+    if (countyCode && coordinates) eventShards.get(countyCode).push([e.id, ...coordinates, e.date, e.time, e.type, e.deaths, e.injuries, townCode, villageCode, e.location]);
+    if (!villageCode) unresolved.push({ id: e.id, coordinates: e.coordinates, location: e.location, countyCode, townCode,
+      reason: assignment.coordinateConflict ? 'address-coordinate-conflict' : !e.coordinates ? 'invalid-coordinates' : 'no-unique-village',
+      ...(assignment.coordinateConflict ? { spatialCountyCode: assignment.spatialCountyCode, spatialTownCode: assignment.spatialTownCode, spatialVillageCode: assignment.spatialVillageCode } : {}) });
     if (++counter % 100000 === 0) console.log(year, counter);
   }
   const folder = `public/data/traffic/${year}`;
@@ -116,6 +119,6 @@ for (const year of [2024, 2025, 2026]) {
     totals: national, report: `${year}/join-report.json` };
   await write(`${folder}/manifest.json`, meta);
   years.push({ year, months: meta.months, complete: meta.complete, populationLabel });
-  console.log(year, JSON.stringify({ ...report, unassigned: undefined }));
+  console.log(year, JSON.stringify({ ...report, unassigned: undefined, coordinateConflictsByVillage: undefined }));
 }
 await write('public/data/traffic/manifest.json', { schemaVersion: 1, years: years.reverse(), eventFields: ['id', 'longitude', 'latitude', 'date', 'time', 'type', 'deaths', 'injuries', 'townCode', 'villageCode', 'location'] });
