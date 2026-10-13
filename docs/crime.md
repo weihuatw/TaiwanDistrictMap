@@ -39,4 +39,6 @@ npm run crime:build
 npm run crime:check
 ```
 
-`data/raw/crime/` 忽略提交；`data/crime/sources.json` 登錄 CSV、人口分頁、年月、取得日與 SHA-256。`public/data/crime/manifest.json` 列出可用快照，各年摘要附来源 URL 與雜湊。更新要先核對官方可用年月與季度、登錄網址及人口截止月份，再下載建置並審核差異。CI 的 `crime:check` 只依賴公開輸出和已審核總量，驗證 22 縣市／368 鄉鎮、案類加總、未對照數與人口加總。
+`data/raw/crime/` 忽略提交；`data/crime/sources.json` 登錄 CSV、人口分頁、年月、取得日與 SHA-256。`public/data/crime/manifest.json` 列出可用快照，各年摘要附來源 URL 與雜湊。更新要先核對官方可用年月與季度、登錄網址及人口截止月份，再下載建置並審核差異。CI 的 `crime:check` 只依賴公開輸出和已審核總量，驗證 22 縣市／368 鄉鎮、案類加總、未對照數與人口加總。
+
+色階按案類與指標設定，件數另依縣市／鄉鎮粒度；同案類／指標跨年固定，不因視角改變重分級。稀少案類使用較小切點以保留區域差異。

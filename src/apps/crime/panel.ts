@@ -46,7 +46,7 @@ export function createCrimePanel(shell: ReturnType<typeof createMapShell>, onCha
     const scale = document.createElement('div'); scale.className = 'crime-scale'; const boundaries = cuts(f, view.level === 'detail' ? 'town' : view.level);
     const ranges = [`大於 0 至未滿 ${boundaries[0]}`, ...boundaries.slice(0, -1).map((x, i) => `${x} 至未滿 ${boundaries[i + 1]}`), `${boundaries.at(-1)} 以上`];
     ranges.forEach((range, i) => { const span = document.createElement('span'), swatch = document.createElement('i'); swatch.style.backgroundColor = colors[i]; span.append(swatch, document.createTextNode(range)); scale.append(span); });
-    const note = document.createElement('p'); note.textContent = '0：白色 · 無資料：灰色／斜紋 · 同指標跨年固定級距'; legend.replaceChildren(title, scale, note);
+    const note = document.createElement('p'); note.textContent = '0：白色 · 無資料：灰色／斜紋 · 同案類／指標跨年固定級距'; legend.replaceChildren(title, scale, note);
   }
   return { render, setFilter, setBusy(busy: boolean) { Object.values(selects).forEach(s => { s.disabled = busy; }); }, obstacles(): Rect[] { if (innerWidth <= 760) return []; const r = legend.getBoundingClientRect(), origin = shell.mapContainer.getBoundingClientRect(); return [{ x: r.x - origin.x, y: r.y - origin.y, w: r.width, h: r.height }]; }, destroy() { abort.abort(); legend.remove(); shell.root.classList.remove('crime-page'); } };
 }

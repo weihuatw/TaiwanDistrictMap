@@ -22,5 +22,18 @@ export function value(r: CrimeRecord | null | undefined, f: Filter): number | nu
 export const unit = (m: Metric) => m === 'rate' ? '件／十萬人' : m === 'offenderRate' ? '人／十萬人' : m === 'suspects' ? '人' : '件';
 export const format = (n: number | null, m: Metric) => n === null ? '無資料' : `${n.toLocaleString('zh-TW', { maximumFractionDigits: isRate(m) ? 1 : 0 })} ${unit(m)}`;
 export const colors = ['#fff4dc', '#fee2a8', '#fec474', '#f99a4a', '#e96c33', '#cd422b', '#932a2d'];
-export const cuts = (f: Filter, level: RegionLevel) => isRate(f.metric) ? [50, 100, 300, 600, 1200, 2400] : level === 'county' ? [100, 500, 2000, 5000, 10000, 30000] : [5, 20, 50, 100, 300, 1000];
+export function cuts(f: Filter, level: RegionLevel): number[] {
+  const rare = ['robbery', 'snatching', 'sexualAssault', 'organized', 'robberySnatching', 'sexualOffense'].includes(f.category);
+  const vehicleOrHome = ['homeTheft', 'carTheft', 'motorcycleTheft'].includes(f.category);
+  if (isRate(f.metric)) {
+    if (rare) return [.1, .5, 1, 2, 5, 10];
+    if (vehicleOrHome) return [1, 3, 5, 10, 20, 40];
+    if (f.category === 'total' && f.scope === 'official') return [300, 600, 1000, 1500, 2000, 3000];
+    if (f.category === 'fraud') return [25, 50, 100, 250, 500, 1000];
+    return [10, 25, 50, 100, 200, 400];
+  }
+  if (rare) return level === 'county' ? [1, 5, 10, 20, 50, 100] : [1, 2, 3, 5, 10, 20];
+  if (vehicleOrHome) return level === 'county' ? [10, 50, 100, 300, 500, 1000] : [1, 5, 10, 20, 50, 100];
+  return level === 'county' ? [100, 500, 2000, 5000, 10000, 30000] : [5, 20, 50, 100, 300, 1000];
+}
 export const color = (r: CrimeRecord | null | undefined, f: Filter, level: RegionLevel) => { const n = value(r, f); return n === null ? '#d6ddd9' : n === 0 ? '#f8fbfc' : colors[cuts(f, level).filter(c => n >= c).length]; };

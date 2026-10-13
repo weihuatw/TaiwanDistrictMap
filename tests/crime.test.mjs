@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { CrimeRepository, validSnapshot } from '../src/data/crime.ts';
-import { parseFilter, value, color, filterQuery } from '../src/apps/crime/theme.ts';
+import { parseFilter, value, color, cuts, filterQuery } from '../src/apps/crime/theme.ts';
 import { parseRoute, transferTheme } from '../src/routing/hash-router.ts';
 import { comparisonRoute } from '../src/comparison/sync.ts';
 
@@ -35,4 +35,11 @@ test('Crime repository caches successful snapshots and retries failed validation
   const [a,b] = await Promise.all([repo.snapshot(2026,'official','available'),repo.snapshot(2026,'official','available')]);
   assert.equal(a,b); assert.equal(attempts,2);
   for (const bad of [{ ...sample, endMonth: 13 }, { ...sample, complete: true }, { ...sample, period: 'half' }, { ...sample, records: { TW: { ...sample.records.TW, population: 0 } } }, { ...sample, records: { TW: { ...sample.records.TW, cases: { total: -1 } } } }]) assert.equal(validSnapshot(bad,2026,'official','available'),false);
+});
+
+test('Sparse crime categories have meaningful fixed scales across years', () => {
+  const f = parseFilter('scope=regional&category=robbery&metric=rate');
+  assert.deepEqual(cuts(f,'county'),cuts({...f,year:2024},'county'));
+  const r = {...sample.records.TW, population:100000, cases:{robbery:1}};
+  assert.notEqual(color(r,f,'county'),color({...r,cases:{robbery:5}},f,'county'));
 });
