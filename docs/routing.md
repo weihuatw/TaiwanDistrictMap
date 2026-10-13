@@ -15,7 +15,7 @@
 /TaiwanDistrictMap/#/politics/63000/63000020?mode=president
 ```
 
-主題使用 `admin`、`population`、`income`、`school`、`housing`、`politics`、`indigenous`。後續路徑依序為縣市代碼、鄉鎮市區代碼、村里代碼或學校 ID；保留前導零及未編定代碼中的英文字母。學校使用既有資料 ID（含學制），不用不唯一的校名。房價止於鄉鎮市區。
+主題使用 `admin`、`population`、`income`、`school`、`housing`、`politics`、`indigenous`、`traffic`。後續路徑依序為縣市代碼、鄉鎮市區代碼、村里代碼或學校 ID；保留前導零及未編定代碼中的英文字母。學校使用既有資料 ID（含學制），不用不唯一的校名。房價止於鄉鎮市區。
 
 `?` 位於 `#` 之後，屬於前端路由，不能使用 `location.search` 讀取。
 
@@ -66,7 +66,7 @@ hash 各路徑不提供獨立的伺服器頁面或社群預覽 metadata；中文
 
 `scripts/vite/initial-preload.mjs` 在正式建置的 HTML post hook 收集各主題的實際 chunk、靜態依賴及 CSS，將小型 bootstrap 放在根入口的 charset／viewport metadata 後、stylesheet 前。Bootstrap 對 hash 採與 router 相同的主題、層數及 ASCII ID 規則，非法網址使用行政區主題；依目前主題發起 `modulepreload` 與 CSS preload，同時以 `preload as="fetch" crossorigin="anonymous"` 提早請求 `data/counties.geojson`。網址使用當次 Vite base，支援 Pages 子路徑及相對 base。
 
-資源索引包含七個主題的檔名，但只對目前主題的靜態依賴發出請求；不預載 worker、其他主題、鄉鎮／村里或主題資料。較大的共用核心優先發起。正常啟動仍由原本的 dynamic import 與 repository 執行，預載錯誤不提交應用狀態。瀏覽器會記住失敗的模組下載，因此程式載入失敗的「重試」會重新整理目前 hash，清除失敗模組紀錄；資料失敗仍使用原本的頁內重試。已用一次 chunk 503 驗證重試後恢復全臺畫面及目前網址。Dev server 不套用此建置 hook。
+資源索引包含八個主題的檔名，但只對目前主題的靜態依賴發出請求；不預載 worker、其他主題、鄉鎮／村里或主題資料。較大的共用核心優先發起。正常啟動仍由原本的 dynamic import 與 repository 執行，預載錯誤不提交應用狀態。瀏覽器會記住失敗的模組下載，因此程式載入失敗的「重試」會重新整理目前 hash，清除失敗模組紀錄；資料失敗仍使用原本的頁內重試。已用一次 chunk 503 驗證重試後恢復全臺畫面及目前網址。Dev server 不套用此建置 hook。
 
 第一個可呈現的 View 使用 0ms 相機定位，包含直接開啟學區／村里分享連結與樣式晚到的情況；若已有預覽則保留原動畫。之後進入、同層切換、返回與保存視角使用原本 duration；學區資料仍在相機停止後更新並保留 180ms 淡入，減少動態效果時維持 0ms。
 
@@ -93,3 +93,5 @@ hash 各路徑不提供獨立的伺服器頁面或社群預覽 metadata；中文
 跨主題仍會重建 map；此階段只改善地區與視角延續，沒有改成持續存在的單一 map 或跨主題共享 repository。行政區概覽卡提供深入該地區的主題連結，村里學區清單另可直接開啟指定學校。
 
 原住民：`#/indigenous?metric=population&tribe=all`；`metric=population|share`、`tribe=all|<manifest 支援的族別 id>`。返回階層與跨主題位置沿用一般行政區路徑。
+
+交通事故：`#/traffic?metric=accidents&year=2024`；`metric=accidents|injuries|deaths|rate`、`year` 依公開 manifest 還原，無效年份採最新可用年度。村里沿用一般行政區路徑，年份與指標切換不新增階層。

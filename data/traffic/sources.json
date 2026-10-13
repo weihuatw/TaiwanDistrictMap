@@ -1,0 +1,112 @@
+{
+  "resources": [
+    {
+      "year": 2024,
+      "catalogUrl": "https://data.gov.tw/dataset/172969",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/CCAD7AA8-5139-4066-8BE3-D6CC3154C137/resource/0A260239-9958-4046-8834-E68E5EC38406/download",
+      "file": "2024-1.zip",
+      "sha256": "f5a8802333ebbd5ba6573e3d7d14e3d8fb1e57be238272140e39d07c66a89e63",
+      "bytes": 40598237,
+      "retrievedAt": "2026-10-13T01:23:28.856508+00:00"
+    },
+    {
+      "year": 2025,
+      "catalogUrl": "https://data.gov.tw/dataset/177136",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/FCD9C2D4-CB71-4EAA-AA4C-B088E5FE3157/resource/EF9B9192-7E4D-4E48-BF8A-AA3D4B298788/download",
+      "file": "2025-1.zip",
+      "sha256": "2a8e32266708fba9bd9764cefc07717ded978f65bae834c3b6795a992d04fbc7",
+      "bytes": 43253520,
+      "retrievedAt": "2026-10-13T01:23:31.041612+00:00"
+    },
+    {
+      "year": 2026,
+      "catalogUrl": "https://data.gov.tw/dataset/12818",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/02D40248-7CAA-4354-82EA-E27AB8DCAB39/resource/0E48174B-F7DD-4D6F-AABF-2DAB849EFC9B/download",
+      "file": "a1-1.csv",
+      "sha256": "a8aa233e896faa83a90f35d1704ce956395f36c0e10d95af05fa7b4241c3710d",
+      "bytes": 1784639,
+      "retrievedAt": "2026-10-13T01:23:16.026154+00:00"
+    },
+    {
+      "year": 2026,
+      "catalogUrl": "https://data.gov.tw/dataset/13139",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/986931B3-0E46-4F94-BF52-A2911499301F/resource/BABEE9C1-83E7-4ACA-A351-18DFFC0BB547/download",
+      "file": "a2-1.zip",
+      "sha256": "3da780c49dc49b1ccb1af2d72dae79654812f7a0377f4340e1d580d0e713c793",
+      "bytes": 3614198,
+      "retrievedAt": "2026-10-13T01:23:15.524470+00:00"
+    },
+    {
+      "year": 2026,
+      "catalogUrl": "https://data.gov.tw/dataset/13139",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/986931B3-0E46-4F94-BF52-A2911499301F/resource/DC412D4E-B0CF-4725-9792-252209ED0FCE/download",
+      "file": "a2-2.zip",
+      "sha256": "44229ce6648e59f47a5a65bf27269c6559fa33b055368c2d573882a541547425",
+      "bytes": 3413831,
+      "retrievedAt": "2026-10-13T01:23:17.623117+00:00"
+    },
+    {
+      "year": 2026,
+      "catalogUrl": "https://data.gov.tw/dataset/13139",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/986931B3-0E46-4F94-BF52-A2911499301F/resource/78389F05-DA36-431B-AE2F-2A3AD8BBB53B/download",
+      "file": "a2-3.zip",
+      "sha256": "ca907f84afe6ab28790e3219df0e84144e61a5d4023157746aea9d6b340dab3e",
+      "bytes": 3195752,
+      "retrievedAt": "2026-10-13T01:23:16.889281+00:00"
+    },
+    {
+      "year": 2026,
+      "catalogUrl": "https://data.gov.tw/dataset/13139",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/986931B3-0E46-4F94-BF52-A2911499301F/resource/C403B4B4-7513-433C-95DB-425E3E67BEDA/download",
+      "file": "a2-4.zip",
+      "sha256": "cfc026f77b10555458aa814cfbcfe05a6bb13a551fa3314ebcc488fa100bede3",
+      "bytes": 3213142,
+      "retrievedAt": "2026-10-13T01:23:18.240865+00:00"
+    },
+    {
+      "year": 2026,
+      "catalogUrl": "https://data.gov.tw/dataset/13139",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/986931B3-0E46-4F94-BF52-A2911499301F/resource/081A710D-739A-4528-A24B-5889CFB476CE/download",
+      "file": "a2-5.zip",
+      "sha256": "bad30cf45650693129099ee72e41d6aa7665befa1d6ff3797be64f2c78b3115f",
+      "bytes": 3276608,
+      "retrievedAt": "2026-10-13T01:23:18.432390+00:00"
+    },
+    {
+      "year": 2026,
+      "catalogUrl": "https://data.gov.tw/dataset/13139",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/986931B3-0E46-4F94-BF52-A2911499301F/resource/110F5C54-B919-480A-9FE8-68C387C3DC1D/download",
+      "file": "a2-6.zip",
+      "sha256": "9b8b30e54fd0cf1a71b67edd60611af7885e0628937d3410d98589c0029fad4b",
+      "bytes": 3133154,
+      "retrievedAt": "2026-10-13T01:23:18.993940+00:00"
+    },
+    {
+      "year": 2026,
+      "catalogUrl": "https://data.gov.tw/dataset/13139",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/986931B3-0E46-4F94-BF52-A2911499301F/resource/909CAE5F-EFE3-4D90-B8B5-94F8E6DD426A/download",
+      "file": "a2-7.zip",
+      "sha256": "27449467ac79d3cc449b834abe9ca9d9d8fb04038153c76ca2532b2aba377ba3",
+      "bytes": 1156937,
+      "retrievedAt": "2026-10-13T01:23:19.035109+00:00"
+    },
+    {
+      "year": 2026,
+      "catalogUrl": "https://data.gov.tw/dataset/13139",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/986931B3-0E46-4F94-BF52-A2911499301F/resource/49A090CC-2C0F-4B91-A136-C33311B894DB/download",
+      "file": "a2-8.zip",
+      "sha256": "0baedd8849184f303de3de18942838375d3d01dab6cf28fb1aa16e27c671c5ea",
+      "bytes": 3024171,
+      "retrievedAt": "2026-10-13T01:23:19.862492+00:00"
+    },
+    {
+      "year": 2026,
+      "catalogUrl": "https://data.gov.tw/dataset/13139",
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/986931B3-0E46-4F94-BF52-A2911499301F/resource/308E696A-D60A-4BDA-8F9B-F8944E9CA1BA/download",
+      "file": "a2-9.zip",
+      "sha256": "b8e37fc185c91d759ab4af6cc0d393dfb0d92557310b0a15649f50c8afaf57d3",
+      "bytes": 3064848,
+      "retrievedAt": "2026-10-13T01:23:22.006924+00:00"
+    }
+  ]
+}

@@ -340,3 +340,12 @@ npm run preview -- --base /TaiwanDistrictMap/ --port 4173 --strictPort
 當前環境若限制 `.git` 寫入或網路，commit／push／gh 可能需要執行工具權限升級；遵循當次環境政策，不把這當作專案尚未設定好的問題。
 
 後續修改資料規則、核心架構或部署流程時同步維護本文件；不要記錄暫時的工具 session ID、瀏覽器 tab ID 或 key 值。
+
+## 交通事故地圖（2026-10-13）
+
+- 新增 `#/traffic` 第八個主題，詳見 `docs/traffic.md`。四個指標為 `accidents|injuries|deaths|rate`，年份寫入 hash query；跨主題及桌面比較沿用一般行政區路徑。
+- 警政署 A1／A2 第一當事人列每案計算一次，不含純財損 A3；死亡標明 24 小時口徑。2024／2025 全年，2026 本次共同完整期間為 1–8 月，不年化。
+- 全臺不下載點位；選縣市按需下載 `events/{county}.json.gz`，鄉鎮／村里依代碼篩選。點位用 circle 圖層與 popup，導航期間隱藏舊點位，相機停止後更新；清理取消事件與排程。
+- `src/data/traffic.ts` 獨立統計 repository、`scripts/traffic/{fetch.py,parse.py,build.mjs,check.mjs}` 資料管線。原始檔忽略，來源與 SHA-256 登錄於 `data/traffic/sources.json`；公開輸出與未對照報告在 `public/data/traffic/`。
+- 座標使用目前村里界線，不分配至最近村里；無法對照留在可確認上層，報告保存差額及地址／座標不一致數。2024／2025 發生率分母用兩年底平均戶籍人口，2026 用 8 月人口，無分母不補零。
+- CI 已加入 `traffic:check`，只讀公開輸出，驗證點位、事件唯一性、死傷與逐層加總。

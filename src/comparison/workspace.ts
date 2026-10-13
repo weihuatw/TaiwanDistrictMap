@@ -6,7 +6,7 @@ import { createLocalRouter } from '../routing/local-router';
 import { createThemeAppHost, type ThemeAppLoader } from '../routing/theme-app-host';
 import { comparisonRoute, createComparisonSync, type SyncPane } from './sync';
 
-const labels: Record<Theme, string> = { admin: '行政區', population: '人口', income: '所得', school: '學區', housing: '房價', politics: '政黨', indigenous: '原住民' };
+const labels: Record<Theme, string> = { admin: '行政區', population: '人口', income: '所得', school: '學區', housing: '房價', politics: '政黨', indigenous: '原住民', traffic: '交通事故' };
 type Loaders = (root: HTMLElement, routing: HashRouter) => Record<Theme, ThemeAppLoader>;
 
 export function createComparisonWorkspace(root: HTMLElement, routing: HashRouter, loaders: Loaders) {

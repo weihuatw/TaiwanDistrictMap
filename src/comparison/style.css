@@ -21,7 +21,7 @@
 .comparison-dual .region-panel { right: 12px; top: 65px; width: min(290px, calc(100% - 24px)); max-height: calc(100% - 100px); z-index: 4; }
 .comparison-dual .map-hint { display: none; }
 .comparison-dual .selection-card { left: 12px; bottom: 38px; max-width: calc(100% - 24px); }
-.comparison-dual .income-legend, .comparison-dual .housing-legend, .comparison-dual .population-map-legend, .comparison-dual .indigenous-legend { right: 12px; max-width: calc(100% - 24px); }
+.comparison-dual .income-legend, .comparison-dual .housing-legend, .comparison-dual .population-map-legend, .comparison-dual .indigenous-legend, .comparison-dual .traffic-legend { right: 12px; max-width: calc(100% - 24px); }
 .cards-hidden .location-panel, .cards-hidden .selection-card, .cards-hidden .housing-transactions { display: none; }
 .comparison-divider { position: absolute; left: var(--split-ratio, 50%); top: 0; bottom: 0; width: 10px; margin-left: -5px; z-index: 8; cursor: col-resize; touch-action: none; border: 0; background: transparent; padding: 0; }
 .comparison-divider::before { content: ''; position: absolute; top: 0; bottom: 0; left: 4px; width: 2px; background: #6c8e7f; }

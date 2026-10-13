@@ -1,6 +1,6 @@
 import type { Camera } from '../map-core/types.ts';
 
-export const themes = ['admin', 'population', 'income', 'school', 'housing', 'politics', 'indigenous'] as const;
+export const themes = ['admin', 'population', 'income', 'school', 'housing', 'politics', 'indigenous', 'traffic'] as const;
 export type Theme = typeof themes[number];
 export interface Route { theme: Theme; ids: string[]; query: string }
 export function parseRoute(hash: string): Route {

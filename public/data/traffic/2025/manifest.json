@@ -1,0 +1,1 @@
+{"schemaVersion":1,"year":2025,"months":[1,2,3,4,5,6,7,8,9,10,11,12],"complete":true,"populationLabel":"2025 年兩年底平均戶籍人口","rateScale":100000,"sourceUrls":["https://data.gov.tw/dataset/177136"],"totals":{"code":"TW","name":"全臺","accidents":403393,"injuries":536740,"deaths":1642,"located":403086,"villageAssigned":402983,"population":23349676},"report":"2025/join-report.json"}

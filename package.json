@@ -31,6 +31,9 @@
     "indigenous:fetch": "python3 scripts/indigenous/fetch.py",
     "indigenous:build": "python3 scripts/indigenous/build.py",
     "indigenous:check": "python3 scripts/indigenous/check.py",
+    "traffic:fetch": "python3 scripts/traffic/fetch.py",
+    "traffic:build": "python3 scripts/traffic/parse.py && node scripts/traffic/build.mjs",
+    "traffic:check": "node scripts/traffic/check.mjs",
     "population:annual:fetch": "python3 scripts/population/annual_fetch.py",
     "population:annual:build": "python3 scripts/population/annual_build.py"
   },
