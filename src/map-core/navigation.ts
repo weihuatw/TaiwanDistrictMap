@@ -81,7 +81,7 @@ export class RegionNavigator {
     finally { if (token === this.sequence) this.onBusy(false); }
   }
   /** Resolve a shared link atomically, retaining ancestor cameras when available. */
-  async restorePath(ids: string[], townSelection = false): Promise<void> {
+  async restorePath(ids: string[], townSelection: boolean | 'county' = false): Promise<void> {
     const token = ++this.sequence;
     this.onBusy(true);
     try {
@@ -98,7 +98,7 @@ export class RegionNavigator {
           if (!this.history.length) { this.history = [next[0]]; this.onChange(this.current!, true); }
           throw new Error('此網址的行政區不存在');
         }
-        if (townSelection && index === 1) { next[next.length - 1] = { ...parent, selected: feature }; break; }
+        if ((townSelection === true && index === 1) || (townSelection === 'county' && index === 0)) { next[next.length - 1] = { ...parent, selected: feature }; break; }
         if (parent.level === 'village') {
           next.push({ ...parent, level: 'detail', path: [...parent.path, feature], selected: feature });
         } else {

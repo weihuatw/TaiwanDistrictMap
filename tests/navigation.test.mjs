@@ -13,6 +13,16 @@ function fixture(load = async (file) => file === 'counties.geojson' ? data(count
   return { nav, events, errors, busy };
 }
 
+test('County-statistic selection restores a county without requesting township geometry', async () => {
+  const requests = [];
+  const { nav } = fixture(async file => { requests.push(file); assert.equal(file, 'counties.geojson'); return data(county); });
+  await nav.restorePath(['63000'], 'county');
+  assert.equal(nav.current.level, 'county'); assert.equal(nav.current.selected, county);
+  assert.equal(nav.current.path.length, 0); assert.equal(nav.stack.length, 1);
+  await nav.restorePath([], 'county');
+  assert.equal(nav.current.selected, null); assert.deepEqual(requests, ['counties.geojson','counties.geojson']);
+});
+
 test('Drill down and restore the saved viewport at each previous level', async () => {
   const { nav, events } = fixture();
   await nav.start(); await nav.enter(county, camera); await nav.enter(town, { ...camera, zoom: 12 }); await nav.enter(village, { ...camera, zoom: 14 });

@@ -17,6 +17,7 @@ const loaders = (root: HTMLElement, routing: HashRouter): Record<Theme, ThemeApp
   politics: () => import('./apps/politics/main').then(({ startPoliticsApp }) => () => startPoliticsApp(root, routing)),
   indigenous: () => import('./apps/indigenous/main').then(({ startIndigenousApp }) => () => startIndigenousApp(root, routing)),
   traffic: () => import('./apps/traffic/main').then(({ startTrafficApp }) => () => startTrafficApp(root, routing)),
+  crime: () => import('./apps/crime/main').then(({ startCrimeApp }) => () => startCrimeApp(root, routing)),
 });
 
 const workspace = createComparisonWorkspace(root, routing, loaders);

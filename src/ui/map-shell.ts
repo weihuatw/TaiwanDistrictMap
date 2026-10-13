@@ -162,7 +162,7 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   function updateThemeLinks() {
     if (!options.routing) return;
     const ids = view ? [...view.path.map(region => region.properties.code),
-      ...(view.selected?.properties.level === 'town' ? [view.selected.properties.code] : [])] : options.routing.current.ids;
+      ...(view.selected && view.selected.properties.level !== 'village' ? [view.selected.properties.code] : [])] : options.routing.current.ids;
     const source: Route = { theme: options.routing.current.theme, ids, query: '' };
     for (const link of root.querySelectorAll<HTMLAnchorElement>('[data-map-page]')) {
       link.href = routeHash(link.dataset.mapPage === source.theme ? options.routing.current
@@ -240,8 +240,8 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     el('region-count').textContent = current.level === 'detail'
       ? `代碼 ${current.selected!.properties.code}`
       : `${current.data.features.length} 個${levelLabels[current.level]}${current.level === 'village' ? '範圍' : ''}`;
-    el('back-button').hidden = current.level === 'county';
-    const breadcrumbPath = current.selected?.properties.level === 'town' ? [...current.path, current.selected] : current.path;
+    el('back-button').hidden = current.level === 'county' && !current.selected;
+    const breadcrumbPath = current.selected && current.selected.properties.level !== 'village' ? [...current.path, current.selected] : current.path;
     const previous = breadcrumbPath.length > 1 ? breadcrumbPath.at(-2)!.properties.name : '全臺';
     el('back-label').textContent = `返回${previous}`;
     const crumbs = el('breadcrumbs'); crumbs.replaceChildren();

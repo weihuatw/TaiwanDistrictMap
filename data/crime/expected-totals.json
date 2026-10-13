@@ -1,0 +1,74 @@
+{
+  "2024:official:available": {
+    "cases": 399926,
+    "suspects": 287597,
+    "unassignedTown": 0,
+    "unassignedCounty": 0
+  },
+  "2024:official:half": {
+    "cases": 118430,
+    "suspects": 121785,
+    "unassignedTown": 0,
+    "unassignedCounty": 0
+  },
+  "2024:regional:available": {
+    "cases": 26239,
+    "suspects": null,
+    "unassignedTown": 2057,
+    "unassignedCounty": 26
+  },
+  "2024:regional:half": {
+    "cases": 11146,
+    "suspects": null,
+    "unassignedTown": 1353,
+    "unassignedCounty": 2
+  },
+  "2025:official:available": {
+    "cases": 608717,
+    "suspects": 428438,
+    "unassignedTown": 0,
+    "unassignedCounty": 0
+  },
+  "2025:official:half": {
+    "cases": 302847,
+    "suspects": 211450,
+    "unassignedTown": 0,
+    "unassignedCounty": 0
+  },
+  "2025:regional:available": {
+    "cases": 36417,
+    "suspects": null,
+    "unassignedTown": 43,
+    "unassignedCounty": 40
+  },
+  "2025:regional:half": {
+    "cases": 17545,
+    "suspects": null,
+    "unassignedTown": 25,
+    "unassignedCounty": 22
+  },
+  "2026:official:available": {
+    "cases": 401168,
+    "suspects": 308666,
+    "unassignedTown": 0,
+    "unassignedCounty": 0
+  },
+  "2026:official:half": {
+    "cases": 293402,
+    "suspects": 228430,
+    "unassignedTown": 0,
+    "unassignedCounty": 0
+  },
+  "2026:regional:available": {
+    "cases": 19483,
+    "suspects": null,
+    "unassignedTown": 21,
+    "unassignedCounty": 21
+  },
+  "2026:regional:half": {
+    "cases": 19483,
+    "suspects": null,
+    "unassignedTown": 21,
+    "unassignedCounty": 21
+  }
+}

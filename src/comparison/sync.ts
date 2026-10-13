@@ -6,6 +6,7 @@ export function comparisonRoute(source: Route, target: Route): Route {
     ? { ...target, ids: [...source.ids] }
     : transferTheme(source, target.theme, target.query);
   if (target.theme === 'population' && new URLSearchParams(target.query).get('metric') === 'density') route.ids = route.ids.slice(0, 2);
+  if (target.theme === 'crime') route.ids = route.ids.slice(0, new URLSearchParams(target.query).get('scope') === 'regional' ? 2 : 1);
   return route;
 }
 

@@ -1,0 +1,244 @@
+{
+  "resources": [
+    {
+      "kind": "regional",
+      "year": 2025,
+      "startMonth": 4,
+      "endMonth": 6,
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/AC4C5CF9-682A-450A-8405-45706B8C9588/resource/6447BAE1-805C-422B-A626-37F25D19B8D0/download",
+      "file": "11404-11406犯罪資料.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/14200",
+      "sha256": "257324015ce0dbaa3fb99abc38c0708f0e6d14834e71437ac082246c3bf09ddd",
+      "bytes": 362680,
+      "retrievedAt": "2026-10-13T05:38:04.131910+00:00"
+    },
+    {
+      "kind": "regional",
+      "year": 2026,
+      "startMonth": 1,
+      "endMonth": 3,
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/AC4C5CF9-682A-450A-8405-45706B8C9588/resource/7CB07A57-01D4-4380-8B26-3E54F0723832/download",
+      "file": "11501-11503犯罪資料.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/14200",
+      "sha256": "92e789c8f4ae1fc7ea8d18f8c92b09520b2f286b9066a61203c69f4714d65a56",
+      "bytes": 343396,
+      "retrievedAt": "2026-10-13T05:38:04.170625+00:00"
+    },
+    {
+      "kind": "regional",
+      "year": 2024,
+      "startMonth": 7,
+      "endMonth": 9,
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/AC4C5CF9-682A-450A-8405-45706B8C9588/resource/3F939C71-2F36-467C-A367-4365DADFE442/download",
+      "file": "11307-11309犯罪資料.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/14200",
+      "sha256": "b43c4b6ffd2eb7ad9761a64ce9e49defc0a3e768c3f3b6040cb31ff4c1a8c50a",
+      "bytes": 259436,
+      "retrievedAt": "2026-10-13T05:38:03.944245+00:00"
+    },
+    {
+      "kind": "regional",
+      "year": 2026,
+      "startMonth": 4,
+      "endMonth": 6,
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/AC4C5CF9-682A-450A-8405-45706B8C9588/resource/A0BD08DF-CD35-4FF9-BB67-4FC81834FE32/download",
+      "file": "11504-11506犯罪資料.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/14200",
+      "sha256": "963c1bd00b3770096c7fca5bbf15c05667b808b1a40daef8d4f4c4c820fe6e70",
+      "bytes": 400264,
+      "retrievedAt": "2026-10-13T05:38:04.050394+00:00"
+    },
+    {
+      "kind": "regional",
+      "year": 2025,
+      "startMonth": 10,
+      "endMonth": 12,
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/AC4C5CF9-682A-450A-8405-45706B8C9588/resource/3C1EADD3-FA57-4FAA-825F-682DA981C41F/download",
+      "file": "11410-11412犯罪資料.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/14200",
+      "sha256": "b26d3e97bb8589d4e42875c745a1bc77de8622020cd03b3f6861a5ac79c19046",
+      "bytes": 359930,
+      "retrievedAt": "2026-10-13T05:38:04.324722+00:00"
+    },
+    {
+      "kind": "regional",
+      "year": 2024,
+      "startMonth": 1,
+      "endMonth": 3,
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/AC4C5CF9-682A-450A-8405-45706B8C9588/resource/94D50258-2BA9-4F28-9604-842B7B36C9DF/download",
+      "file": "11301-11303犯罪資料.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/14200",
+      "sha256": "a2ba8010a00b743d60c98f231062a78781cf0b2f181171067b2bf59a78762cb4",
+      "bytes": 208473,
+      "retrievedAt": "2026-10-13T05:38:04.372652+00:00"
+    },
+    {
+      "kind": "regional",
+      "year": 2025,
+      "startMonth": 1,
+      "endMonth": 3,
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/AC4C5CF9-682A-450A-8405-45706B8C9588/resource/C831243A-E836-480E-BA06-B6B1DFCB2488/download",
+      "file": "11401-11403犯罪資料.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/14200",
+      "sha256": "38b2cfd449e61bc6e46286818754920d655b273c4401ef5e5ae3d46d2595bfa0",
+      "bytes": 314197,
+      "retrievedAt": "2026-10-13T05:38:04.519543+00:00"
+    },
+    {
+      "kind": "regional",
+      "year": 2024,
+      "startMonth": 10,
+      "endMonth": 12,
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/AC4C5CF9-682A-450A-8405-45706B8C9588/resource/13F498F1-6C56-4DE5-AE2C-C48FE5DC1871/download",
+      "file": "11310-11312犯罪資料.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/14200",
+      "sha256": "725415ae1f3e473e15cca262403806bdb7c55e5c82da81c7cd52c26e842e3282",
+      "bytes": 316702,
+      "retrievedAt": "2026-10-13T05:38:04.574657+00:00"
+    },
+    {
+      "kind": "regional",
+      "year": 2024,
+      "startMonth": 4,
+      "endMonth": 6,
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/AC4C5CF9-682A-450A-8405-45706B8C9588/resource/9BCD2BBB-63FC-4FD9-8636-C96F17BD5528/download",
+      "file": "11304-11306犯罪資料.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/14200",
+      "sha256": "a968079966e6b5a486c28f562ba1472430a4c86f8b421b13dea33580535ee3c2",
+      "bytes": 203754,
+      "retrievedAt": "2026-10-13T05:38:04.756297+00:00"
+    },
+    {
+      "kind": "regional",
+      "year": 2025,
+      "startMonth": 7,
+      "endMonth": 9,
+      "url": "https://opdadm.moi.gov.tw/api/v1/no-auth/resource/api/dataset/AC4C5CF9-682A-450A-8405-45706B8C9588/resource/62DEC883-2424-452F-A538-F61DAA8696B6/download",
+      "file": "11407-11409犯罪資料.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/14200",
+      "sha256": "cf69180281c1e38748fca93f281bec20a17f5beb20135b16e047e8101bd2aa85",
+      "bytes": 363569,
+      "retrievedAt": "2026-10-13T05:38:04.743851+00:00"
+    },
+    {
+      "kind": "cases",
+      "url": "https://statis.moi.gov.tw/micst/webMain.aspx?sys=220&kind=21&type=1&funid=c0620101&cycle=41&outmode=12&utf=1&compmode=0&outkind=3&fldspc=0,2,4,3,9,3,14,4,22,1,25,4,34,4,40,31,&codspc0=0,2,3,2,6,1,9,1,12,1,15,17,&ym=11301&ymt=11508",
+      "file": "cases.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/9603",
+      "sha256": "1852d46b958570be147d30f575d6b8a410f9d7b3962329d77c502e43a0a0bbda",
+      "bytes": 130701,
+      "retrievedAt": "2026-10-13T05:38:09.172391+00:00"
+    },
+    {
+      "kind": "suspects",
+      "url": "https://statis.moi.gov.tw/micst/webMain.aspx?sys=220&kind=21&type=1&funid=c0620103&cycle=41&outmode=12&utf=1&compmode=0&outkind=3&fldspc=0,2,4,3,9,3,14,4,22,1,25,4,34,4,40,31,&codspc0=0,2,3,2,6,1,9,1,12,1,15,17,&ym=11301&ymt=11508",
+      "file": "suspects.csv",
+      "catalogUrl": "https://data.gov.tw/dataset/9604",
+      "sha256": "df76084a060485c65571e9b6afb2e1d3c7f4dbb540cca0fd6775fa7ccdd9135b",
+      "bytes": 129232,
+      "retrievedAt": "2026-10-13T05:38:04.743313+00:00"
+    }
+  ],
+  "populations": [
+    {
+      "api": "ODRP013",
+      "period": "11306",
+      "file": "data/raw/crime/ODRP013-11306.json",
+      "records": 7748,
+      "sha256": "422b048a252487391a915beb95b45851086f4419c8d8fe7857c8d55066dddd9f",
+      "pages": [
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11306?PAGE=1",
+          "sha256": "a18c5bbf4c1128ccb3a835d59863b212849b703dcff690f8a8c2759a51a2c82d"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11306?PAGE=2",
+          "sha256": "d0dd563292a98e236f4129dfb14225c844431637ccad90a04f8a36b40ce70656"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11306?PAGE=3",
+          "sha256": "01dfaa8d6eeab2c9ec9e2732cce53ceafc6ae1fecf8576282d23cc371c83fc3c"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11306?PAGE=4",
+          "sha256": "dea8730415e4630c78fc8ff443cd7f819c8406f83b20c7f2b4678751d9831ae4"
+        }
+      ]
+    },
+    {
+      "api": "ODRP013",
+      "period": "11406",
+      "file": "data/raw/crime/ODRP013-11406.json",
+      "records": 7748,
+      "sha256": "6dfe52510fdc4ea2485f643c89305233ebf7359fc488ed2f1d40e5d4dc684978",
+      "pages": [
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11406?PAGE=1",
+          "sha256": "b684f5a29819e3d1ec4f5c436d7fb974108320317ca69aba09327ff3f17fc6fb"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11406?PAGE=2",
+          "sha256": "fa60e28a11a64759741d76e7561f07811d76e930ce3e4bc3de54251231a8aeaf"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11406?PAGE=3",
+          "sha256": "5faba6ab7df57f69c3b23fe5d85833299a445e723e6f2cb6c7ced090664dc707"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11406?PAGE=4",
+          "sha256": "aa06bcf7bfede189ce7061f5d8609db369826b5218be05aea2907a474f093113"
+        }
+      ]
+    },
+    {
+      "api": "ODRP013",
+      "period": "11506",
+      "file": "data/raw/crime/ODRP013-11506.json",
+      "records": 7771,
+      "sha256": "afcd4417a72805f32608775e13e0309e5fea3dc3adb1abf2ea0faf0ab3d3aa6b",
+      "pages": [
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11506?PAGE=1",
+          "sha256": "3fae95f7349580ad81936117dc154657f3f4d40aa7637482d29a5c7d8e05b997"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11506?PAGE=2",
+          "sha256": "0cc0743645f138fb98609ac38d7ad04b7476c567c5d1193f6eec4cf406fc0902"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11506?PAGE=3",
+          "sha256": "d64306bce0971059c0f1824dc4efc523884d58be704f0d39e6281a33ce5edfdc"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11506?PAGE=4",
+          "sha256": "a341989a3e3aa5fa7127bfb6466afa46761ee2dcf25463631e73e1dd05db14df"
+        }
+      ]
+    },
+    {
+      "api": "ODRP013",
+      "period": "11508",
+      "file": "data/raw/crime/ODRP013-11508.json",
+      "records": 7781,
+      "sha256": "3417ced3176416d6e75db5cfbc70d29304276aef65d7e666235469f71f6a8bd3",
+      "pages": [
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11508?PAGE=1",
+          "sha256": "eed56da71138d2d1f4aa9595a1ef0c80641684835c900b287f9ccb5e9d7e3036"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11508?PAGE=2",
+          "sha256": "952a5aa1e846a9e7039fe10cbc4ccb5abd81297ae38d95a5579b43b265dc5197"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11508?PAGE=3",
+          "sha256": "633c1876801897808e0a7027cc327d2d24967db2af073d94d852dce9af5890b0"
+        },
+        {
+          "url": "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP013/11508?PAGE=4",
+          "sha256": "08c56ecc9474c129759228ece6282340098a680c87bc185c0069b193672230b5"
+        }
+      ]
+    }
+  ]
+}

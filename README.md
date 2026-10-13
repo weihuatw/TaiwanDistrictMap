@@ -4,7 +4,9 @@
 
 行政區資訊卡整合戶籍人口、2024 所得、住宅成交統計與政黨資料；村里層級另列出已對照的國小、國中學區。各卡片預設收折，可展開查看明細與來源。
 
-八個主題在同一入口切換，保留目前行政區與視角，並記住各主題指標／篩選。目的主題為學區或房價時保留至鄉鎮市區，行政區資訊卡亦可直接開啟該地區的主題分析。
+九個主題在同一入口切換，保留目前行政區與視角，並記住各主題指標／篩選。目的主題為學區或房價時保留至鄉鎮市區，行政區資訊卡亦可直接開啟該地區的主題分析。
+
+刑事統計主題 `#/crime` 提供 2024、2025 全年及 2026 已公布期間，可切換案件件數、每十萬人口率、嫌疑犯人數與犯罪人口率；全般統計止於縣市，收錄 8 案類止於鄉鎮，僅顯示區域彙總。詳見 [刑事統計說明](docs/crime.md)。
 
 交通事故主題 `#/traffic` 可切換事故件數、受傷／死亡人數、每十萬戶籍人口事故件數與年份；全臺不標記事件點，縣市、鄉鎮及村里顯示官方事件座標。目前提供 2024、2025 全年及 2026 年 1–8 月 A1／A2 傷亡事故，死亡採 24 小時口徑。詳見 [交通事故地圖說明](docs/traffic.md)。
 
@@ -125,7 +127,7 @@ npm run preview -- --port 4173 --strictPort
 
 ## GitHub Pages 部署
 
-`.github/workflows/deploy-pages.yml` 在每次推送至 `main` 或手動執行時，使用 Node.js 24 安裝鎖定的相依套件，執行測試與八類資料檢查（行政區、所得、學區、房價、人口、政治、原住民、交通事故），再以 `/TaiwanDistrictMap/` 為 base 建置並發布 `dist/`。預先生成的 `public/data/` 隨原始碼提交，不必在 Actions 下載或重建官方資料。
+`.github/workflows/deploy-pages.yml` 在每次推送至 `main` 或手動執行時，使用 Node.js 24 安裝鎖定的相依套件，執行測試與九類資料檢查（行政區、所得、學區、房價、人口、政治、原住民、交通事故、刑事統計），再以 `/TaiwanDistrictMap/` 為 base 建置並發布 `dist/`。預先生成的 `public/data/` 隨原始碼提交，不必在 Actions 下載或重建官方資料。
 
 Repository 的 Settings → Pages → Source 設為 **GitHub Actions**。在 Settings → Secrets and variables → Actions 設定 `VITE_TOMTOM_API_KEY`；工作流程缺少 key 時會停止，避免意外發布沒有底圖的版本。`.env.local`、原始下載檔、`node_modules/` 與 `dist/` 不提交。
 
@@ -150,4 +152,4 @@ SDK 版本沿用 ParkingMap 的 `0.51.3`；MapLibre 使用相容的 `6.13.0`。�
 
 ## 分享網址與返回
 
-八個地圖主題使用根目錄 hash 路由，例如 `#/school/63000/63000020/323604-elementary` 或 `#/indigenous?metric=share&tribe=amis`。行政區與學校以代碼／ID 識別，「複製分享」附上中文位置標題；同層切換不累積瀏覽器歷史，返回回上一層。舊 `.html` 網址仍可開啟並導向新入口。格式與實作見 [網址與導覽](docs/routing.md)。
+九個地圖主題使用根目錄 hash 路由，例如 `#/school/63000/63000020/323604-elementary` 或 `#/indigenous?metric=share&tribe=amis`。行政區與學校以代碼／ID 識別，「複製分享」附上中文位置標題；同層切換不累積瀏覽器歷史，返回回上一層。舊 `.html` 網址仍可開啟並導向新入口。格式與實作見 [網址與導覽](docs/routing.md)。

@@ -1,12 +1,12 @@
 import type { Camera } from '../map-core/types.ts';
 
-export const themes = ['admin', 'population', 'income', 'school', 'housing', 'politics', 'indigenous', 'traffic'] as const;
+export const themes = ['admin', 'population', 'income', 'school', 'housing', 'politics', 'indigenous', 'traffic', 'crime'] as const;
 export type Theme = typeof themes[number];
 export interface Route { theme: Theme; ids: string[]; query: string }
 export function parseRoute(hash: string): Route {
   const [path, query = ''] = hash.replace(/^#\/?/, '').split('?');
   const [theme = 'admin', ...ids] = path.split('/').filter(Boolean);
-  if (!themes.includes(theme as Theme) || ids.length > (theme === 'housing' ? 2 : 3) || ids.some(id => !/^[A-Za-z0-9_-]+$/.test(id))) throw new Error('無效的地圖網址');
+  if (!themes.includes(theme as Theme) || ids.length > (theme === 'housing' || theme === 'crime' ? 2 : 3) || ids.some(id => !/^[A-Za-z0-9_-]+$/.test(id))) throw new Error('無效的地圖網址');
   return { theme: theme as Theme, ids, query: new URLSearchParams(query).toString() };
 }
 export function routeHash(route: Route): string {
@@ -22,7 +22,7 @@ export function commonDepth(a: Route, b: Route): number {
 /** School IDs cannot be transferred as village codes; housing stops at towns. */
 export function transferTheme(route: Route, theme: Theme, query = ''): Route {
   const geographicIds = route.theme === 'school' ? route.ids.slice(0, 2) : route.ids;
-  return { theme, ids: geographicIds.slice(0, theme === 'school' || theme === 'housing' ? 2 : 3), query };
+  return { theme, ids: geographicIds.slice(0, theme === 'school' || theme === 'housing' || theme === 'crime' ? 2 : 3), query };
 }
 
 function validCamera(value: unknown): value is Camera {

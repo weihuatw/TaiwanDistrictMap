@@ -31,7 +31,7 @@ function preloadInitialMap(index, base) {
   const [path] = location.hash.replace(/^#\/?/, '').split('?');
   const [requested = 'admin', ...ids] = path.split('/').filter(Boolean);
   const valid = Object.hasOwn(index, requested)
-    && ids.length <= (requested === 'housing' ? 2 : 3)
+    && ids.length <= (requested === 'housing' || requested === 'crime' ? 2 : 3)
     && ids.every(id => /^[A-Za-z0-9_-]+$/.test(id));
   const selected = index[valid ? requested : 'admin'];
   const hint = (file, rel, as) => {

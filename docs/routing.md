@@ -15,7 +15,7 @@
 /TaiwanDistrictMap/#/politics/63000/63000020?mode=president
 ```
 
-主題使用 `admin`、`population`、`income`、`school`、`housing`、`politics`、`indigenous`、`traffic`。後續路徑依序為縣市代碼、鄉鎮市區代碼、村里代碼或學校 ID；保留前導零及未編定代碼中的英文字母。學校使用既有資料 ID（含學制），不用不唯一的校名。房價止於鄉鎮市區。
+主題使用 `admin`、`population`、`income`、`school`、`housing`、`politics`、`indigenous`、`traffic`、`crime`。後續路徑依序為縣市代碼、鄉鎮市區代碼、村里代碼或學校 ID；保留前導零及未編定代碼中的英文字母。學校使用既有資料 ID（含學制），不用不唯一的校名。房價止於鄉鎮市區。
 
 `?` 位於 `#` 之後，屬於前端路由，不能使用 `location.search` 讀取。
 
@@ -95,3 +95,5 @@ hash 各路徑不提供獨立的伺服器頁面或社群預覽 metadata；中文
 原住民：`#/indigenous?metric=population&tribe=all`；`metric=population|share`、`tribe=all|<manifest 支援的族別 id>`。返回階層與跨主題位置沿用一般行政區路徑。
 
 交通事故：`#/traffic?metric=accidents&year=2024`；`metric=accidents|injuries|deaths|rate`、`year` 依公開 manifest 還原，無效年份採最新可用年度。村里沿用一般行政區路徑，年份與指標切換不新增階層。
+
+刑事統計：`#/crime/63000/63000020?scope=regional&year=2025&period=half&category=motorcycleTheft&metric=rate`；`scope=official|regional`，`period=available|half`，`year=2024|2025|2026`，`metric=cases|rate|suspects|offenderRate`。全般／嫌疑犯僅選縣市；收錄案類僅選到鄉鎮，跨主題不保留村里代碼。嫌疑犯指標僅在 official 範圍可選；切換資料成功後才提交 URL，失敗可重試。
