@@ -16,7 +16,13 @@ export function createComparisonWorkspace(root: HTMLElement, routing: HashRouter
     <button type="button" class="comparison-toggle" aria-expanded="false" aria-controls="comparison-settings-panel">地圖比較</button>
     <div id="comparison-settings-panel" class="comparison-controls" role="region" aria-label="地圖比較設定" hidden>
     <div class="comparison-heading"><span class="comparison-title">地圖比較</span><button type="button" class="close-button comparison-close" aria-label="關閉比較設定">×</button></div>
-    <label>畫面 <select aria-label="地圖畫面模式"><option value="single">單一地圖</option><option value="dual">雙地圖</option></select></label>
+    <div class="comparison-mode-setting" role="radiogroup" aria-labelledby="comparison-mode-label">
+      <span id="comparison-mode-label">畫面</span>
+      <div class="comparison-mode-options">
+        <label><input type="radio" name="comparison-view-mode" value="single" checked>單地圖</label>
+        <label><input type="radio" name="comparison-view-mode" value="dual">雙地圖</label>
+      </div>
+    </div>
     <label><span class="left-setting-label">主題</span> <select aria-label="左側地圖主題"></select></label>
     <label class="right-setting" hidden>右側 <select aria-label="右側地圖主題"></select></label>
     <label class="sync-setting" hidden><input type="checkbox" checked>保持同步</label>
@@ -30,8 +36,8 @@ export function createComparisonWorkspace(root: HTMLElement, routing: HashRouter
   const panes = [...workspace.querySelectorAll<HTMLElement>('.comparison-pane')] as [HTMLElement, HTMLElement];
   panes[0].append(root); root.classList.add('pane-content');
   const roots: [HTMLElement, HTMLElement] = [root, workspace.querySelector<HTMLElement>('#comparison-right')!];
-  const selects = [...workspace.querySelectorAll<HTMLSelectElement>('select')];
-  const modeSelect = selects[0], themeSelects = selects.slice(1);
+  const themeSelects = [...workspace.querySelectorAll<HTMLSelectElement>('.comparison-controls select')];
+  const modeInputs = [...workspace.querySelectorAll<HTMLInputElement>('input[name="comparison-view-mode"]')];
   const syncInput = workspace.querySelector<HTMLInputElement>('.sync-setting input')!;
   const cardsInput = workspace.querySelector<HTMLInputElement>('.cards-setting')!;
   const divider = workspace.querySelector<HTMLElement>('.comparison-divider')!;
@@ -152,7 +158,8 @@ export function createComparisonWorkspace(root: HTMLElement, routing: HashRouter
   const resize = new ResizeObserver(resizeMaps); panes.forEach(pane => resize.observe(pane));
   function setDual(value: boolean) {
     dual = value && desktop.matches;
-    modeSelect.value = dual ? 'dual' : 'single'; workspace.classList.toggle('comparison-dual', dual);
+    modeInputs.forEach(input => { input.checked = (input.value === 'dual') === dual; });
+    workspace.classList.toggle('comparison-dual', dual);
     panes[1].hidden = !dual; divider.hidden = !dual;
     workspace.querySelectorAll<HTMLElement>('.right-setting, .sync-setting').forEach(element => { element.hidden = !dual; });
     if (dual) {
@@ -171,7 +178,7 @@ export function createComparisonWorkspace(root: HTMLElement, routing: HashRouter
     }
     updateSettingsStatus(); updateNote(); resizeMaps();
   }
-  modeSelect.addEventListener('change', () => setDual(modeSelect.value === 'dual'), { signal: lifetime.signal });
+  modeInputs.forEach(input => input.addEventListener('change', () => setDual(input.value === 'dual'), { signal: lifetime.signal }));
   cardsInput.addEventListener('change', () => { workspace.classList.toggle('cards-hidden', !cardsInput.checked); resizeMaps(); }, { signal: lifetime.signal });
   syncInput.addEventListener('change', () => { sync.setEnabled(dual && syncInput.checked); updateSettingsStatus(); updateNote(); scheduleRefresh(); }, { signal: lifetime.signal });
   for (const index of [0, 1] as const) {
