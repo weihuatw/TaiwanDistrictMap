@@ -4,6 +4,7 @@ import { BoundaryRepository } from '../../map-core/boundaries';
 import { createMap } from '../../map-core/create-map';
 import { RegionNavigator } from '../../map-core/navigation';
 import { createRegionLayer } from '../../map-core/region-layer';
+import { sortRegionsByValue } from '../../map-core/region-sort';
 import type { Region, View } from '../../map-core/types';
 import { createMapShell } from '../../ui/map-shell';
 import { HousingRepository } from './data';
@@ -24,7 +25,7 @@ export function startHousingApp(root: HTMLElement, routing?: HashRouter){
     loadingText:'載入房價與行政區…',errorText:'房價或行政區資料載入失敗，請重試。',
     sourceIntro:'內政部不動產成交案件實際資訊（免費批次），行政區界來自國土測繪中心，底圖為TomTom向量地圖。',
     rowMeta:(region)=>{const s=housing.get(year,group,region.properties.code);return s?.status==='insufficient'?'樣本不足':formatPrice(s?.medianWanPing);},
-    sortRegions:(regions)=>[...regions].sort((a,b)=>(housing.get(year,group,b.properties.code)?.medianWanPing??-Infinity)-(housing.get(year,group,a.properties.code)?.medianWanPing??-Infinity)||a.properties.code.localeCompare(b.properties.code)),
+    sortRegions:(regions,direction)=>sortRegionsByValue(regions,region=>housing.get(year,group,region.properties.code)?.medianWanPing,direction),
     formatTooltip:(hit)=>panel.tooltip(hit),
     onChoose:(region)=>choose(region),onBack:()=>back(),onHome:()=>navigator.home(),
     onNavigate:(index)=>{if(index === navigator.stack.length - 1) navigator.selectTown(null);else navigator.goTo(index);},onPanelChange:()=>layer?.scheduleLabels(),

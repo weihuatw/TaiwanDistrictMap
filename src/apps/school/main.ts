@@ -3,6 +3,7 @@ import type { HashRouter, Route } from '../../routing/hash-router';
 import { BoundaryRepository } from '../../map-core/boundaries';
 import { createMap, type BasemapStyle } from '../../map-core/create-map';
 import { createRegionLayer } from '../../map-core/region-layer';
+import { sortByName } from '../../map-core/region-sort';
 import type { Region, RegionOutline, Regions, View } from '../../map-core/types';
 import { createMapShell } from '../../ui/map-shell';
 import { SchoolRepository } from './data';
@@ -80,13 +81,15 @@ export function startSchoolApp(root: HTMLElement, routing?: HashRouter) {
     onChoose: region => { if (layer?.ready && navigator.current?.level !== 'school') void navigator.enter(region, layer.camera()); },
     onBack: () => navigator.back(), onHome: () => navigator.home(), onNavigate: index => navigator.goTo(index),
     onPanelChange: () => layer?.scheduleLabels(),
-    customList: (_view: View, query: string, list: HTMLElement) => {
+    customList: (_view: View, query: string, list: HTMLElement, direction) => {
       const view = navigator.current;
       if (view?.level !== 'school') return;
       list.replaceChildren();
       const visible = navigator.visibleSchools;
       const matches = visible.filter(s => `${s.name} ${s.code ?? s.id}`.replaceAll('台', '臺').toLowerCase().includes(query));
-      for (const school of matches) {
+      const sorted = sortByName(matches, school => school.name, direction,
+        (a, b) => a.level.localeCompare(b.level) || (a.code ?? a.id).localeCompare(b.code ?? b.id));
+      for (const school of sorted) {
         const button = document.createElement('button'); button.type = 'button'; button.className = 'region-option school-option';
         button.dataset.schoolId = school.id;
         button.setAttribute('aria-pressed', String(view.selected?.id === school.id));
@@ -106,7 +109,7 @@ export function startSchoolApp(root: HTMLElement, routing?: HashRouter) {
           : '找不到符合的學校，請調整篩選或搜尋校名。';
         list.append(empty);
       }
-      return { title: '選擇學校', summary: `${matches.length} / ${visible.length} 所學校` };
+      return { title: '選擇學校', summary: `${sorted.length} / ${visible.length} 所學校` };
     },
     formatTooltip: hit => {
       if (hit.parentIndex !== undefined) return `切換至 ${hit.region.properties.name}`;

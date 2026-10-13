@@ -2,6 +2,7 @@ import template from './map-shell.html?raw';
 import type { BoundaryManifest, Padding, Rect, Region, RegionColor, RegionHit, View } from '../map-core/types';
 import type { BasemapStatus } from '../map-core/create-map';
 import { parseRoute, routeHash, type HashRouter, type Route, type Theme } from '../routing/hash-router';
+import { sortRegionsByName, type SortDirection } from '../map-core/region-sort';
 
 interface ShellOptions {
   routing?: HashRouter;
@@ -15,15 +16,18 @@ interface ShellOptions {
   brandTitle?: string;
   pageTitle?: string;
   rowMeta?: (region: Region) => string;
-  sortRegions?: (regions: Region[]) => Region[];
+  sortRegions?: (regions: Region[], direction: SortDirection) => Region[];
   formatTooltip?: (hit: RegionHit) => string;
   showSelectionCard?: boolean;
   loadingText?: string;
   errorText?: string;
   sourceIntro?: string;
   renderSelectionDetails?: (region: Region | null, container: HTMLElement) => void;
-  customList?: (view: View, query: string, list: HTMLElement) => { title: string; summary: string } | undefined;
+  customList?: (view: View, query: string, list: HTMLElement, direction: SortDirection) => { title: string; summary: string } | undefined;
 }
+
+const REGION_SORT_STORAGE_KEY = 'taiwan-map-region-sort-direction';
+const isSortDirection = (value: unknown): value is SortDirection => value === 'asc' || value === 'desc';
 
 /** Shared page chrome; map and data modules communicate through callbacks. */
 export function createMapShell(root: HTMLElement, options: ShellOptions) {
@@ -54,6 +58,13 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     return element;
   };
   const lifetime = new AbortController();
+  const sortControl = el<HTMLSelectElement>('region-sort');
+  let sortDirection: SortDirection = 'desc';
+  try {
+    const stored = localStorage.getItem(REGION_SORT_STORAGE_KEY);
+    if (isSortDirection(stored)) sortDirection = stored;
+  } catch { /* Keep the descending default when browser storage is unavailable. */ }
+  sortControl.value = sortDirection;
   root.addEventListener('comparisonlayout', options.onPanelChange, { signal: lifetime.signal });
   const mapContainer = el('map');
   const mobile = matchMedia('(max-width: 760px)');
@@ -270,14 +281,14 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     el('list-title').textContent = { county: '選擇縣市', town: '選擇鄉鎮市區', village: '選擇村里' }[actualLevel];
     const normalize = (value: string) => value.replaceAll('台', '臺').toLowerCase();
     const query = normalize(el<HTMLInputElement>('region-search').value.trim());
-    const custom = options.customList?.(view, query, el('region-list'));
+    const custom = options.customList?.(view, query, el('region-list'), sortDirection);
     if (custom) {
       el('list-title').textContent = custom.title;
       el('list-summary').textContent = custom.summary;
       return;
     }
     const matches = view.data.features.filter((f) => normalize(`${f.properties.name} ${f.properties.code}`).includes(query));
-    const visible = options.sortRegions?.(matches) ?? matches;
+    const visible = options.sortRegions?.(matches, sortDirection) ?? sortRegionsByName(matches, sortDirection);
     el('list-summary').textContent = `${visible.length} / ${view.data.features.length} 個範圍`;
     const list = el('region-list'); list.replaceChildren();
     for (const region of visible) {
@@ -326,6 +337,24 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   el('back-button').addEventListener('click', () => options.onBack());
   el('home-button').addEventListener('click', () => options.onHome());
   el('region-search').addEventListener('input', renderList);
+  sortControl.addEventListener('change', () => {
+    if (!isSortDirection(sortControl.value)) return;
+    sortDirection = sortControl.value;
+    try { localStorage.setItem(REGION_SORT_STORAGE_KEY, sortDirection); } catch { /* Sorting still works for this page. */ }
+    renderList();
+    window.dispatchEvent(new CustomEvent('regionlistsortchange', { detail: sortDirection }));
+  }, { signal: lifetime.signal });
+  window.addEventListener('regionlistsortchange', event => {
+    const direction = (event as CustomEvent<unknown>).detail;
+    if (!isSortDirection(direction) || direction === sortDirection) return;
+    sortDirection = direction; sortControl.value = direction; renderList();
+  }, { signal: lifetime.signal });
+  window.addEventListener('storage', event => {
+    if (event.key !== REGION_SORT_STORAGE_KEY) return;
+    const direction = isSortDirection(event.newValue) ? event.newValue : 'desc';
+    if (direction === sortDirection) return;
+    sortDirection = direction; sortControl.value = direction; renderList();
+  }, { signal: lifetime.signal });
   el('retry-button').addEventListener('click', () => retry?.());
   el('error-close').addEventListener('click', () => { clearError(); });
   const sourceDialog = el<HTMLDialogElement>('source-dialog');

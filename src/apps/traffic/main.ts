@@ -4,6 +4,7 @@ import {BoundaryRepository} from '../../map-core/boundaries';
 import {createMap} from '../../map-core/create-map';
 import {RegionNavigator} from '../../map-core/navigation';
 import {createRegionLayer} from '../../map-core/region-layer';
+import {sortRegionsByValue} from '../../map-core/region-sort';
 import type {Region,View} from '../../map-core/types';
 import {createMapShell} from '../../ui/map-shell';
 import {TrafficRepository,type TrafficEvent,type TrafficManifest} from '../../data/traffic';
@@ -18,7 +19,7 @@ export function startTrafficApp(root:HTMLElement,routing?:HashRouter){
  const eventCache=new Map<string,TrafficEvent[]>(),manifests=new Map<number,TrafficManifest>();
  const val=(r:Region)=>repo.get(r.properties.code,year),shownValue=(r:Region)=>value(val(r),metric),getColor=(r:Region)=>color(val(r),metric,r.properties.level);
  const routeFor=(v:View):Route=>({theme:'traffic',ids:v.path.map(x=>x.properties.code),query:new URLSearchParams({metric,year:String(year),...(!showPoints?{points:'hide'}:{})}).toString()});
- const shell=createMapShell(root,{routing,getCamera:()=>layer?.ready&&nav.current?layer.camera():undefined,brandTitle:'交通事故',pageTitle:'臺灣傷亡交通事故地圖',getColor,showSelectionCard:false,loadingText:'載入交通事故與行政區…',errorText:'交通事故或行政區資料載入失敗，請重試。',sourceIntro:'警政署公開 A1／A2 傷亡交通事故逐案資料，以第一當事人列計算每案一次。人口分母來自內政部戶政司。未收錄純財損 A3；死亡採官方檔案的 24 小時口徑。',rowMeta:r=>format(shownValue(r),metric),sortRegions:rs=>[...rs].sort((a,b)=>(shownValue(b)??-Infinity)-(shownValue(a)??-Infinity)||a.properties.code.localeCompare(b.properties.code)),formatTooltip:h=>`${h.parentIndex!==undefined?'切換至 ':''}${h.region.properties.name}${h.parentIndex===undefined?` · ${format(shownValue(h.region),metric)}`:''}`,onChoose:r=>{if(layer?.ready)void nav.enter(r,layer.camera())},onBack:()=>nav.back(),onHome:()=>nav.home(),onNavigate:i=>nav.goTo(i),onPanelChange:()=>layer?.scheduleLabels()});
+ const shell=createMapShell(root,{routing,getCamera:()=>layer?.ready&&nav.current?layer.camera():undefined,brandTitle:'交通事故',pageTitle:'臺灣傷亡交通事故地圖',getColor,showSelectionCard:false,loadingText:'載入交通事故與行政區…',errorText:'交通事故或行政區資料載入失敗，請重試。',sourceIntro:'警政署公開 A1／A2 傷亡交通事故逐案資料，以第一當事人列計算每案一次。人口分母來自內政部戶政司。未收錄純財損 A3；死亡採官方檔案的 24 小時口徑。',rowMeta:r=>format(shownValue(r),metric),sortRegions:(regions,direction)=>sortRegionsByValue(regions,shownValue,direction),formatTooltip:h=>`${h.parentIndex!==undefined?'切換至 ':''}${h.region.properties.name}${h.parentIndex===undefined?` · ${format(shownValue(h.region),metric)}`:''}`,onChoose:r=>{if(layer?.ready)void nav.enter(r,layer.camera())},onBack:()=>nav.back(),onHome:()=>nav.home(),onNavigate:i=>nav.goTo(i),onPanelChange:()=>layer?.scheduleLabels()});
  const panel=createTrafficPanel(shell,repo,(m,y)=>{if(!nav.current)return;if(y!==year){const route={...routeFor(nav.current),query:new URLSearchParams({metric:m,year:String(y),...(!showPoints?{points:'hide'}:{})}).toString()};void restoreRoute(route)}else{metric=m;render(nav.current,false,true)}},visible=>{showPoints=visible;points?.setVisible(visible);if(nav.current){routing?.commit(routeFor(nav.current));shell.refreshThemeLinks();const meta=manifests.get(year);if(meta)panel.render(nav.current,metric,meta,showPoints)}});
  function render(view:View,restore=false,keepCamera=false){
   const route=routeFor(view),cam=routing?.consumeRouteCamera(route);if(cam)view.camera=cam;

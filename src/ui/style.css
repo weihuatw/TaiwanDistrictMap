@@ -47,6 +47,9 @@ h1 { margin: 0; font-size: 28px; font-weight: 650; letter-spacing: 1px; line-hei
 .search-box svg { width: 16px; height: 16px; }
 .search-box input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 12px; color: #315348; }
 .search-box input::placeholder { color: #8a9a90; }
+.sort-box { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 9px; padding: 0 3px; color: #71847a; font-size: 11px; }
+.sort-box select { min-height: 34px; padding: 0 9px; border: 1px solid #e1e8df; border-radius: 8px; background: #f8faf7; color: #315348; font: inherit; }
+.sort-box select:focus-visible { outline: 2px solid #33816d; outline-offset: 2px; }
 .list-summary { margin: 12px 3px 9px; font-size: 11px; color: #849389; }
 .region-list { overflow-y: auto; overscroll-behavior: contain; margin: 0 -7px; padding: 0 7px; scrollbar-width: thin; scrollbar-color: #cad7cc transparent; }
 .region-option { display: flex; width: 100%; align-items: center; gap: 11px; padding: 12px 8px; border: 0; border-bottom: 1px solid #eef2eb; text-align: left; background: transparent; color: #315348; border-radius: 6px; }

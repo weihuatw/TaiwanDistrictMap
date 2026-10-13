@@ -6,6 +6,7 @@ import { BoundaryRepository } from '../../map-core/boundaries';
 import { createMap } from '../../map-core/create-map';
 import { RegionNavigator } from '../../map-core/navigation';
 import { createRegionLayer } from '../../map-core/region-layer';
+import { sortRegionsByValue } from '../../map-core/region-sort';
 import type { Camera, Region, View } from '../../map-core/types';
 import { createMapShell } from '../../ui/map-shell';
 import { createPopulationMapPanel } from './panel';
@@ -38,7 +39,7 @@ export function startPopulationApp(root: HTMLElement, routing?: HashRouter) {
     loadingText: '載入人口統計與行政區…', errorText: '人口或行政區資料載入失敗，請重試。',
     sourceIntro: '戶籍人口、戶數、性別、年齡及出生死亡登記來自內政部戶政司；密度採官方年底人口與土地面積。行政區界來自國土測繪中心；戶籍人口不代表實際居住人口。',
     rowMeta: region => formatValue(value(region), metric),
-    sortRegions: regions => [...regions].sort((a, b) => (value(b) ?? -Infinity) - (value(a) ?? -Infinity) || a.properties.code.localeCompare(b.properties.code)),
+    sortRegions: (regions, direction) => sortRegionsByValue(regions, value, direction),
     formatTooltip: hit => `${hit.parentIndex !== undefined ? '切換至 ' : ''}${hit.region.properties.name}${hit.parentIndex === undefined ? ` · ${metricLabels[metric]} ${formatValue(value(hit.region), metric)}` : ''}`,
     onChoose: chooseRegion,
     onBack: () => { cancelMetricChange(); if (metric === 'density' && navigator.current?.selected) navigator.selectTown(null); else navigator.back(); },

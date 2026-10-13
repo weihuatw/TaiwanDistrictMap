@@ -4,6 +4,7 @@ import { BoundaryRepository } from '../../map-core/boundaries';
 import { createMap } from '../../map-core/create-map';
 import { RegionNavigator } from '../../map-core/navigation';
 import { createRegionLayer } from '../../map-core/region-layer';
+import { sortRegionsByValue } from '../../map-core/region-sort';
 import { createMapShell } from '../../ui/map-shell';
 import type { Region } from '../../map-core/types';
 import { IncomeRepository } from './data';
@@ -29,7 +30,7 @@ export function startIncomeApp(root: HTMLElement, routing?: HashRouter) {
       const mean = income.get(region.properties.code)?.meanK;
       return mean == null ? '無資料' : `${formatWan(mean)} 萬`;
     },
-    sortRegions: (regions) => [...regions].sort((a, b) => (income.get(b.properties.code)?.meanK ?? -Infinity) - (income.get(a.properties.code)?.meanK ?? -Infinity) || a.properties.code.localeCompare(b.properties.code)),
+    sortRegions: (regions, direction) => sortRegionsByValue(regions, region => income.get(region.properties.code)?.meanK, direction),
     formatTooltip: (hit) => panel.tooltip(hit),
     onChoose: (region) => { if (layer?.ready && navigator.current) void navigator.enter(region, layer.camera()); },
     onBack: () => navigator.back(), onHome: () => navigator.home(), onNavigate: (index) => navigator.goTo(index),
