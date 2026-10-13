@@ -67,7 +67,7 @@ npm run dev -- --port 5173 --strictPort
 | `src/map-core/settled-update.ts` | 最新更新排程：相機停止後下一幀執行，清理時取消 |
 | `src/map-core/region-layer.ts` | GeoJSON 填色／輪廓、灰色背景區域、獨立強調外框、點擊命中、避讓標籤；MapLibre `style.load` 後即可加入行政區圖層，不等底圖圖磚與字型全部載入；不查詢頁面元素 ID |
 | `src/map-core/types.ts` | 行政區、View、Camera、Padding 等共用型別 |
-| `src/ui/map-shell.html`、`map-shell.ts`、`style.css` | 清單、搜尋、升／降冪排序、麵包屑、提示、來源視窗及手機資訊面板；排序方向跨主題共用並保存在瀏覽器偏好，不持有資料載入或導覽歷史 |
+| `src/ui/map-shell.html`、`map-shell.ts`、`style.css` | 清單、搜尋、筆數旁的升／降冪切換箭頭、麵包屑、提示、來源視窗及手機資訊面板；排序方向跨主題共用並保存在瀏覽器偏好，不持有資料載入或導覽歷史 |
 | `src/data/population.ts` | 共用戶籍人口 manifest、村里／各層彙總與單一年齡分片 repository；不耦合主題或地圖幾何 |
 | `src/data/indigenous.ts` | 原住民資料 manifest、村里／各層彙總 repository；不載入年齡分片、不耦合地圖幾何 |
 | `src/apps/*/main.ts` | 引入該主題 CSS，組合核心、介面及主題回呼，處理主題資訊；行政區主題的跨主題資訊卡由 `src/apps/admin/facts-panel.ts` 讀取各主題 repository |

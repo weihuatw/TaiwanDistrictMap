@@ -58,13 +58,11 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     return element;
   };
   const lifetime = new AbortController();
-  const sortControl = el<HTMLSelectElement>('region-sort');
   let sortDirection: SortDirection = 'desc';
   try {
     const stored = localStorage.getItem(REGION_SORT_STORAGE_KEY);
     if (isSortDirection(stored)) sortDirection = stored;
   } catch { /* Keep the descending default when browser storage is unavailable. */ }
-  sortControl.value = sortDirection;
   root.addEventListener('comparisonlayout', options.onPanelChange, { signal: lifetime.signal });
   const mapContainer = el('map');
   const mobile = matchMedia('(max-width: 760px)');
@@ -284,12 +282,12 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     const custom = options.customList?.(view, query, el('region-list'), sortDirection);
     if (custom) {
       el('list-title').textContent = custom.title;
-      el('list-summary').textContent = custom.summary;
+      renderListSummary(custom.summary);
       return;
     }
     const matches = view.data.features.filter((f) => normalize(`${f.properties.name} ${f.properties.code}`).includes(query));
     const visible = options.sortRegions?.(matches, sortDirection) ?? sortRegionsByName(matches, sortDirection);
-    el('list-summary').textContent = `${visible.length} / ${view.data.features.length} 個範圍`;
+    renderListSummary(`${visible.length} / ${view.data.features.length} 個範圍`);
     const list = el('region-list'); list.replaceChildren();
     for (const region of visible) {
       const p = region.properties;
@@ -307,6 +305,27 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
     }
     if (!visible.length) { const empty = document.createElement('p'); empty.className = 'empty-list'; empty.textContent = '找不到符合的區域，請試試名稱或行政區代碼。'; list.append(empty); }
     list.scrollTop = 0;
+  }
+
+  function renderListSummary(text: string) {
+    const summary = el('list-summary');
+    summary.replaceChildren(document.createTextNode(text));
+    const nextDirection: SortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+    const nextLabel = nextDirection === 'asc' ? '升冪' : '降冪';
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'list-sort-toggle';
+    button.textContent = sortDirection === 'desc' ? '▼' : '▲';
+    button.setAttribute('aria-label', `目前${sortDirection === 'desc' ? '降冪' : '升冪'}排序，點擊切換為${nextLabel}`);
+    button.setAttribute('aria-pressed', String(sortDirection === 'asc'));
+    button.setAttribute('aria-controls', 'region-list');
+    button.title = `目前${sortDirection === 'desc' ? '降冪（大至小）' : '升冪（小至大）'}，點擊切換為${nextLabel}`;
+    button.addEventListener('click', () => {
+      sortDirection = nextDirection;
+      try { localStorage.setItem(REGION_SORT_STORAGE_KEY, sortDirection); } catch { /* Sorting still works for this page. */ }
+      renderList();
+      window.dispatchEvent(new CustomEvent('regionlistsortchange', { detail: sortDirection }));
+    });
+    summary.append(document.createTextNode(' '), button);
   }
 
   function toggleList(open = el('region-panel').hidden) {
@@ -337,23 +356,16 @@ export function createMapShell(root: HTMLElement, options: ShellOptions) {
   el('back-button').addEventListener('click', () => options.onBack());
   el('home-button').addEventListener('click', () => options.onHome());
   el('region-search').addEventListener('input', renderList);
-  sortControl.addEventListener('change', () => {
-    if (!isSortDirection(sortControl.value)) return;
-    sortDirection = sortControl.value;
-    try { localStorage.setItem(REGION_SORT_STORAGE_KEY, sortDirection); } catch { /* Sorting still works for this page. */ }
-    renderList();
-    window.dispatchEvent(new CustomEvent('regionlistsortchange', { detail: sortDirection }));
-  }, { signal: lifetime.signal });
   window.addEventListener('regionlistsortchange', event => {
     const direction = (event as CustomEvent<unknown>).detail;
     if (!isSortDirection(direction) || direction === sortDirection) return;
-    sortDirection = direction; sortControl.value = direction; renderList();
+    sortDirection = direction; renderList();
   }, { signal: lifetime.signal });
   window.addEventListener('storage', event => {
     if (event.key !== REGION_SORT_STORAGE_KEY) return;
     const direction = isSortDirection(event.newValue) ? event.newValue : 'desc';
     if (direction === sortDirection) return;
-    sortDirection = direction; sortControl.value = direction; renderList();
+    sortDirection = direction; renderList();
   }, { signal: lifetime.signal });
   el('retry-button').addEventListener('click', () => retry?.());
   el('error-close').addEventListener('click', () => { clearError(); });
