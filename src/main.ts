@@ -18,6 +18,7 @@ const loaders = (root: HTMLElement, routing: HashRouter): Record<Theme, ThemeApp
   indigenous: () => import('./apps/indigenous/main').then(({ startIndigenousApp }) => () => startIndigenousApp(root, routing)),
   traffic: () => import('./apps/traffic/main').then(({ startTrafficApp }) => () => startTrafficApp(root, routing)),
   crime: () => import('./apps/crime/main').then(({ startCrimeApp }) => () => startCrimeApp(root, routing)),
+  'child-safety': () => import('./apps/child-safety/main').then(({ startChildSafetyApp }) => () => startChildSafetyApp(root, routing)),
 });
 
 const workspace = createComparisonWorkspace(root, routing, loaders);

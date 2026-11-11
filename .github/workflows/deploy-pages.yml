@@ -35,6 +35,7 @@ jobs:
       - run: npm run indigenous:check
       - run: npm run traffic:check
       - run: npm run crime:check
+      - run: npm run child-safety:check
       - name: Check basemap key
         env:
           VITE_TOMTOM_API_KEY: ${{ secrets.VITE_TOMTOM_API_KEY }}

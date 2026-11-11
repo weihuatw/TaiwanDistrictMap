@@ -38,7 +38,10 @@
     "population:annual:build": "python3 scripts/population/annual_build.py",
     "crime:fetch": "python3 scripts/crime/fetch.py",
     "crime:build": "python3 scripts/crime/build.py",
-    "crime:check": "node scripts/crime/check.mjs"
+    "crime:check": "node scripts/crime/check.mjs",
+    "child-safety:fetch": "python3 scripts/child-safety/data.py fetch",
+    "child-safety:build": "python3 scripts/child-safety/data.py build",
+    "child-safety:check": "python3 scripts/child-safety/data.py check"
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "0.51.3",

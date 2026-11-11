@@ -22,6 +22,7 @@ test('Initial hints follow the router for all themes, deep links and invalid has
     '#school/63000/63000020/323604-elementary', '#/school/09007/09007010',
     '#/housing/63000/63000020?year=2024&type=apartment', '#/politics?mode=president', '#/population/63000/63000020?metric=elderly',
     '#/crime/63000/63000020?scope=regional&year=2026', '#/crime/a/b/c',
+    '#/child-safety/65000?year=2025&metric=rate', '#/child-safety/a/b',
     '#/unknown', '#/__proto__', '#/school/臺北市', '#/school/a/b/c/d', '#/housing/a/b/c'];
   for (const hash of hashes) {
     let theme; try { theme = parseRoute(hash).theme; } catch { theme = 'admin'; }

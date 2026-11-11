@@ -1,0 +1,72 @@
+.child-page .location-panel {
+  max-height: calc(100dvh - 125px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.child-page .map-hint { display: none; }
+.child-controls, .child-scale {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.child-controls { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); margin: 12px 0; }
+.child-controls label, .child-summary label:not([hidden]) { display: grid; gap: 4px; }
+.child-page .child-controls select, .child-summary select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 6px 8px;
+  border: 1px solid #cbdde7;
+  border-radius: 8px;
+  background: #f6fafc;
+  color: #234d69;
+  font: inherit;
+}
+
+.child-page .child-controls select:focus-visible, .child-summary select:focus-visible {
+  outline: 3px solid #4492b0;
+  outline-offset: 2px;
+}
+
+.child-summary {
+  color: #345367;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.child-summary p { margin: 6px 0; }
+.child-summary strong { font-size: 22px; font-variant-numeric: tabular-nums; }
+.child-summary dl { display: grid; gap: 4px; margin: 8px 0; }
+.child-summary dl > div { display: flex; justify-content: space-between; gap: 8px; }
+.child-summary dd { margin: 0; text-align: right; }
+.child-summary details { padding: 8px 0; border-top: 1px solid #dce5de; }
+.child-summary summary { cursor: pointer; font-weight: 600; }
+.child-summary details label { margin-top: 8px; }
+.child-summary a { color: #234d69; text-underline-offset: 2px; }
+
+.child-legend {
+  position: absolute;
+  right: 18px;
+  bottom: 38px;
+  width: 250px;
+  max-width: calc(100% - 36px);
+  padding: 12px;
+  border: 1px solid #d5e2e9;
+  border-radius: 12px;
+  background: #fffffcf5;
+  color: #31536a;
+  font-size: 12px;
+}
+
+.child-scale { margin-top: 8px; font-size: 11px; }
+.child-scale span { display: flex; align-items: center; gap: 5px; }
+.child-scale i { flex: none; width: 12px; height: 12px; border: 1px solid #31536a30; border-radius: 2px; }
+
+@media (max-width: 760px) {
+  .child-page .location-panel { max-height: none; overflow: visible; }
+  .child-page .brand { display: none; }
+  .child-page .child-controls select, .child-summary select { min-height: 44px; font-size: 16px; }
+  .child-legend { position: static; width: 100%; max-width: none; padding: 12px 0; border: 0; background: transparent; }
+}
