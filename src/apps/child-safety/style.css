@@ -70,3 +70,32 @@
   .child-page .child-controls select, .child-summary select { min-height: 44px; font-size: 16px; }
   .child-legend { position: static; width: 100%; max-width: none; padding: 12px 0; border: 0; background: transparent; }
 }
+
+.child-sanctions { margin: 12px 0; font-size: 12px; line-height: 1.6; color: #345367; }
+.child-marker-toggle { display: flex; align-items: center; gap: 6px; font-weight: 600; }
+.child-sanctions select { width: 100%; min-height: 44px; font: inherit; margin-bottom: 8px; }
+.child-sanctions article { border-top: 1px solid #d8c8df; margin-top: 12px; padding-top: 8px; }
+.child-sanctions h3, .child-sanctions h4 { margin: 8px 0; }
+.child-sanctions dl { margin: 8px 0; }
+.child-sanctions dt { margin-top: 6px; font-weight: 600; color: #526b7c; }
+.child-sanctions dd { margin: 0; white-space: pre-line; overflow-wrap: anywhere; }
+.child-sanctions p { margin: 7px 0; }
+.child-sanctions button { min-height: 36px; margin: 8px; }
+.child-sanctions a { color: #5e327b; }
+.child-sanction-marker {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #9b3f48;
+  box-shadow: 0 1px 5px #0005;
+  color: #fff;
+  font: 600 12px sans-serif;
+  cursor: pointer;
+}
+.child-sanction-marker:focus-visible { outline: 3px solid #16394b; outline-offset: 2px; }
+@media (max-width: 760px) {
+  .child-sanctions select { font-size: 16px; }
+}
+
+.child-sanction-marker.selected { background: #3e246d; outline: 3px solid #f9bf40; outline-offset: 1px; }

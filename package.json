@@ -40,8 +40,9 @@
     "crime:build": "python3 scripts/crime/build.py",
     "crime:check": "node scripts/crime/check.mjs",
     "child-safety:fetch": "python3 scripts/child-safety/data.py fetch",
-    "child-safety:build": "python3 scripts/child-safety/data.py build",
-    "child-safety:check": "python3 scripts/child-safety/data.py check"
+    "child-safety:build": "python3 scripts/child-safety/data.py build && python3 scripts/child-safety/build-sanctions.py",
+    "child-safety:sanctions:fetch": "python3 scripts/child-safety/sanctions.py --refresh",
+    "child-safety:check": "python3 scripts/child-safety/data.py check && python3 scripts/child-safety/build-sanctions.py check"
   },
   "dependencies": {
     "@tomtom-org/maps-sdk": "0.51.3",

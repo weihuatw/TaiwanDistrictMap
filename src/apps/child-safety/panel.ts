@@ -1,6 +1,7 @@
 import type { createMapShell } from '../../ui/map-shell';
 import { appendTextOption, setExternalLink } from '../../ui/safe-dom';
 import { loadChildSafetyData, validDirectory, type ChildSafetyData, type Directory } from './data';
+import { validSanctionDetails, type SanctionDetails, type SanctionIndex, type SanctionSchool } from './sanctions';
 import { format, legendItems, metrics, unit, value, type Metric } from './theme';
 
 const sanctionUrl = 'https://ap.ece.moe.edu.tw/webecems/punishSearch.aspx';
@@ -25,12 +26,22 @@ function numberRows(list: HTMLElement, entries: Array<[string, string]>) {
   }));
 }
 
-export function createChildSafetyPanel(shell: ReturnType<typeof createMapShell>, signal: AbortSignal, change: (filter: Filter) => void) {
+export function createChildSafetyPanel(shell: ReturnType<typeof createMapShell>, signal: AbortSignal, change: (filter: Filter) => void, toggleMarkers: (visible: boolean) => void, focusSchool: (school: SanctionSchool | undefined) => void) {
   shell.viewExtra.innerHTML = `
     <div class="child-controls">
       <label>統計年度<select data-ui="child-year" disabled></select></label>
       <label>地圖著色<select data-ui="child-metric" disabled></select></label>
     </div>
+    <section class="child-sanctions">
+      <label class="child-marker-toggle"><input type="checkbox" data-ui="sanction-markers" checked>顯示官方裁罰園所</label>
+      <p data-ui="sanction-summary" role="status"></p>
+      <details data-ui="sanction-section"><summary>園所裁罰紀錄</summary>
+        <p>地圖標記內為公開裁罰筆數，位置為園址。未定位園所仍可從清單查閱。</p>
+        <label>鄉鎮市區<select data-ui="sanction-town"></select></label>
+        <label>園所<select data-ui="sanction-school"></select></label>
+        <div data-ui="sanction-details">選取縣市或點選地圖標記，即可查看園所裁罰紀錄。</div>
+      </details>
+    </section>
     <section class="child-summary" aria-live="polite">
       <p data-ui="child-label"></p><strong data-ui="child-value">載入中…</strong>
       <dl data-ui="child-totals"></dl>
@@ -54,6 +65,15 @@ export function createChildSafetyPanel(shell: ReturnType<typeof createMapShell>,
       </details>
     </section>`;
   const el = <T extends HTMLElement = HTMLElement>(key: string) => shell.viewExtra.querySelector<T>(`[data-ui=${key}]`)!;
+  const sanctionTown = el<HTMLSelectElement>('sanction-town');
+  const sanctionSchool = el<HTMLSelectElement>('sanction-school');
+  sanctionTown.disabled = sanctionSchool.disabled = true;
+  const sanctionSection = el<HTMLDetailsElement>('sanction-section');
+  let sanctionCounty: SanctionDetails | undefined;
+  let sanctionIndex: SanctionIndex | undefined;
+  let sanctionRequest: AbortController | undefined;
+  let desiredSchool: string | undefined;
+  const sanctionCache = new Map<string, SanctionDetails>();
   const year = el<HTMLSelectElement>('child-year');
   const metric = el<HTMLSelectElement>('child-metric');
   const preschoolYear = el<HTMLSelectElement>('preschool-year');
@@ -170,8 +190,122 @@ export function createChildSafetyPanel(shell: ReturnType<typeof createMapShell>,
   town.addEventListener('change', renderTowns, { signal });
   school.addEventListener('change', renderSchool, { signal });
 
+  function showSanctionSchool() {
+    const record = sanctionCounty?.schools.find(s => s.id === sanctionSchool.value);
+    const container = el('sanction-details');
+    container.replaceChildren();
+    if (!record) return;
+    const heading = document.createElement('h3');
+    heading.textContent = record.name;
+    const address = document.createElement('p');
+    address.textContent = `${record.address} · 園所狀態：${record.status}`;
+    container.append(heading, address);
+    container.append(link('官方裁罰查詢 ↗', record.sourceUrl));
+    if (record.position) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = '查看園址';
+      button.addEventListener('click', () => focusSchool(record), { signal });
+      container.append(button);
+    }
+    if (!record.position) {
+      const note = document.createElement('p');
+      note.textContent = record.positionStatus === 'outside-town'
+        ? '官方座標與所屬行政區不符，完整裁罰紀錄保留於此。'
+        : '官方未提供可核對的園址座標，完整裁罰紀錄保留於此。';
+      container.append(note);
+    }
+    for (const sanction of [...record.sanctions].sort((a, b) => b.date.localeCompare(a.date))) {
+      const article = document.createElement('article');
+      const title = document.createElement('h4');
+      title.textContent = `${sanction.date} · ${sanction.document}`;
+      const list = document.createElement('dl');
+      numberRows(list, [
+        ['處分時園名', sanction.schoolName], ['處分依據', sanction.basis],
+        ['違反規定', sanction.violation], ['負責人／行為人', sanction.subject], ['處分內容', sanction.disposition],
+      ]);
+      article.append(title, list);
+      container.append(article);
+    }
+  }
+
+  function filterSanctionSchools() {
+    const previous = desiredSchool ?? sanctionSchool.value;
+    sanctionSchool.replaceChildren();
+    appendTextOption(sanctionSchool, '', '選擇園所');
+    for (const record of sanctionCounty?.schools.filter(s => !sanctionTown.value || s.townName === sanctionTown.value).sort((a, b) => a.name.localeCompare(b.name, 'zh-TW')) ?? []) {
+      appendTextOption(sanctionSchool, record.id, `${record.name}（${record.sanctions.length} 筆）`);
+    }
+    sanctionSchool.value = previous;
+    if (!sanctionSchool.value) sanctionSchool.value = '';
+    desiredSchool = undefined;
+    showSanctionSchool();
+  }
+
+  function showSanctionCounty(result: SanctionDetails) {
+    sanctionCounty = result;
+    sanctionTown.disabled = sanctionSchool.disabled = false;
+    sanctionTown.replaceChildren();
+    appendTextOption(sanctionTown, '', '全部鄉鎮');
+    for (const name of [...new Set(result.schools.map(s => s.townName))].sort((a, b) => a.localeCompare(b, 'zh-TW'))) {
+      appendTextOption(sanctionTown, name, name || '行政區未對照');
+    }
+    filterSanctionSchools();
+  }
+
+  async function loadSanctions() {
+    if (!county || !sanctionSection.open || sanctionRequest) return;
+    if (sanctionCounty?.county === county) {
+      if (desiredSchool) {
+        sanctionTown.value = '';
+        filterSanctionSchools();
+      }
+      return;
+    }
+    const cached = sanctionCache.get(county);
+    if (cached) { showSanctionCounty(cached); return; }
+    const requestedCounty = county;
+    const controller = new AbortController();
+    sanctionRequest = controller;
+    const container = el('sanction-details');
+    container.textContent = '載入園所裁罰紀錄…';
+    try {
+      const result = await loadChildSafetyData<SanctionDetails>(`sanctions/${requestedCounty}.json`,
+        d => validSanctionDetails(d, requestedCounty)
+          && d.records === sanctionIndex?.counties[requestedCounty]?.records
+          && d.schools.length === sanctionIndex?.counties[requestedCounty]?.schools, AbortSignal.any([signal, controller.signal]));
+      if (signal.aborted || controller.signal.aborted) return;
+      sanctionCache.set(requestedCounty, result);
+      showSanctionCounty(result);
+    } catch {
+      if (signal.aborted || controller.signal.aborted) return;
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.textContent = '重試';
+      retry.addEventListener('click', () => void loadSanctions(), { once: true, signal });
+      container.replaceChildren('裁罰資料載入失敗。', retry);
+    } finally {
+      if (sanctionRequest === controller) sanctionRequest = undefined;
+    }
+  }
+
+  el<HTMLInputElement>('sanction-markers').addEventListener('change', event =>
+    toggleMarkers((event.target as HTMLInputElement).checked), { signal });
+  sanctionTown.addEventListener('change', () => {
+    filterSanctionSchools();
+    if (!sanctionSchool.value) focusSchool(undefined);
+  }, { signal });
+  sanctionSchool.addEventListener('change', () => {
+    showSanctionSchool();
+    const record = sanctionCounty?.schools.find(s => s.id === sanctionSchool.value);
+    focusSchool(record);
+  }, { signal });
+  sanctionSection.addEventListener('toggle', () => void loadSanctions(), { signal });
+
   return {
-    render(next: ChildSafetyData, filter: Filter, countyCode: string | undefined, countyName: string) {
+    render(next: ChildSafetyData, filter: Filter, countyCode: string | undefined, countyName: string, sanctions: SanctionIndex, selectedSchool?: string, markersVisible = true) {
+      el<HTMLInputElement>('sanction-markers').checked = markersVisible;
+      sanctionIndex = sanctions;
       if (!data) {
         data = next;
         for (const y of Object.keys(data.years).sort().reverse()) appendTextOption(year, y, `${y} 年`);
@@ -208,7 +342,21 @@ export function createChildSafetyPanel(shell: ReturnType<typeof createMapShell>,
         scale.append(entry);
       }
       legend.replaceChildren(title, scale);
+      const summaries = countyCode ? [sanctions.counties[countyCode]] : Object.values(sanctions.counties);
+      const totalSchools = summaries.reduce((sum, s) => sum + s.schools, 0);
+      const totalRecords = summaries.reduce((sum, s) => sum + s.records, 0);
+      const positioned = summaries.reduce((sum, s) => sum + s.positioned, 0);
+      const date = summaries.map(s => s.retrievedAt.slice(0, 10)).sort().at(-1);
+      el('sanction-summary').textContent = `${countyName} · ${totalSchools} 所園所、${totalRecords} 筆公開裁罰，${positioned} 所可定位。${date} 取得，公告會隨官方公布期限及更正異動。${countyCode ? '' : '選取縣市或點選標記可查看明細。'}`;
       if (county !== countyCode) {
+        sanctionRequest?.abort();
+        sanctionRequest = undefined;
+        sanctionCounty = undefined;
+        sanctionTown.disabled = sanctionSchool.disabled = true;
+        desiredSchool = undefined;
+        sanctionTown.replaceChildren();
+        sanctionSchool.replaceChildren();
+        el('sanction-details').textContent = countyCode ? '' : '請先選取縣市。';
         directoryRequest?.abort();
         directoryRequest = undefined;
         county = countyCode;
@@ -219,7 +367,12 @@ export function createChildSafetyPanel(shell: ReturnType<typeof createMapShell>,
         status.textContent = '';
         renderTowns();
       }
+      if (selectedSchool) {
+        desiredSchool = selectedSchool;
+        sanctionSection.open = true;
+      }
       void loadSchools();
+      void loadSanctions();
     },
     setBusy(busy: boolean) { year.disabled = metric.disabled = busy; },
     obstacles() {

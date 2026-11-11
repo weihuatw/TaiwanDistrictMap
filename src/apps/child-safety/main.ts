@@ -1,4 +1,5 @@
 import './style.css';
+import { createSanctionMarkers, validSanctionIndex, type SanctionIndex, type SanctionSchool } from './sanctions';
 import { BoundaryRepository } from '../../map-core/boundaries';
 import { createMap } from '../../map-core/create-map';
 import { RegionNavigator } from '../../map-core/navigation';
@@ -16,6 +17,11 @@ export function startChildSafetyApp(root: HTMLElement, routing?: HashRouter) {
   const boundaries = new BoundaryRepository(`${import.meta.env.BASE_URL}data/`);
   let statistics: Promise<ChildSafetyData> | undefined;
   let data: ChildSafetyData | undefined;
+  let sanctionData: SanctionIndex | undefined;
+  let sanctionRequest: Promise<SanctionIndex> | undefined;
+  let markers: ReturnType<typeof createSanctionMarkers> | undefined;
+  let markersVisible = true;
+  let selectedSchool: string | undefined;
   let filter: Filter = { year: '', metric: 'reports' };
   let query = '';
   let preserveViewport = false;
@@ -45,7 +51,11 @@ export function startChildSafetyApp(root: HTMLElement, routing?: HashRouter) {
     return {
       theme: 'child-safety',
       ids: view.selected ? [view.selected.properties.code] : [],
-      query: new URLSearchParams({ year: filter.year, metric: filter.metric }).toString(),
+      query: new URLSearchParams({
+        year: filter.year, metric: filter.metric,
+        ...(!markersVisible ? { markers: 'false' } : {}),
+        ...(selectedSchool ? { school: selectedSchool } : {}),
+      }).toString(),
     };
   }
 
@@ -56,10 +66,28 @@ export function startChildSafetyApp(root: HTMLElement, routing?: HashRouter) {
     query = routeFor(view).query;
     shell.hideTooltip();
     present(view, true);
+  }, visible => {
+    markersVisible = visible;
+    if (sanctionData) markers?.render(sanctionData, nav.current?.selected?.properties.code, visible, selectedSchool);
+    if (nav.current) {
+      query = routeFor(nav.current).query;
+      routing?.commit(routeFor(nav.current));
+    }
+  }, (school: SanctionSchool | undefined) => {
+    selectedSchool = school?.id;
+    if (nav.current) {
+      query = routeFor(nav.current).query;
+      routing?.commit(routeFor(nav.current));
+    }
+    if (sanctionData) markers?.render(sanctionData, nav.current?.selected?.properties.code, markersVisible, selectedSchool);
+    if (school?.position) map?.map.easeTo({
+      center: school.position, zoom: Math.max(14, map.map.getZoom()),
+      duration: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 600,
+    });
   });
 
   function present(view: View, preserveCamera = false) {
-    if (!data || lifetime.signal.aborted) return;
+    if (!data || !sanctionData || lifetime.signal.aborted) return;
     const route = routeFor(view);
     const camera = routing?.consumeRouteCamera(route);
     if (camera) view.camera = camera;
@@ -71,15 +99,18 @@ export function startChildSafetyApp(root: HTMLElement, routing?: HashRouter) {
       search.value = searchText;
       shell.refreshList();
     }
-    panel.render(data, filter, view.selected?.properties.code, view.selected?.properties.name ?? '全臺');
+    panel.render(data, filter, view.selected?.properties.code, view.selected?.properties.name ?? '全臺', sanctionData, selectedSchool, markersVisible);
+    markers?.render(sanctionData, view.selected?.properties.code, markersVisible, selectedSchool);
     layer?.render(view, nav.context, !!camera || !!view.camera, undefined, undefined, preserveCamera && !camera);
   }
 
   const nav = new RegionNavigator(async file => {
     statistics ??= loadChildSafetyData<ChildSafetyData>('statistics.json', validStatistics, lifetime.signal)
       .catch(error => { statistics = undefined; throw error; });
-    const [geometry, snapshot] = await Promise.all([boundaries.load(file), statistics]);
-    if (!lifetime.signal.aborted) data = snapshot;
+    sanctionRequest ??= loadChildSafetyData<SanctionIndex>('sanctions.json', validSanctionIndex, lifetime.signal)
+      .catch(error => { sanctionRequest = undefined; throw error; });
+    const [geometry, snapshot, sanctions] = await Promise.all([boundaries.load(file), statistics, sanctionRequest]);
+    if (!lifetime.signal.aborted) { data = snapshot; sanctionData = sanctions; }
     return geometry;
   }, view => {
     if (!data) return;
@@ -94,6 +125,9 @@ export function startChildSafetyApp(root: HTMLElement, routing?: HashRouter) {
 
   function restoreRoute(route: Route) {
     query = route.query;
+    const params = new URLSearchParams(query);
+    selectedSchool = /^[a-f0-9]{16}$/.test(params.get('school') ?? '') ? params.get('school')! : undefined;
+    markersVisible = params.get('markers') !== 'false';
     const view = nav.current;
     preserveViewport = !!view && (view.selected?.properties.code ?? '') === (route.ids[0] ?? '');
     if (view && !view.selected && route.ids.length && layer?.ready) overviewCamera = layer.camera();
@@ -102,12 +136,16 @@ export function startChildSafetyApp(root: HTMLElement, routing?: HashRouter) {
 
   function choose(region: Region) {
     if (layer?.ready && nav.current) {
+      selectedSchool = undefined;
       void restoreRoute({ ...routeFor(nav.current), ids: [region.properties.code] });
     }
   }
 
   function back() {
-    if (nav.current?.selected) void restoreRoute({ ...routeFor(nav.current), ids: [] });
+    if (nav.current?.selected) {
+      selectedSchool = undefined;
+      void restoreRoute({ ...routeFor(nav.current), ids: [] });
+    }
   }
 
   function home() {
@@ -119,6 +157,11 @@ export function startChildSafetyApp(root: HTMLElement, routing?: HashRouter) {
 
   try {
     map = createMap({ container: shell.mapContainer, apiKey: import.meta.env.VITE_TOMTOM_API_KEY, style: 'monoLight', onStatus: shell.setBasemapStatus });
+    markers = createSanctionMarkers(map.map, (id, county) => {
+      if (!nav.current) return;
+      selectedSchool = id;
+      void restoreRoute({ ...routeFor(nav.current), ids: [county] });
+    });
     layer = createRegionLayer(map.map, {
       getColor, isMissing: region => shown(region) === null, fillOpacity: .68, hoverOpacity: .68, selectedOpacity: .68,
       getPadding: shell.getPadding, getLabelObstacles: () => [...shell.getLabelObstacles(), ...panel.obstacles()],
@@ -139,6 +182,7 @@ export function startChildSafetyApp(root: HTMLElement, routing?: HashRouter) {
       lifetime.abort();
       nav.destroy();
       panel.destroy();
+      markers?.destroy();
       layer?.destroy();
       map?.destroy();
       shell.root.classList.remove('child-page');

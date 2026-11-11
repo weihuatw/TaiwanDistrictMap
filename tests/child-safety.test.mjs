@@ -29,3 +29,20 @@ test('兒少保護分享網址還原年份與著色，跨主題時保留縣市',
   const fromAdmin = parseRoute('#/admin/65000/65000010/65000010001');
   assert.equal(routeHash(transferTheme(fromAdmin, 'child-safety', route.query)), routeHash(route));
 });
+
+test('園所裁罰快照可由地圖索引載入，錯誤縣市或來源會被拒絕', async () => {
+  const { validSanctionIndex, validSanctionDetails } = await import('../src/apps/child-safety/sanctions.ts');
+  const index = JSON.parse(readFileSync(new URL('../public/data/child-safety/sanctions.json', import.meta.url)));
+  assert.equal(validSanctionIndex(index), true);
+  assert.equal(validSanctionIndex({ ...index, counties: {} }), false);
+  const county = index.schools[0].county;
+  const details = JSON.parse(readFileSync(new URL(`../public/data/child-safety/sanctions/${county}.json`, import.meta.url)));
+  assert.equal(validSanctionDetails(details, county), true);
+  assert.equal(validSanctionDetails(details, '00000'), false);
+  const corrupted = structuredClone(details);
+  corrupted.schools[0].sourceUrl = 'javascript:alert(1)';
+  assert.equal(validSanctionDetails(corrupted, county), false);
+  corrupted.schools[0].sourceUrl = details.schools[0].sourceUrl;
+  corrupted.schools[0].position = [0, 0];
+  assert.equal(validSanctionDetails(corrupted, county), false);
+});
